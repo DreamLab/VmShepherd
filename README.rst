@@ -1,0 +1,9 @@
+vmshepherd
+----
+
+
+tests
+=====
+
+    make test
+
