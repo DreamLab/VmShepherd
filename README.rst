@@ -1,9 +1,9 @@
-vmshepherd
-----
+VmShepherd
+==========
 
 
 tests
-=====
+-----
 
     make test
 

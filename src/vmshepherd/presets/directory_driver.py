@@ -4,7 +4,6 @@ import os
 import yaml
 from .abstract import AbstractConfigurationDriver
 
-
 # TODO: probably it would be better to separate list from preset data
 #       This will make a lot easier to pass runtime data.
 #       The change requires modification in worker, preset abstract API and a Preset class.
