@@ -4,27 +4,18 @@ import os
 import yaml
 from .abstract import AbstractConfigurationDriver
 
-# TODO: probably it would be better to separate list from preset data
-#       This will make a lot easier to pass runtime data.
-#       The change requires modification in worker, preset abstract API and a Preset class.
-
 
 class DirectoryDriver(AbstractConfigurationDriver):
 
-    def __init__(self, path):
+    def __init__(self, path, runtime, defaults):
+        super().__init__(runtime, defaults)
         self._presets = {}
         self._path = path
 
-    async def get_presets_configuration(self):
-        await self.reload()
-        return self._presets
-
-    async def get_preset(self, name):
-        await self.reload()
-        return self._presets.get(name)
+    async def get(self, preset_name):
+        return self._presets[preset_name]
 
     async def get_presets_list(self):
-        await self.reload()
         return list(self._presets.keys())
 
     async def reload(self):
@@ -34,7 +25,7 @@ class DirectoryDriver(AbstractConfigurationDriver):
                 preset_name = item.name.replace('.conf', '')
                 preset = await self._load_from_file(item.path)
                 if preset is not None:
-                    presets[preset_name] = self.prepare_preset(preset_name, preset)
+                    presets[preset_name] = self.create_preset(preset_name, preset)
         self._presets = presets
 
     async def _load_from_file(self, fn):

@@ -1,15 +1,17 @@
 import asyncio
 import collections
+import copy
 import yaml
 
 
-def update_dict_recursively(d, u):
+def get_merged_dict_recursively(d, u):
+    new = copy.deepcopy(d)
     for k, v in u.items():
         if isinstance(v, collections.Mapping):
-            d[k] = update_dict_recursively(d.get(k, {}), v)
+            new[k] = update_dict_recursively(new.get(k, {}), v)
         else:
-            d[k] = v
-    return d
+            new[k] = v
+    return new
 
 
 def load_config_file(path):

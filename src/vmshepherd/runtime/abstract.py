@@ -8,15 +8,16 @@ It also should provide lock mechanism - in multiinstance deployment, a preset sh
 
 class AbstractRuntimeData:
 
-    async def lock_preset(self, preset_name: str) -> bool:
+
+    async def acquire_lock(self, name: str) -> bool:
         ''' Locks preset during manage process, any other VMgr instance won't disrubt it.
 
         If lock was acquired it should return True, otherwise False.
         '''
         raise NotImplementedError
 
-    async def unlock_preset(self, preset_name: str) -> None:
-        ''' Unlocks presets other VMgr instance will be able to mange it.
+    async def release_lock(self, name: str) -> None:
+        ''' Unlocks presets, other VMgr instance will be able to manage it.
 
         :arg string preset_name: Preset name
         '''

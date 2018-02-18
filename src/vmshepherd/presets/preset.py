@@ -1,22 +1,33 @@
 import asyncio
 import logging
 import time
+# 3.7 and later asynccontextmanager is available in builtin module - contextmanager
+from async_generator import asynccontextmanager
 
 
 class Preset:
 
-    def __init__(self, name: str, config: dict, iaas=None, healthcheck=None):
+    def __init__(self, name: str, config: dict, runtime: object, iaas=None, healthcheck=None):
         self.iaas = iaas
         self.healthcheck = healthcheck
         self.config = config
         self.name = name
+        self.runtime = runtime
         self.count = config['count']
         self.created = 0
         self.terminated = 0
+        self._locked = False
 
     async def _terminate_vm(self, vm):
-        # TODO: limiter
         await vm.terminate()
+
+    async def __aenter__(self):
+        self._locked = await self.runtime.acquire_lock(self.name)
+        return self._locked
+
+    async def __aexit__(self, exc_type, exc, tb):
+        if self._locked:
+            await self.runtime.release_lock(self.name)
 
     async def _create_vms(self, count):
         for i in range(count):
@@ -35,7 +46,7 @@ class Preset:
         vms = await self.iaas.list_vms(self.name)
         return vms
 
-    async def manage(self, data):
+    async def manage(self):
         vms = await self.list_vms()
 
         missing = self.count - len(vms) if len(vms) < self.count else 0
@@ -51,7 +62,8 @@ class Preset:
                 await vm.terminate()
 
         await self._create_vms(missing)
-
+        # TODO runtime data
+        data = {}
         data['CHECK'] = await self._healthcheck(vms, data)
         return data
 
@@ -76,5 +88,4 @@ class Preset:
                         logging.info("Terminate VM:%s, healthcheck fails from: %s", vm, vms_fails[vm.id]['time'])
                         missing += 1
                         await self._terminate_vm(vm)
-        await self._create_vms(missing)
         return vms_fails

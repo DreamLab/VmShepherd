@@ -1,6 +1,6 @@
 import logging
 import os
-from vmshepherd.driver import Driver
+from vmshepherd.drivers import Drivers
 from vmshepherd.worker import Worker
 
 
@@ -18,10 +18,13 @@ class VmShepherd:
 
         self.root_dir = os.path.dirname(__file__)
 
-        self.runtime_manager = Driver.get('runtime', self.config['runtime'])
+        self.runtime_manager = Drivers.get('runtime', self.config['runtime'])
 
-        self.preset_manager = Driver.get('presets', self.config['presets'])
-        self.preset_manager.set_defaults(self.config.get('defaults', {}))
+        self.preset_manager = Drivers.get(
+            'presets', self.config['presets'],
+            runtime=self.runtime_manager,
+            defaults=self.config.get('defaults', {})
+        )
 
         self.worker = Worker(self, 5, autostart=self.config.get('autostart', True))
 
