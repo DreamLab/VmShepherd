@@ -115,11 +115,14 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
     @expectedFailure
     async def test_example_of_bad_locking(self):
         await self.vmshepherd.preset_manager.reload()
-        self.vmshepherd.runtime_manager.lock_preset = Mock(return_value=futurized(False))
-        self.vmshepherd.runtime_manager.unlock_preset = Mock(return_value=futurized(True))
+
+        # no lock-mechanism actually, always manage preset
+        self.vmshepherd.runtime_manager.acquire_lock = Mock(return_value=futurized(True))
+        self.vmshepherd.runtime_manager.release_lock = Mock(return_value=futurized(True))
+
         await asyncio.gather(
             self.vmshepherd.run(run_once=True),
-            self.vmshepherd.run(run_once=True)
+            self.vmshepherd.worker._manage()  # explicit call of private method to bypass run_once check
         )
 
         preset = await self.vmshepherd.preset_manager.get('test-preset')

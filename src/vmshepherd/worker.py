@@ -30,27 +30,11 @@ class Worker:
 
         self._start_time = time.time()
         logging.info('VmShepherd start cycle...')
-        result, cnt_presets, cnt_failed_presets = self.ERROR, 0, 0
 
         try:
-            await self.presets.reload()
-
-            presets = await self.presets.get_presets_list()
-            cnt_presets = len(presets)
-
-            for name in presets:
-
-                try:
-                    preset = await self.presets.get(name)
-                    async with preset as locked:
-                        if locked:
-                            await preset.manage()
-                except Exception:
-                    raise
-                    cnt_failed_presets += 1
-
-            result = self.OK
+            result, cnt_presets, cnt_failed_presets = await self._manage()
         except Exception:
+            result = self.ERROR
             logging.exception('Error while running')
         finally:
             logging.info(
@@ -59,3 +43,23 @@ class Worker:
             )
             self._running = False
         return result
+
+    async def _manage(self):
+        await self.presets.reload()
+
+        presets = await self.presets.get_presets_list()
+        cnt_presets = len(presets)
+        cnt_presets, cnt_failed_presets = len(presets), 0
+
+        for name in presets:
+
+            try:
+                preset = await self.presets.get(name)
+                async with preset as locked:
+                    if locked:
+                        await preset.manage()
+            except Exception:
+                logging.exception('Error managing %s', name)
+                cnt_failed_presets += 1
+
+        return self.OK, cnt_presets, cnt_failed_presets

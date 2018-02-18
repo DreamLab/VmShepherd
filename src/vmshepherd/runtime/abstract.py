@@ -8,7 +8,6 @@ It also should provide lock mechanism - in multiinstance deployment, a preset sh
 
 class AbstractRuntimeData:
 
-
     async def acquire_lock(self, name: str) -> bool:
         ''' Locks preset during manage process, any other VMgr instance won't disrubt it.
 

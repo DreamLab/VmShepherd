@@ -1,8 +1,6 @@
 import asyncio
 import logging
 import time
-# 3.7 and later asynccontextmanager is available in builtin module - contextmanager
-from async_generator import asynccontextmanager
 
 
 class Preset:

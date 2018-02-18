@@ -8,7 +8,7 @@ def get_merged_dict_recursively(d, u):
     new = copy.deepcopy(d)
     for k, v in u.items():
         if isinstance(v, collections.Mapping):
-            new[k] = update_dict_recursively(new.get(k, {}), v)
+            new[k] = get_merged_dict_recursively(new.get(k, {}), v)
         else:
             new[k] = v
     return new
