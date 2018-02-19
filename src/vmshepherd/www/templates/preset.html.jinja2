@@ -76,7 +76,7 @@
                 </tr>
               </thead>
               <tbody>
-{% for vm in data['vms'] %}
+{% for vm in data['vms']|sorted %}
                 <tr>
                   <td>{{ loop.index }}</td>
                   <td>{{ vm.id }}</td>
