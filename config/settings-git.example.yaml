@@ -8,7 +8,7 @@ presets:
   driver_params:
     repositories:
         paas: http://kwarunek@stash.grupa.onet/scm/paas/vms-paas-presets.git
-    clone_dir: '$TMP/vms'
+        # db: http://user:paas@github.com/blahblah/foo
 
 defaults:
 
