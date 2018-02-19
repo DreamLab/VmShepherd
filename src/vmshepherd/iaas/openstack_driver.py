@@ -16,7 +16,7 @@ from novaclient.exceptions import ClientException, NotFound, MethodNotAllowed, N
 class OpenStackDriver(AbstractIaasDriver):
 
     def __init__(self, *args, **config):
-        self.config = kwargs
+        self.config = config
 
     def openstack_exception(func):
         '''
