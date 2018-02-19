@@ -19,6 +19,6 @@ requirements:
 clean:
 	rm -rf `find . -name __pycache__`
 	rm -f `find . -type f -name '*.py[co]' `
-	rm -rf dist build htmlcov
+	rm -rf dist build htmlcov .tox
 
 .PHONY: install test show-docs run requirements clean
