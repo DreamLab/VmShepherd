@@ -1,6 +1,6 @@
-========
-Contents
-========
+==========
+VmShepherd
+==========
 
 .. toctree::
    :maxdepth: 2

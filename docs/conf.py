@@ -2,6 +2,9 @@
 from __future__ import unicode_literals
 
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath('../src'))
 
 
 extensions = [
@@ -28,7 +31,7 @@ author = 'Dreamlab'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '0.0.3'
 
-pygments_style = 'trac'
+pygments_style = 'sphinx'
 templates_path = ['.']
 extlinks = {
     'issue': ('https://github.com/Dreamlab/vmshepherd/issues/%s', '#'),
@@ -45,6 +48,10 @@ html_last_updated_fmt = '%b %d, %Y'
 html_split_index = False
 html_sidebars = {
    '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
+}
+html_theme_options = {
+    'collapse_navigation': False,
+    'sticky_navigation': True,
 }
 html_short_title = '%s-%s' % (project, version)
 
