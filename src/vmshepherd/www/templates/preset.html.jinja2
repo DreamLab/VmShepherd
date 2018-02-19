@@ -1,13 +1,62 @@
 {% for name, data in presets.items() %}
 <div class="preset-item" data-preset="{{ name }}">
           <h2 class="anchor" id="{{ name }}">Preset {{ name }}</h2>
-          <h4>Config</h4>
           <div class="row">
             <div class="col-xs-12 col-md-3">
               <ul>
-{% for name in data['preset'].config.keys() %}
-                <li><b>{{ name }}:</b> {{ data['preset'][name] }}</li>
-{% endfor %}
+                <li><b>General:</b>
+                  <ul>
+                    <li><b>Name:</b> {{ data['preset'].name }}</li>
+                    <li><b>Count:</b> {{ data['preset'].count }}</li>
+                    <li><b>Flavor:</b> {{ data['preset'].config['flavor'] }}</li>
+                    <li><b>Image:</b> {{ data['preset'].config['image'] }}</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <ul>
+                <li><b>Network:</b>
+                    <ul>
+                      <li><b>Availability zone:</b> {{ data['preset'].config['network'].get('availability_zone', '') }}</li>
+                      <li><b>Subnet:</b>
+                        <ul>
+                            {% for subnet in data['preset'].config['network'].get('subnet', []) %}
+                            <li>{{ subnet }}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                      <li><b>Security groups:</b>
+                        <ul>
+                            {% for sg in data['preset'].config['network'].get('security_groups', []) %}
+                            <li>{{ sg }}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                    </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <ul>
+                <li><b>Customization:</b>
+                  <ul>
+                      <li><b>Meta-tags:</b>
+                        <ul>
+                            {% for k, v in data['preset'].config.get('meta_tags', {}).items() %}
+                            <li><b>{{ k }}</b>: {v}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                      <li><b>Userdata (cloud-init):</b>
+                        <ul>
+                            {% for k, v in data['preset'].config.get('userdata', {}).items() %}
+                            <li><b>{{ k }}</b>: {v}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                  </ul>
+                </li>
               </ul>
             </div>
           </div>
@@ -29,8 +78,8 @@
 {% for vm in data['vms'] %}
                 <tr>
                   <td>{{ vm.id }}</td>
-                  <td>{{ vm.ip }}</td>
-                  <td>{{ vm.state }}</td>
+                  <td>{{ vm.ip|join(", ") }}</td>
+                  <td>{{ vm.state.value|upper }}</td>
                   <td>{{ vm.created }}</td>
                 </tr>
 {% endfor %}
