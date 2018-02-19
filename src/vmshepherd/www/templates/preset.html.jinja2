@@ -68,6 +68,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>Lp</th>
                   <th>Vm_id</th>
                   <th>Ip</th>
                   <th>State</th>
@@ -77,10 +78,11 @@
               <tbody>
 {% for vm in data['vms'] %}
                 <tr>
+                  <td>{{ loop.index }}</td>
                   <td>{{ vm.id }}</td>
                   <td>{{ vm.ip|join(", ") }}</td>
                   <td>{{ vm.state.value|upper }}</td>
-                  <td>{{ vm.created }}</td>
+                  <td>{{ vm.created|datetimeformat }}</td>
                 </tr>
 {% endfor %}
               </tbody>
