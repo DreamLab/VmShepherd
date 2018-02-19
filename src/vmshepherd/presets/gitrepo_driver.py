@@ -1,4 +1,3 @@
-import aiofiles
 import asyncio
 import errno
 import logging
@@ -6,6 +5,7 @@ import os
 import tempfile
 import yaml
 from .abstract import AbstractConfigurationDriver
+from vmshepherd.utils import async_load_from_file
 from asyncio.subprocess import PIPE
 
 
@@ -41,7 +41,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
         for item in os.scandir(path):
             if os.path.isfile(item.path):
                 preset_name = '.'.join([repo_name, item.name.replace('.conf', '')])
-                preset = await self._load_from_file(item.path)
+                preset = await async_load_from_file(item.path)
                 if preset is not None:
                     loaded[preset_name] = self.create_preset(preset)
         return loaded
@@ -69,10 +69,3 @@ class GitRepoDriver(AbstractConfigurationDriver):
             if e.errno != errno.EEXIST:
                 raise
 
-    async def _load_from_file(self, fn):
-        async with aiofiles.open(fn, mode='r') as f:
-            contents = await f.read()
-            data = yaml.load(contents)
-
-        self.validate_preset(data)
-        return data
