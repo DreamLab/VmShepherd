@@ -31,9 +31,9 @@ class VmShepherd:
         self.worker = Worker(self, 5, autostart=self.config.get('autostart', True))
 
         if self.config.get('web'):
-            self.web = WebServer(
-                self, self.config.get('port', 8888),
-            )
+            port = self.config.get('listen_port', 8888)
+            logging.info('Starting server, listening on %s.', port)
+            self.web = WebServer(self, port)
             asyncio.ensure_future(self.web.start())
 
     async def run(self, run_once=False):
