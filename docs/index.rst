@@ -1,13 +1,12 @@
-========
-Contents
-========
+==========
+VmShepherd
+==========
 
 .. toctree::
    :maxdepth: 2
 
-   readme
-   installation
-   usage
+   getting_started
+   extending
    reference/index
    changelog
 

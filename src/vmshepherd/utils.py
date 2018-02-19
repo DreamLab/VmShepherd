@@ -1,21 +1,31 @@
+import aiofiles
 import asyncio
 import collections
+import copy
 import yaml
 
 
-def update_dict_recursively(d, u):
+def get_merged_dict_recursively(d, u):
+    new = copy.deepcopy(d)
     for k, v in u.items():
         if isinstance(v, collections.Mapping):
-            d[k] = update_dict_recursively(d.get(k, {}), v)
+            new[k] = get_merged_dict_recursively(new.get(k, {}), v)
         else:
-            d[k] = v
-    return d
+            new[k] = v
+    return new
 
 
 def load_config_file(path):
     with open(path, 'r') as f:
         config = yaml.load(f)
     return config
+
+
+async def async_load_from_file(path):
+    async with aiofiles.open(path, mode='r') as f:
+        contents = await f.read()
+        data = yaml.load(contents)
+    return data
 
 
 # Following functions are used in dummy drivers

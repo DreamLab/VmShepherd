@@ -30,30 +30,35 @@ class Worker:
 
         self._start_time = time.time()
         logging.info('VmShepherd start cycle...')
-        state, cnt_presets, cnt_failed_presets = self.ERROR, 0, 0
-        try:
-            # TODO: it's making runtime injection a bit harder.
-            #       Separate listing from actual fetch.
-            # IDEA: use __aiter__ __anext__
-            presets = await self.presets.get_presets_configuration()
-            cnt_presets = len(presets)
 
-            for name, preset in presets.items():
-                if (await self.runtime.lock_preset(name)):
-                    try:
-                        runtime_data = await self.runtime.get_preset_data(name)
-                        runtime_data = await preset.manage(runtime_data)
-                        await self.runtime.set_preset_data(name, runtime_data)
-                    except Exception:
-                        cnt_failed_presets += 1
-                    finally:
-                        await self.runtime.unlock_preset(name)
-            state = self.OK
+        try:
+            result, cnt_presets, cnt_failed_presets = await self._manage()
         except Exception:
+            result, cnt_presets, cnt_failed_presets = self.ERROR, -1, -1
             logging.exception('Error while running')
         finally:
             logging.info(
-                'VmShepherd end cycle result=%s presets=%s failed_presets=%s f time=%.2f',
-                state, cnt_presets, cnt_failed_presets, time.time() - self._start_time
+                'VmShepherd end cycle result=%s presets=%s failed_presets=%s time=%.2f',
+                result, cnt_presets, cnt_failed_presets, time.time() - self._start_time
             )
             self._running = False
+        return result
+
+    async def _manage(self):
+        await self.presets.reload()
+
+        presets = await self.presets.get_presets_list()
+        cnt_presets, cnt_failed_presets = len(presets), 0
+
+        for name in presets:
+
+            try:
+                preset = await self.presets.get(name)
+                async with preset as locked:
+                    if locked:
+                        await preset.manage()
+            except Exception:
+                logging.exception('Error managing %s', name)
+                cnt_failed_presets += 1
+
+        return self.OK, cnt_presets, cnt_failed_presets

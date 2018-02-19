@@ -33,7 +33,10 @@ setup(
             'DummyIaasDriver = vmshepherd.iaas:DummyIaasDriver',
             'OpenStackDriver = vmshepherd.iaas:OpenStackDriver'
         ],
-        'vmshepherd.driver.presets': ['DirectoryDriver = vmshepherd.presets:DirectoryDriver'],
+        'vmshepherd.driver.presets': [
+            'DirectoryDriver = vmshepherd.presets:DirectoryDriver',
+            'GitRepoDriver = vmshepherd.presets:GitRepoDriver'
+        ],
         'vmshepherd.driver.runtime': ['InMemoryDriver = vmshepherd.runtime:InMemoryDriver'],
         'vmshepherd.driver.healthcheck': ['HttpHealthcheck = vmshepherd.healthcheck:HttpHealthcheck']
     },

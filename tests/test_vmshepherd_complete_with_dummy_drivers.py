@@ -5,7 +5,7 @@ from collections import namedtuple
 from unittest import expectedFailure
 from unittest.mock import Mock
 from vmshepherd import VmShepherd
-from vmshepherd.driver import Driver
+from vmshepherd.drivers import Drivers
 from vmshepherd.iaas import VmState
 
 VmMock = namedtuple('VmMock', 'id ip name image flavor')
@@ -15,34 +15,34 @@ class TestVmShepherdInitWithDummyDrivers(AsyncTestCase):
 
     def setUp(self):
         super().setUp()
-        Driver.flush_cache()
+        Drivers.unload_all()
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_initialize_preset_manager(self):
+        await self.vmshepherd.preset_manager.reload()
         presets_list = await self.vmshepherd.preset_manager.get_presets_list()
         self.assertEqual(presets_list, ['test-preset'])
 
-        preset = (await self.vmshepherd.preset_manager.get_presets_configuration())['test-preset']
+        preset = await self.vmshepherd.preset_manager.get('test-preset')
         self.assertEqual(preset.count, 1)
 
     async def test_initialize_iaas(self):
-        await self.vmshepherd.runtime_manager.lock_preset('test-preset')
-        await self.vmshepherd.runtime_manager.unlock_preset('test-preset')
+        await self.vmshepherd.runtime_manager.acquire_lock('test-preset')
+        await self.vmshepherd.runtime_manager.release_lock('test-preset')
 
 
 class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
 
     def setUp(self):
         super().setUp()
-        Driver.flush_cache()
+        Drivers.unload_all()
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_run(self):
         # first run - should create on vm
         await self.vmshepherd.run(run_once=True)
 
-        preset = await self.vmshepherd.preset_manager.get_preset('test-preset')
-
+        preset = await self.vmshepherd.preset_manager.get('test-preset')
         vm_list = await preset.list_vms()
         self.assertEqual(
             vm_list,
@@ -93,17 +93,18 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 
     def setUp(self):
         super().setUp()
-        Driver.flush_cache()
+        Drivers.unload_all()
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_locking(self):
-        preset = await self.vmshepherd.preset_manager.get_preset('test-preset')
+        await self.vmshepherd.preset_manager.reload()
+        preset = await self.vmshepherd.preset_manager.get('test-preset')
         await asyncio.gather(
             self.vmshepherd.run(run_once=True),
             self.vmshepherd.run(run_once=True)
         )
 
-        preset = await self.vmshepherd.preset_manager.get_preset('test-preset')
+        preset = await self.vmshepherd.preset_manager.get('test-preset')
         vm_list = await preset.list_vms()
         self.assertEqual(
             vm_list,
@@ -113,14 +114,18 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 
     @expectedFailure
     async def test_example_of_bad_locking(self):
-        self.vmshepherd.runtime_manager.lock_preset = Mock(return_value=futurized(False))
-        self.vmshepherd.runtime_manager.unlock_preset = Mock(return_value=futurized(True))
+        await self.vmshepherd.preset_manager.reload()
+
+        # no lock-mechanism actually, always manage preset
+        self.vmshepherd.runtime_manager.acquire_lock = Mock(return_value=futurized(True))
+        self.vmshepherd.runtime_manager.release_lock = Mock(return_value=futurized(True))
+
         await asyncio.gather(
             self.vmshepherd.run(run_once=True),
-            self.vmshepherd.run(run_once=True)
+            self.vmshepherd.worker._manage()  # explicit call of private method to bypass run_once check
         )
 
-        preset = await self.vmshepherd.preset_manager.get_preset('test-preset')
+        preset = await self.vmshepherd.preset_manager.get('test-preset')
         vm_list = await preset.list_vms()
         self.assertEqual(
             vm_list,
