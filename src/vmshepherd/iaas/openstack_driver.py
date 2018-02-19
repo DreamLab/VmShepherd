@@ -15,17 +15,8 @@ from novaclient.exceptions import ClientException, NotFound, MethodNotAllowed, N
 
 class OpenStackDriver(AbstractIaasDriver):
 
-    def __init__(self, *args, **kwargs):
-        self.config = {
-            'auth_url': kwargs['auth_url'],
-            'username': kwargs['username'],
-            'password': kwargs['password'],
-            'project_name': kwargs['project_name'],
-            'user_domain_name': kwargs['user_domain_name'],
-            'project_domain_name': kwargs['project_domain_name'],
-            'api_version': kwargs['api_version'],
-            'image_owner_ids': kwargs['image_owner_ids']
-        }
+    def __init__(self, *args, **config):
+        self.config = kwargs
 
     def openstack_exception(func):
         '''
@@ -133,7 +124,7 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg present_name: string
         '''
 
-        servers = self.nova.servers.list(search_opts={'name': preset_name})
+        servers = self.nova.servers.list(search_opts={'name': f'^{preset_name}$'})
         result = []
         for server in servers:
             result.append(self._map_vm_structure(server))
