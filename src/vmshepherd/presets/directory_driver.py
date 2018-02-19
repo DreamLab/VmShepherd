@@ -1,6 +1,4 @@
-import logging
 import os
-import yaml
 from .abstract import AbstractConfigurationDriver
 from vmshepherd.utils import async_load_from_file
 
@@ -27,14 +25,3 @@ class DirectoryDriver(AbstractConfigurationDriver):
                 if preset is not None:
                     presets[preset_name] = self.create_preset(preset)
         self._presets = presets
-
-    async def _load_from_file(self, fn):
-        try:
-            async with aiofiles.open(fn, mode='r') as f:
-                contents = await f.read()
-                data = yaml.load(contents)
-
-            self.validate_preset(data)
-            return data
-        except Exception:
-            logging.exception('DirectoryDriver: Error loading %s', fn)

@@ -3,10 +3,9 @@ import errno
 import logging
 import os
 import tempfile
-import yaml
 from .abstract import AbstractConfigurationDriver
-from vmshepherd.utils import async_load_from_file
 from asyncio.subprocess import PIPE
+from vmshepherd.utils import async_load_from_file
 
 
 class GitRepoDriver(AbstractConfigurationDriver):
@@ -68,4 +67,3 @@ class GitRepoDriver(AbstractConfigurationDriver):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-
