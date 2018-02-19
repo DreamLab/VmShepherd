@@ -1,14 +1,13 @@
-========
-Contents
-========
+=========
+Extending
+=========
 
 .. toctree::
    :maxdepth: 2
 
-   getting_started
-   extending
-   reference/index
-   changelog
+   readme
+   installation
+   usage
 
 Indices and tables
 ==================
