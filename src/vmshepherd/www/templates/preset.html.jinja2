@@ -1,0 +1,41 @@
+{% for name, data in presets.items() %}
+<div class="preset-item" data-preset="{{ name }}">
+          <h2 class="anchor" id="{{ name }}">Preset {{ name }}</h2>
+          <h4>Config</h4>
+          <div class="row">
+            <div class="col-xs-12 col-md-3">
+              <ul>
+{% for name in data['preset'].config.keys() %}
+                <li><b>{{ name }}:</b> {{ data['preset'][name] }}</li>
+{% endfor %}
+              </ul>
+            </div>
+          </div>
+
+          <div class="table-responsive sub-header">
+            <div>
+                <h4 class="pull-left">Virtual machines ({{ data['vms']|length }}/{{ data['preset'].count }})</h4>
+            </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Vm_id</th>
+                  <th>Ip</th>
+                  <th>State</th>
+                  <th>Created at</th>
+                </tr>
+              </thead>
+              <tbody>
+{% for vm in data['vms'] %}
+                <tr>
+                  <td>{{ vm.id }}</td>
+                  <td>{{ vm.ip }}</td>
+                  <td>{{ vm.state }}</td>
+                  <td>{{ vm.created }}</td>
+                </tr>
+{% endfor %}
+              </tbody>
+            </table>
+          </div>
+</div>
+{% endfor %}
