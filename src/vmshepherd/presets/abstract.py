@@ -21,7 +21,7 @@ class AbstractConfigurationDriver:
         # TODO
         return True
 
-    def create_preset(self, name, config):
+    def create_preset(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )
@@ -35,7 +35,7 @@ class AbstractConfigurationDriver:
         config['healthcheck'] = healthcheck_cfg
 
         return Preset(
-            name, config, runtime=self.runtime,
+            config['name'], config, runtime=self.runtime,
             iaas=iaas, healthcheck=healthcheck
         )
 

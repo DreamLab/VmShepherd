@@ -34,7 +34,7 @@ class Worker:
         try:
             result, cnt_presets, cnt_failed_presets = await self._manage()
         except Exception:
-            result = self.ERROR
+            result, cnt_presets, cnt_failed_presets = self.ERROR, -1, -1
             logging.exception('Error while running')
         finally:
             logging.info(
@@ -48,7 +48,6 @@ class Worker:
         await self.presets.reload()
 
         presets = await self.presets.get_presets_list()
-        cnt_presets = len(presets)
         cnt_presets, cnt_failed_presets = len(presets), 0
 
         for name in presets:
