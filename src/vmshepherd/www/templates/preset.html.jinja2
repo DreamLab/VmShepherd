@@ -82,7 +82,7 @@
                   <td>{{ vm.id }}</td>
                   <td>{{ vm.ip|join(", ") }}</td>
                   <td>{{ vm.state.value|upper }}</td>
-                  <td>{{ vm.created|datetimeformat }}</td>
+                  <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 </tr>
 {% endfor %}
               </tbody>
