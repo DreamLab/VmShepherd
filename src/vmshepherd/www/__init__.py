@@ -4,8 +4,10 @@ import os
 from aiohttp import web
 from datetime import datetime
 
+
 def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
         return datetime.fromtimestamp(int(value)).strftime(format)
+
 
 class WebServer(web.Application):
 
@@ -50,6 +52,6 @@ class Panel(web.View):
             data['presets'][name] = {
                 'preset': preset,
                 'vms': await preset.list_vms(),
-                'runtime' : await  runtime.get_preset_data(name)
+                'runtime': await  runtime.get_preset_data(name)
             }
         return data
