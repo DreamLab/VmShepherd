@@ -46,6 +46,7 @@ class Preset:
 
     async def manage(self):
         vms = await self.list_vms()
+        runtime_stats = await self.runtime.get_preset_data(self.name)
 
         missing = self.count - len(vms) if len(vms) < self.count else 0
 
@@ -60,10 +61,8 @@ class Preset:
                 await vm.terminate()
 
         await self._create_vms(missing)
-        # TODO runtime data
-        data = {}
-        data['CHECK'] = await self._healthcheck(vms, data)
-        return data
+        runtime_stats['CHECK'] = await self._healthcheck(vms, runtime_stats)
+        await self.runtime.set_preset_data(self.name, runtime_stats)
 
     async def _healthcheck(self, vms, data):
         _healthchecks = {}
@@ -83,7 +82,7 @@ class Preset:
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
                     if terminate_heatlh_failed_delay + vms_fails[vm.id]['time'] < time.time():
-                        logging.info("Terminate VM:%s, healthcheck fails from: %s", vm, vms_fails[vm.id]['time'])
+                        logging.info("Terminate %s, healthcheck fails since %s", vm, vms_fails[vm.id]['time'])
                         missing += 1
                         await self._terminate_vm(vm)
         return vms_fails

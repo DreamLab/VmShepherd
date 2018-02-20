@@ -2,6 +2,10 @@ import aiofiles
 import asyncio
 import collections
 import copy
+import logging
+import random
+import socket
+import string
 import yaml
 
 
@@ -42,3 +46,30 @@ def next_id():
     while True:
         yield i
         i += 1
+
+
+def gen_id(rnd_length):
+    hostname = socket.gethostname()
+    rnd = ''.join(random.choice(
+        string.ascii_lowercase + string.digits) for i in range(rnd_length)
+    )
+    return f'{hostname}-{rnd}'
+
+
+class PrefixFilter(logging.Filter):
+    """Prepends prefix to logged message."""
+    def __init__(self, prefix):
+        self._prefix = prefix
+
+    def filter(self, record):
+        record.msg = '[%s] %s' % (self._prefix, record.msg)
+        return True
+
+
+def prefix_logging(prefix, handler=None):
+    if handler is not None:
+        handlers = [handler]
+    else:
+        handlers = logging.getLogger().handlers
+    for hndlr in handlers:
+        hndlr.addFilter(PrefixFilter(prefix))
