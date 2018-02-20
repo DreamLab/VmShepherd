@@ -63,6 +63,7 @@ class Preset:
         # TODO runtime data
         data = {}
         data['CHECK'] = await self._healthcheck(vms, data)
+        await self.runtime.set_preset_data(self.name, data)
         return data
 
     async def _healthcheck(self, vms, data):

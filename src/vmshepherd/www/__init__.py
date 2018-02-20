@@ -4,10 +4,12 @@ import os
 from aiohttp import web
 from datetime import datetime
 
+def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
+        return datetime.fromtimestamp(int(value)).strftime(format)
 
 class WebServer(web.Application):
 
-    def __init__(self, vmshepherd, port=8888):
+    def __init__(self, vmshepherd,  port=8888):
         super().__init__()
 
         self.port = port
@@ -18,7 +20,7 @@ class WebServer(web.Application):
         self.template_path = os.path.join(webroot, 'templates')
         aiohttp_jinja2.setup(
             self, loader=jinja2.FileSystemLoader(self.template_path),
-            filters={'sorted': sorted}
+            filters={'datetimeformat': datetimeformat, 'sorted': sorted}
         )
 
         self['static_root_url'] = '/static'
@@ -42,10 +44,12 @@ class Panel(web.View):
         data = {'presets': {}, 'config': vms.config}
         await vms.preset_manager.reload()
         presets = await vms.preset_manager.get_presets_list()
+        runtime = vms.runtime_manager
         for name in presets:
             preset = await vms.preset_manager.get(name)
             data['presets'][name] = {
                 'preset': preset,
-                'vms': await preset.list_vms()
+                'vms': await preset.list_vms(),
+                'runtime' : await  runtime.get_preset_data(name)
             }
         return data
