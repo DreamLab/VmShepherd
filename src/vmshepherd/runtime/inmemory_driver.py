@@ -7,7 +7,8 @@ class InMemoryDriver(AbstractRuntimeData):
     ''' Simple in-memory driver for runtime data and locks managment.
     '''
 
-    def __init__(self):
+    def __init__(self, instance_id):
+        super().__init__(instance_id)
         self._storage = {}
         self._locks = {}
 

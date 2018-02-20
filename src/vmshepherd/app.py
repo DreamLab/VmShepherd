@@ -14,7 +14,10 @@ class VmShepherd:
 
         self.setup_logging()
 
-        self.runtime_manager = Drivers.get('runtime', self.config['runtime'])
+        self.runtime_manager = Drivers.get(
+            'runtime', self.config['runtime'],
+            instance_id=self.instance_id
+        )
 
         self.preset_manager = Drivers.get(
             'presets', self.config['presets'],
