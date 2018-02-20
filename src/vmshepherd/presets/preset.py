@@ -1,6 +1,7 @@
 import asyncio
 import logging
-from datetime import datetime, timedelta
+import time
+
 
 class Preset:
 
@@ -45,6 +46,7 @@ class Preset:
 
     async def manage(self):
         vms = await self.list_vms()
+        runtime_stats = await self.runtime.get_preset_data(self.name)
 
         missing = self.count - len(vms) if len(vms) < self.count else 0
 
@@ -59,15 +61,8 @@ class Preset:
                 await vm.terminate()
 
         await self._create_vms(missing)
-        # TODO runtime data
-        data = {}
-        data['CHECK'] = await self._healthcheck(vms, data)
-        preset_data = await self.runtime.get_preset_data(self.name)
-        for vm in vms:
-            count = preset_data.get('CHECK', {}).get(vm.id, {}).get('count', 0)
-            data['CHECK'][vm.id]['count'] = count +1
-        await self.runtime.set_preset_data(self.name, data)
-        return data
+        runtime_stats['CHECK'] = await self._healthcheck(vms, runtime_stats)
+        await self.runtime.set_preset_data(self.name, runtime_stats)
 
     async def _healthcheck(self, vms, data):
         _healthchecks = {}
@@ -82,12 +77,12 @@ class Preset:
             # if check failed
             if not state_check.result():
                 vms_fails[vm.id] = {
-                    'time': vms_prev_fails.get(vm.id, {}).get('time', datetime.now())
+                    'time': vms_prev_fails.get(vm.id, {}).get('time', time.time())
                 }
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
-                    if timedelta(seconds=terminate_heatlh_failed_delay) + vms_fails[vm.id]['time'] < datetime.now():
-                        logging.info("Terminate VM:%s, healthcheck fails from: %s", vm, vms_fails[vm.id]['time'])
+                    if terminate_heatlh_failed_delay + vms_fails[vm.id]['time'] < time.time():
+                        logging.info("Terminate %s, healthcheck fails since %s", vm, vms_fails[vm.id]['time'])
                         missing += 1
                         await self._terminate_vm(vm)
         return vms_fails
