@@ -5,7 +5,6 @@ from .abstract import AbstractIaasDriver
 from .exception import IaasException, IaasPresetConfigurationException, IaasCommunicationException, IaasAuthException
 from .vm import Vm, VmState
 from bidict import bidict
-from datetime import datetime
 from glanceclient.v2 import Client as glanceclient
 from keystoneauth1 import session
 from keystoneauth1 import exceptions as keystoneauth_exceptions
