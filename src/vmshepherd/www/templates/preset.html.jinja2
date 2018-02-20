@@ -86,7 +86,8 @@
                   <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                   <td>
                     {%if data['runtime'].get('CHECK', {}).get(vm.id) %}
-                        {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time').strftime('%Y-%m-%d %H:%M:%S') }}
+                        time: {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time').strftime('%Y-%m-%d %H:%M:%S') }},
+                        count: {{data['runtime'].get('CHECK', {}).get(vm.id, {}).get('count') }}
                     {% endif %}
                   </td>
                   </td>

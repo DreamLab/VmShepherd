@@ -62,6 +62,10 @@ class Preset:
         # TODO runtime data
         data = {}
         data['CHECK'] = await self._healthcheck(vms, data)
+        preset_data = await self.runtime.get_preset_data(self.name)
+        for vm in vms:
+            count = preset_data.get('CHECK', {}).get(vm.id, {}).get('count', 0)
+            data['CHECK'][vm.id]['count'] = count +1
         await self.runtime.set_preset_data(self.name, data)
         return data
 
