@@ -64,8 +64,8 @@
 		  <div class="row sub-header">
 			<div class="col-xs-12">
 			  <ul>
-				<li>last_manage_by: TODO VmShepherd instance IP</li>
-				<li>last_manage_time:{{ data['runtime'].get('LAST_MANAGED', 0)|int }}s </li>
+				<li>last_manage_by: {{ data['vmshepherd_id'] }}</li>
+				<li>last_manage_time: {{ data['runtime'].get('LAST_MANAGED', 0)|int }}s </li>
 			  </ul>
 			</div>
 		  </div>

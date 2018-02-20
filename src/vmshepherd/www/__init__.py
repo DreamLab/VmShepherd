@@ -47,6 +47,7 @@ class Panel(web.View):
             data['presets'][name] = {
                 'preset': preset,
                 'vms': await preset.list_vms(),
-                'runtime': await  runtime.get_preset_data(name)
+                'runtime': await  runtime.get_preset_data(name),
+                'vmshepherd_id': vms.instance_id
             }
         return data
