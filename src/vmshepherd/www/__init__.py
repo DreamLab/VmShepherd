@@ -2,11 +2,8 @@ import aiohttp_jinja2
 import jinja2
 import os
 from aiohttp import web
-from time import strftime
 from datetime import datetime
 
-def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
-        return datetime.fromtimestamp(int(value)).strftime(format)
 
 class WebServer(web.Application):
 
@@ -21,7 +18,7 @@ class WebServer(web.Application):
         self.template_path = os.path.join(webroot, 'templates')
         aiohttp_jinja2.setup(
             self, loader=jinja2.FileSystemLoader(self.template_path),
-            filters={'datetimeformat': datetimeformat, 'sorted': sorted}
+            filters={'sorted': sorted}
         )
 
         self['static_root_url'] = '/static'
