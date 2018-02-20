@@ -45,6 +45,7 @@ class Preset:
         return vms
 
     async def manage(self):
+        now = time.time()
         vms = await self.list_vms()
         runtime_stats = await self.runtime.get_preset_data(self.name)
 
@@ -62,6 +63,8 @@ class Preset:
 
         await self._create_vms(missing)
         runtime_stats['CHECK'] = await self._healthcheck(vms, runtime_stats)
+        runtime_stats['LAST_MANAGED'] = now - runtime_stats.get('LAST_MANAGED_TIMESATMP', now)
+        runtime_stats['LAST_MANAGED_TIMESATMP'] = now
         await self.runtime.set_preset_data(self.name, runtime_stats)
 
     async def _healthcheck(self, vms, data):

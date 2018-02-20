@@ -17,7 +17,7 @@ class WebServer(web.Application):
         self.template_path = os.path.join(webroot, 'templates')
         aiohttp_jinja2.setup(
             self, loader=jinja2.FileSystemLoader(self.template_path),
-            filters={'sorted': sorted}
+            filters={'sorted': sorted, 'int': int}
         )
 
         self['static_root_url'] = '/static'

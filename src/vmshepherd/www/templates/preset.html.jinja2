@@ -60,7 +60,15 @@
               </ul>
             </div>
           </div>
-
+          <h4>Last managed</h4>
+		  <div class="row sub-header">
+			<div class="col-xs-12">
+			  <ul>
+				<li>last_manage_by: TODO VmShepherd instance IP</li>
+				<li>last_manage_time:{{ data['runtime'].get('LAST_MANAGED', 0)|int }}s </li>
+			  </ul>
+			</div>
+		  </div>
           <div class="table-responsive sub-header">
             <div>
                 <h4 class="pull-left">Virtual machines ({{ data['vms']|length }}/{{ data['preset'].count }})</h4>
@@ -86,7 +94,7 @@
                   <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                   <td>
                     {%if data['runtime'].get('CHECK', {}).get(vm.id) %}
-                        time from: {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time_from') }},
+                        time from: {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time_from')|int }}s,
                         count: {{data['runtime'].get('CHECK', {}).get(vm.id, {}).get('count') }}
                     {% endif %}
                   </td>
