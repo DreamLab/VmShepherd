@@ -1,7 +1,6 @@
 import asyncio
 import logging
-import time
-
+from datetime import datetime, timedelta
 
 class Preset:
 
@@ -79,11 +78,11 @@ class Preset:
             # if check failed
             if not state_check.result():
                 vms_fails[vm.id] = {
-                    'time': vms_prev_fails.get(vm.id, {}).get('time', time.time())
+                    'time': vms_prev_fails.get(vm.id, {}).get('time', datetime.now())
                 }
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
-                    if terminate_heatlh_failed_delay + vms_fails[vm.id]['time'] < time.time():
+                    if timedelta(seconds=terminate_heatlh_failed_delay) + vms_fails[vm.id]['time'] < datetime.now():
                         logging.info("Terminate VM:%s, healthcheck fails from: %s", vm, vms_fails[vm.id]['time'])
                         missing += 1
                         await self._terminate_vm(vm)

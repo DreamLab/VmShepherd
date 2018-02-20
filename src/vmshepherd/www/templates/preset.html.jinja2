@@ -83,10 +83,10 @@
                   <td>{{ vm.id }}</td>
                   <td>{{ vm.ip|join(", ") }}</td>
                   <td>{{ vm.state.value|upper }}</td>
-                  <td>{{ vm.created|datetimeformat }}</td>
+                  <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                   <td>
                     {%if data['runtime'].get('CHECK', {}).get(vm.id) %}
-                        {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time')|datetimeformat }}
+                        {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time').strftime('%Y-%m-%d %H:%M:%S') }}
                     {% endif %}
                   </td>
                   </td>

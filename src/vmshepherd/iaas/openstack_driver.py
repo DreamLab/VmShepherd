@@ -1,5 +1,6 @@
 import logging
 import time
+from datetime import datetime
 from .abstract import AbstractIaasDriver
 from .exception import IaasException, IaasPresetConfigurationException, IaasCommunicationException, IaasAuthException
 from .vm import Vm, VmState
