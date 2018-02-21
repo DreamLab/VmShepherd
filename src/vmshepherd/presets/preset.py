@@ -81,16 +81,15 @@ class Preset:
         await asyncio.gather(*list(_healthchecks.values()), return_exceptions=True)
         missing = 0
         for vm, state_check in _healthchecks.items():
-            self._info.failed_checks[vm.id] = {'time': time.time()}
 
             # if check failed
             if not state_check.result():
-                last_failed = self._info.failed_checks[vm.id]['time']
+                last_failed = self._info.failed_checks.get(vm.id, {}).get('time', time.time())
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
                     if terminate_heatlh_failed_delay + last_failed < time.time():
                         logging.info("Terminate %s, healthcheck fails since %s", vm, last_failed)
                         missing += 1
                         await self._terminate_vm(vm)
-            else:
+            elif self._info.failed_checks.get(vm.id):
                 del self._info.failed_checks[vm.id]
