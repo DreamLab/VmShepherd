@@ -62,7 +62,7 @@ class PrefixFilter(logging.Filter):
         self._prefix = prefix
 
     def filter(self, record):
-        record.msg = '[%s] %s' % (self._prefix, record.msg)
+        record.msg = '[%s][%s]: %s' % (self._prefix, record.module, record.msg)
         return True
 
 
