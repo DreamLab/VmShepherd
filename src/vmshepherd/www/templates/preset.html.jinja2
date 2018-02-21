@@ -81,7 +81,6 @@
                   <th>Ip</th>
                   <th>State</th>
                   <th>Created at</th>
-                  <th>Healthcheck</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,15 +89,18 @@
                   <td>{{ loop.index }}</td>
                   <td>{{ vm.id }}</td>
                   <td>{{ vm.ip|join(", ") }}</td>
-                  <td>{{ vm.state.value|upper }}</td>
-                  <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                   <td>
-                    {%if data['runtime'].get('CHECK', {}).get(vm.id) %}
-                        time from: {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time_from')|int }}s,
-                        count: {{data['runtime'].get('CHECK', {}).get(vm.id, {}).get('count') }}
-                    {% endif %}
+                    <p {%if data['runtime'].get('CHECK', {}).get(vm.id) %} class="vm-state-error" {% endif %} >
+                    {{ vm.state.value|upper }}
+                        {%if data['runtime'].get('CHECK', {}).get(vm.id) %}
+                           {
+                            Healthcheck failed from: {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time_from')|int }}s,
+                            count: {{data['runtime'].get('CHECK', {}).get(vm.id, {}).get('count') }}
+                            }
+                        {% endif %}
+                    </p>
                   </td>
-                  </td>
+                  <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 </tr>
 {% endfor %}
               </tbody>

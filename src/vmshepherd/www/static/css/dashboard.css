@@ -102,3 +102,7 @@ body {
 .nobr {
   white-space:nowrap;
 }
+.vm-state-error{
+  font-weight: bold;
+  color: red;
+}
