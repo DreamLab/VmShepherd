@@ -128,7 +128,7 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg present_name: string
         '''
 
-        servers = self.nova.servers.list(search_opts={'name': f'^{preset_name}$'})
+        servers = self.nova.servers.list(params={'name': f'^{preset_name}$'})
         result = []
         for server in servers:
             result.append(self._map_vm_structure(server))
