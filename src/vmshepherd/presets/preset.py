@@ -86,16 +86,16 @@ class Preset:
             # if check failed
             if not state_check.result():
                 current_fails.append(vm.id)
-                last_failed = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
+                failed_since = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
                 count_fails = self.info.failed_checks.get(vm.id, {}).get('count', 0)
-                self.info.failed_checks[vm.id] = {'time': time.time(), 'count': count_fails + 1}
+                self.info.failed_checks[vm.id] = {'time':failed_since, 'count': count_fails + 1}
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
-                if terminate_heatlh_failed_delay >= 0:
-                    if terminate_heatlh_failed_delay + last_failed < time.time():
-                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails, last_failed)
+                if terminate_heatlh_failed_delay >= 0 and count_fails > 5:
+                    if terminate_heatlh_failed_delay + failed_since < time.time():
+                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails, failed_since)
                         missing += 1
                         await self._terminate_vm(vm)
 
-        for vm in self.info.failed_checks:
-            if vm not in current_fails:
-                del self.info.failed_checks[vm.id]
+        for vm_id in list(self.info.failed_checks.keys()):
+            if vm_id not in current_fails:
+                del self.info.failed_checks[vm_id]

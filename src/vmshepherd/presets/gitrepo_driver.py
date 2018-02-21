@@ -41,6 +41,9 @@ class GitRepoDriver(AbstractConfigurationDriver):
             if os.path.isfile(item.path):
                 preset_name = '.'.join([repo_name, item.name.replace('.conf', '')])
                 preset = await async_load_from_file(item.path)
+
+                # prepend repo name to preset_name
+                preset['name'] = f"{repo_name}.{preset['name']}"
                 if preset is not None:
                     loaded[preset_name] = self.create_preset(preset)
         return loaded
@@ -59,7 +62,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
 
         if process.returncode != 0:
             logging.error('Git error: %s %s %s', path, repo, stderr)
-            raise RuntimeError('Could not fetch presets ({path}) from {repo}')
+            raise RuntimeError(f'Could not fetch presets ({path}) from {repo}')
 
     def _assure_clone_dir_exists(self):
         try:

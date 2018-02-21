@@ -68,6 +68,9 @@ class Vm:
                 return False
         return True
 
+    def __gt__(self, other):
+        return self.ip > other.ip
+
     def __hash__(self):
         return hash(self.id)
 

@@ -49,10 +49,7 @@
                         </ul>
                       </li>
                       <li><b>Userdata (cloud-init):</b>
-                        <ul>
-                            {% for k, v in data['preset'].config.get('userdata', {}).items() %}
-                            <li><b>{{ k }}</b>: {v}</li>
-                            {% endfor %}
+                            <textarea cols=24 rows=5 readonly>{{ data['preset'].config.get('userdata', '') }}</textarea>
                         </ul>
                       </li>
                   </ul>
@@ -65,7 +62,7 @@
 			<div class="col-xs-12">
 			  <ul>
 				<li>last_manage_by: {{ data['runtime'].last_managed_by }}</li>
-				<li>last_manage_sec_ago: {{ data['now']|int - data['runtime'].last_managed|int }}s </li>
+				<li>last_manage_sec_ago: {{ (data['now'] - data['runtime'].last_managed)|int }}s </li>
 			  </ul>
 			</div>
 		  </div>

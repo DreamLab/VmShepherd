@@ -31,10 +31,10 @@ class Worker:
         self._start_time = time.time()
         logging.info('VmShepherd start cycle...')
 
+        result, cnt_presets, cnt_failed_presets = self.ERROR, -1, -1
         try:
             result, cnt_presets, cnt_managed, cnt_failed_presets = await self._manage()
         except Exception:
-            result, cnt_presets, cnt_failed_presets = self.ERROR, -1, -1
             logging.exception('Error while running')
         finally:
             logging.info(
