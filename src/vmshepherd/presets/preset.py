@@ -24,7 +24,7 @@ class Preset:
     async def __aenter__(self):
         self.info = await self.runtime.get_preset_data(self.name)
         # TODO: literal, magic numbers should be taken from config
-        require_manage = time.time() - self.info.last_managed > 10 
+        require_manage = time.time() - self.info.last_managed > 10
         if not require_manage:
             return False
 
