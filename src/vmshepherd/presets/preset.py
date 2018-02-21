@@ -14,7 +14,7 @@ class Preset:
         self.count = config['count']
         self.created = 0
         self.terminated = 0
-
+        self._extra = {'preset': self.name}
         self._locked = False
         self.info = None
 
@@ -49,7 +49,7 @@ class Preset:
                 await self.iaas.create_vm(**args)
                 self.created += 1
             except Exception:
-                logging.error('Could not create vm with %s', args)
+                logging.error('Could not create vm with %s', args, extra=self._extra)
 
     async def list_vms(self):
         vms = await self.iaas.list_vms(self.name)
@@ -61,8 +61,9 @@ class Preset:
         missing = self.count - len(vms) if len(vms) < self.count else 0
 
         logging.info(
-            '%s iaas_count: %s preset_count: %s missing: %s',
-            self.name, len(vms), self.count, missing
+            'Manage - iaas_count: %s preset_count: %s missing: %s',
+            len(vms), self.count, missing,
+            extra=self._extra
         )
         for vm in vms:
             if vm.is_dead():
@@ -92,7 +93,8 @@ class Preset:
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
                     if terminate_heatlh_failed_delay + last_failed < time.time():
-                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails, last_failed)
+                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails,
+                            last_failed, extra=self._extra)
                         missing += 1
                         await self._terminate_vm(vm)
 

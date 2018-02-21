@@ -62,9 +62,11 @@ class PrefixFilter(logging.Filter):
         self._prefix = prefix
 
     def filter(self, record):
-        record.msg = '[%s][%s]: %s' % (self._prefix, record.module, record.msg)
+        if 'preset' in record.__dict__:
+            record.msg = '[%s][%s][%s]: %s' % (self._prefix, record.preset, record.module, record.msg)
+        else:
+            record.msg = '[%s][%s]: %s' % (self._prefix, record.module, record.msg)
         return True
-
 
 def prefix_logging(prefix, handler=None):
     if handler is not None:
