@@ -23,5 +23,5 @@ class DirectoryDriver(AbstractConfigurationDriver):
                 preset_name = item.name.replace('.conf', '')
                 preset = await async_load_from_file(item.path)
                 if preset is not None:
-                    presets[preset_name] = self.create_preset(preset)
+                    presets[preset_name] = await self.create_preset(preset)
         self._presets = presets

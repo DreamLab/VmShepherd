@@ -12,7 +12,7 @@ class InMemoryDriver(AbstractRuntimeData):
         self._storage = {}
         self._locks = {}
 
-    async def acquire_lock(self, name, timeout=1):
+    async def _acquire_lock(self, name, timeout=1):
         if not self._locks.get(name):
             self._locks[name] = asyncio.Lock()
         fut = self._locks[name].acquire()
@@ -25,14 +25,14 @@ class InMemoryDriver(AbstractRuntimeData):
             logging.exception('Lock %s failed.', name)
             return False
 
-    async def release_lock(self, name):
+    async def _release_lock(self, name):
         try:
             self._locks[name].release()
         except RuntimeError:
             logging.exception('Unlock %s failed.', name)
 
-    async def set_preset_data(self, preset_name, data):
+    async def _set_preset_data(self, preset_name, data):
         self._storage[preset_name] = data
 
-    async def get_preset_data(self, preset_name):
+    async def _get_preset_data(self, preset_name):
         return self._storage.get(preset_name, {})
