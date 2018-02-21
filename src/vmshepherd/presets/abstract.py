@@ -17,9 +17,7 @@ class AbstractConfigurationDriver:
     async def get_presets_list(self):
         raise NotImplementedError
 
-    async def create_preset(self, config):
-        runtime = await self.runtime.get_preset_data(config['name'])
-
+    def create_preset(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )
