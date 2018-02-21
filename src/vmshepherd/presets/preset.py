@@ -100,4 +100,4 @@ class Preset:
 
         for vm in self.info.failed_checks:
             if vm not in current_fails:
-                del self.info.failed_checks[vm.id]
+                del self.info.failed_checks[vm]
