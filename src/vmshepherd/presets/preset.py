@@ -45,6 +45,7 @@ class Preset:
         return vms
 
     async def manage(self):
+        now = time.time()
         vms = await self.list_vms()
         runtime_stats = await self.runtime.get_preset_data(self.name)
 
@@ -62,6 +63,8 @@ class Preset:
 
         await self._create_vms(missing)
         runtime_stats['CHECK'] = await self._healthcheck(vms, runtime_stats)
+        runtime_stats['LAST_MANAGED'] = now - runtime_stats.get('LAST_MANAGED_TIMESATMP', now)
+        runtime_stats['LAST_MANAGED_TIMESATMP'] = now
         await self.runtime.set_preset_data(self.name, runtime_stats)
 
     async def _healthcheck(self, vms, data):
@@ -73,15 +76,18 @@ class Preset:
         vms_prev_fails = data.get('CHECK', {})
         vms_fails = {}
         missing = 0
+        now = time.time()
         for vm, state_check in _healthchecks.items():
             # if check failed
             if not state_check.result():
                 vms_fails[vm.id] = {
-                    'time': vms_prev_fails.get(vm.id, {}).get('time', time.time())
+                    'time': vms_prev_fails.get(vm.id, {}).get('time', now),
+                    'count': vms_prev_fails.get(vm.id, {}).get('count', 0) + 1,
+                    'time_from': now - vms_prev_fails.get(vm.id, {}).get('time', now)
                 }
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
-                    if terminate_heatlh_failed_delay + vms_fails[vm.id]['time'] < time.time():
+                    if terminate_heatlh_failed_delay + vms_fails[vm.id]['time'] < now:
                         logging.info("Terminate %s, healthcheck fails since %s", vm, vms_fails[vm.id]['time'])
                         missing += 1
                         await self._terminate_vm(vm)
