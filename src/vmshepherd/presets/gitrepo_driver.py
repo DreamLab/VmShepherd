@@ -39,11 +39,10 @@ class GitRepoDriver(AbstractConfigurationDriver):
         loaded = {}
         for item in os.scandir(path):
             if os.path.isfile(item.path):
-                preset_name = '.'.join([repo_name, item.name.replace('.conf', '')])
                 preset = await async_load_from_file(item.path)
 
                 # prepend repo name to preset_name
-                preset['name'] = f"{repo_name}.{preset['name']}"
+                preset['name'] = preset_name = f"{repo_name}.{preset['name']}"
                 if preset is not None:
                     loaded[preset_name] = self.create_preset(preset)
         return loaded
