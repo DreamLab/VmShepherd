@@ -11,16 +11,16 @@ import time
 class Data:
 
     def __init__(self, d):
-        self.update(d)
-
-    def update(self, d):
-        self.last_manage = d.get('LAST_MANAGE', {}).get('time', 0)
-        self.last_manage_by = d.get('LAST_MANAGE', {}).get('id', '')
-        self.failed_checks = d.get('FAILED_CHECKS', {})
-        self.iaas = d.get('IAAS', {})
+        self.last_managed = d.get('last_managed', {}).get('time', 0)
+        self.last_managed_by = d.get('last_managed', {}).get('id', '')
+        self.failed_checks = d.get('failed_checks', {})
+        self.iaas = d.get('iaas', {})
 
     def dump(self):
-        return self.__dict__
+        return {'iaas': self.iaas, 'failed_checks': self.failed_checks}
+
+    def __str__(self):
+        return str(self.__dict__)
 
 
 class AbstractRuntimeData:
@@ -62,14 +62,14 @@ class AbstractRuntimeData:
         return Data(response)
 
     async def set_preset_data(self, name, data):
-        last_manage = {
-            'LAST_MANAGED': {
+        commit = {
+            'last_managed': {
                 'time': time.time(),
                 'id': self.instance_id
             }
         }
-        data.update(last_manage)
-        return await self._set_preset_data(name, data.dump())
+        commit.update(data.dump())
+        return await self._set_preset_data(name, commit)
 
     async def acquire_lock(self, name):
         return await self._acquire_lock(name)

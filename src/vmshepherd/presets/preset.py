@@ -24,11 +24,11 @@ class Preset:
     async def __aenter__(self):
         self.info = await self.runtime.get_preset_data(self.name)
         # TODO: literal, magic numbers should be taken from config
-        require_manage = time.time() - self.info.last_manage > 60
+        require_manage = time.time() - self.info.last_managed > 1
         if not require_manage:
             return False
 
-        expired = time.time() - self.info.last_manage > 120
+        expired = time.time() - self.info.last_managed > 120
         self._locked = await self.runtime.acquire_lock(self.name)
 
         return expired or self._locked
@@ -87,10 +87,12 @@ class Preset:
             if not state_check.result():
                 current_fails.append(vm.id)
                 last_failed = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
+                count_fails = self.info.failed_checks.get(vm.id, {}).get('count', 0)
+                self.info.failed_checks[vm.id] = {'time': time.time(), 'count': count_fails + 1}
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
                     if terminate_heatlh_failed_delay + last_failed < time.time():
-                        logging.info("Terminate %s, healthcheck fails since %s", vm, last_failed)
+                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails, last_failed)
                         missing += 1
                         await self._terminate_vm(vm)
 
