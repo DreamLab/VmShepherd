@@ -45,7 +45,6 @@ class Panel(web.View):
         runtime = vms.runtime_manager
         for name in presets:
             preset = await vms.preset_manager.get(name)
-            a= await  runtime.get_preset_data(name)
             data['presets'][name] = {
                 'preset': preset,
                 'vms': await preset.list_vms(),
