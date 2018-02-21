@@ -16,26 +16,26 @@ class Preset:
         self.terminated = 0
 
         self._locked = False
-        self._info = None
+        self.info = None
 
     async def _terminate_vm(self, vm):
         await vm.terminate()
 
     async def __aenter__(self):
-        self._info = await self.runtime.get_preset_data(self.name)
+        self.info = await self.runtime.get_preset_data(self.name)
         # TODO: literal, magic numbers should be taken from config
-        require_manage = time.time() - self._info.last_manage > 60
+        require_manage = time.time() - self.info.last_manage > 60
         if not require_manage:
             return False
 
-        expired = time.time() - self._info.last_manage > 120
+        expired = time.time() - self.info.last_manage > 120
         self._locked = await self.runtime.acquire_lock(self.name)
 
         return expired or self._locked
 
     async def __aexit__(self, exc_type, exc, tb):
         if self._locked:
-            await self.runtime.set_preset_data(self.name, self._info)
+            await self.runtime.set_preset_data(self.name, self.info)
             await self.runtime.release_lock(self.name)
 
     async def _create_vms(self, count):
@@ -84,12 +84,12 @@ class Preset:
 
             # if check failed
             if not state_check.result():
-                last_failed = self._info.failed_checks.get(vm.id, {}).get('time', time.time())
+                last_failed = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0:
                     if terminate_heatlh_failed_delay + last_failed < time.time():
                         logging.info("Terminate %s, healthcheck fails since %s", vm, last_failed)
                         missing += 1
                         await self._terminate_vm(vm)
-            elif self._info.failed_checks.get(vm.id):
-                del self._info.failed_checks[vm.id]
+            elif self.info.failed_checks.get(vm.id):
+                del self.info.failed_checks[vm.id]
