@@ -64,8 +64,8 @@
 		  <div class="row sub-header">
 			<div class="col-xs-12">
 			  <ul>
-				<li>last_manage_by: {{ data['vmshepherd_id'] }}</li>
-				<li>last_manage_time: {{ data['runtime'].get('LAST_MANAGED', 0)|int }}s </li>
+				<li>last_manage_by: {{ data['runtime'].last_managed_by }}</li>
+				<li>last_manage_sec_ago: {{ data['now']|int - data['runtime'].last_managed|int }}s </li>
 			  </ul>
 			</div>
 		  </div>
@@ -89,16 +89,12 @@
                   <td>{{ loop.index }}</td>
                   <td>{{ vm.id }}</td>
                   <td>{{ vm.ip|join(", ") }}</td>
-                  <td>
-                    <p {%if data['runtime'].get('CHECK', {}).get(vm.id) %} class="vm-state-error" {% endif %} >
+                  <td {%if data['runtime'].failed_checks.get(vm.id) %} class="error" {% endif %}>
                     {{ vm.state.value|upper }}
-                        {%if data['runtime'].get('CHECK', {}).get(vm.id) %}
-                           {
-                            Healthcheck failed from: {{ data['runtime'].get('CHECK', {}).get(vm.id, {}).get('time_from')|int }}s,
-                            count: {{data['runtime'].get('CHECK', {}).get(vm.id, {}).get('count') }}
-                            }
+                        {%if data['runtime'].failed_checks.get(vm.id) %}
+                            Healthcheck fails for {{ data['now']|int - data['runtime'].failed_checks[vm.id]['time']|int }}s,
+                            count: {{data['runtime'].failed_checks[vm.id]['count'] }})
                         {% endif %}
-                    </p>
                   </td>
                   <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 </tr>

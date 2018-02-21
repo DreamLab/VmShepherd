@@ -1,12 +1,13 @@
 import aiohttp_jinja2
 import jinja2
 import os
+import time
 from aiohttp import web
 
 
 class WebServer(web.Application):
 
-    def __init__(self, vmshepherd,  port=8888):
+    def __init__(self, vmshepherd, port=8888):
         super().__init__()
 
         self.port = port
@@ -44,10 +45,12 @@ class Panel(web.View):
         runtime = vms.runtime_manager
         for name in presets:
             preset = await vms.preset_manager.get(name)
+            a= await  runtime.get_preset_data(name)
             data['presets'][name] = {
                 'preset': preset,
                 'vms': await preset.list_vms(),
-                'runtime': await  runtime.get_preset_data(name),
-                'vmshepherd_id': vms.instance_id
+                'runtime': await runtime.get_preset_data(name),
+                'vmshepherd_id': vms.instance_id,
+                'now': time.time()
             }
         return data

@@ -102,6 +102,7 @@ body {
 .nobr {
   white-space:nowrap;
 }
+td.error {background-color: #F5A9A9 !important}
 .vm-state-error{
   font-weight: bold;
   color: red;
