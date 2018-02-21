@@ -12,17 +12,8 @@ from asyncnovaclient import NovaClient, GlanceClient, AuthPassword
 
 class OpenStackDriver(AbstractIaasDriver):
 
-    def __init__(self, *args, **kwargs):
-        self.config = {
-            'auth_url': kwargs['auth_url'],
-            'username': kwargs['username'],
-            'password': kwargs['password'],
-            'project_name': kwargs['project_name'],
-            'user_domain_name': kwargs['user_domain_name'],
-            'project_domain_name': kwargs['project_domain_name'],
-            'api_version': kwargs['api_version'],
-            'image_owner_ids': kwargs['image_owner_ids']
-        }
+    def __init__(self, *args, **config):
+        self.config = config
 
     def openstack_exception(func):
         '''
@@ -137,15 +128,11 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg present_name: string
         '''
 
-        logging.info("listing vm: %s", preset_name)
-        servers = self.nova.servers.list(params={'name': preset_name})
+        servers = self.nova.servers.list(search_opts={'name': f'^{preset_name}$'})
         result = []
         for server in servers:
             result.append(self._map_vm_structure(server))
         return result
-        # except Exception as e:
-        #    logging.error(e)
-        #    raise IaasSystemException
 
     @openstack_exception
     async def terminate_vm(self, vm_id):
@@ -189,7 +176,7 @@ class OpenStackDriver(AbstractIaasDriver):
         :returns object
         '''
         ip = self._extract_ips(vm.addresses)
-        created = datetime.strptime(vm.created, '%Y-%m-%dT%H:%M:%SZ').timestamp()
+        created = datetime.strptime(vm.created, '%Y-%m-%dT%H:%M:%SZ')
         flavor = self.flavors_map.get(vm.flavor.get('id'))
         image = self.images_map.get(vm.image.get('id'))
         state = self._map_vm_status(vm.status)

@@ -1,0 +1,106 @@
+{% for name, data in presets.items() %}
+<div class="preset-item" data-preset="{{ name }}">
+          <h2 class="anchor" id="{{ name }}">Preset {{ name }}</h2>
+          <div class="row">
+            <div class="col-xs-12 col-md-3">
+              <ul>
+                <li><b>General:</b>
+                  <ul>
+                    <li><b>Name:</b> {{ data['preset'].name }}</li>
+                    <li><b>Count:</b> {{ data['preset'].count }}</li>
+                    <li><b>Flavor:</b> {{ data['preset'].config['flavor'] }}</li>
+                    <li><b>Image:</b> {{ data['preset'].config['image'] }}</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <ul>
+                <li><b>Network:</b>
+                    <ul>
+                      <li><b>Availability zone:</b> {{ data['preset'].config['network'].get('availability_zone', '') }}</li>
+                      <li><b>Subnet:</b>
+                        <ul>
+                            {% for subnet in data['preset'].config['network'].get('subnet', []) %}
+                            <li>{{ subnet }}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                      <li><b>Security groups:</b>
+                        <ul>
+                            {% for sg in data['preset'].config['network'].get('security_groups', []) %}
+                            <li>{{ sg }}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                    </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <ul>
+                <li><b>Customization:</b>
+                  <ul>
+                      <li><b>Meta-tags:</b>
+                        <ul>
+                            {% for k, v in data['preset'].config.get('meta_tags', {}).items() %}
+                            <li><b>{{ k }}</b>: {v}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                      <li><b>Userdata (cloud-init):</b>
+                        <ul>
+                            {% for k, v in data['preset'].config.get('userdata', {}).items() %}
+                            <li><b>{{ k }}</b>: {v}</li>
+                            {% endfor %}
+                        </ul>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <h4>Last managed</h4>
+		  <div class="row sub-header">
+			<div class="col-xs-12">
+			  <ul>
+				<li>last_manage_by: {{ data['runtime'].last_managed_by }}</li>
+				<li>last_manage_sec_ago: {{ data['now']|int - data['runtime'].last_managed|int }}s </li>
+			  </ul>
+			</div>
+		  </div>
+          <div class="table-responsive sub-header">
+            <div>
+                <h4 class="pull-left">Virtual machines ({{ data['vms']|length }}/{{ data['preset'].count }})</h4>
+            </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Lp</th>
+                  <th>Vm_id</th>
+                  <th>Ip</th>
+                  <th>State</th>
+                  <th>Created at</th>
+                </tr>
+              </thead>
+              <tbody>
+{% for vm in data['vms']|sorted %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ vm.id }}</td>
+                  <td>{{ vm.ip|join(", ") }}</td>
+                  <td {%if data['runtime'].failed_checks.get(vm.id) %} class="error" {% endif %}>
+                    {{ vm.state.value|upper }}
+                        {%if data['runtime'].failed_checks.get(vm.id) %}
+                            Healthcheck fails for {{ data['now']|int - data['runtime'].failed_checks[vm.id]['time']|int }}s,
+                            count: {{data['runtime'].failed_checks[vm.id]['count'] }})
+                        {% endif %}
+                  </td>
+                  <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                </tr>
+{% endfor %}
+              </tbody>
+            </table>
+          </div>
+</div>
+{% endfor %}

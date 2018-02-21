@@ -14,6 +14,9 @@ class HttpHealthcheck(AbstractHealthcheck):
         self.conn_timeout = conn_timeout
         self.read_timeout = read_timeout
 
+    def __str__(self):
+        return f'HTTP on {self.port} with {self.method} {self.path} expecting {self.check_status}'
+
     async def is_healthy(self, vm):
         if not vm.ip:
             logging.info('[healthcheck] ip is empty:%s', vm)

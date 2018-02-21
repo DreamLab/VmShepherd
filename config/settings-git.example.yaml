@@ -7,9 +7,11 @@ runtime:
   driver: InMemoryDriver
 
 presets:
-  driver: DirectoryDriver
+  driver: GitRepoDriver
   driver_params:
-    path: config/presets.d
+    repositories:
+        paas: http://kwarunek@stash.grupa.onet/scm/paas/vms-paas-presets.git
+        # db: http://user:paas@github.com/blahblah/foo
 
 defaults:
 
