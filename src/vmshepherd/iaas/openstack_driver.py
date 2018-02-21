@@ -129,9 +129,6 @@ class OpenStackDriver(AbstractIaasDriver):
         for server in servers:
             result.append(self._map_vm_structure(server))
         return result
-        # except Exception as e:
-        #    logging.error(e)
-        #    raise IaasSystemException
 
     @openstack_exception
     async def terminate_vm(self, vm_id):
@@ -172,7 +169,7 @@ class OpenStackDriver(AbstractIaasDriver):
         :returns object
         '''
         ip = self._extract_ips(vm.addresses)
-        created = datetime.strptime(vm.created, '%Y-%m-%dT%H:%M:%SZ').timestamp()
+        created = datetime.strptime(vm.created, '%Y-%m-%dT%H:%M:%SZ')
         flavor = self.flavors_map.get(vm.flavor.get('id'))
         image = self.images_map.get(vm.image.get('id'))
         state = self._map_vm_status(vm.status)

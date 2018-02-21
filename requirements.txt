@@ -2,6 +2,7 @@ pyyaml
 aiohttp
 aiofiles
 bidict
+aiohttp_jinja2
 python-novaclient==10.0.0
 python-glanceclient==2.9.1
 keystoneauth1==3.4.0
