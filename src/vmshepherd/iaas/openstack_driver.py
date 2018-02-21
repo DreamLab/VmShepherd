@@ -5,12 +5,9 @@ from .exception import IaasException, IaasPresetConfigurationException, IaasComm
 from .vm import Vm, VmState
 from bidict import bidict
 from datetime import datetime
-from glanceclient.v2 import Client as glanceclient
-from keystoneauth1 import session
 from keystoneauth1 import exceptions as keystoneauth_exceptions
-from keystoneauth1.identity import v3
-from novaclient import client as novaclient
 from novaclient.exceptions import ClientException, NotFound, MethodNotAllowed, NotAcceptable
+from asyncnovaclient import NovaClient, GlanceClient, AuthPassword
 
 
 class OpenStackDriver(AbstractIaasDriver):
@@ -57,16 +54,15 @@ class OpenStackDriver(AbstractIaasDriver):
 
         '''
         async def wrap(self, *args, **kwargs):
-            if not hasattr(self, 'openstacksess') or self.openstacksess.verify is not True:
-                self.auth = v3.Password(auth_url=self.config['auth_url'],
-                                        username=self.config['username'],
-                                        password=self.config['password'],
-                                        project_name=self.config['project_name'],
-                                        user_domain_name=self.config['user_domain_name'],
-                                        project_domain_name=self.config['project_domain_name'])
-                self.openstacksess = session.Session(auth=self.auth)
-                self.nova = novaclient.Client(self.config['api_version'], session=self.openstacksess)
-                self.glance = glanceclient('2', session=self.openstacksess)
+            if not hasattr(self, 'auth') or self.auth.verify() is True:
+                self.auth = AuthPassword(auth_url=self.config['auth_url'],
+                                         username=self.config['username'],
+                                         password=self.config['password'],
+                                         project_name=self.config['project_name'],
+                                         user_domain_name=self.config['user_domain_name'],
+                                         project_domain_name=self.config['project_domain_name'])
+                self.nova = NovaClient(self.config['api_version'], session=self.auth)
+                self.glance = GlanceClient('2', session=self.auth)
 
             if not hasattr(self, 'last_init') or self.last_init < (time.time() - 60):
                 await self.initialize()
@@ -122,8 +118,16 @@ class OpenStackDriver(AbstractIaasDriver):
 
         image_id = self.images_map.inv.get(image)
         flavor_id = self.flavors_map.inv.get(flavor)
-        return self.nova.servers.create(preset_name, flavor=flavor_id, image=image_id, security_groups=security_groups,
-                                        userdata=userdata, key_name=key_name)
+        body = {
+            "name": preset_name,
+            "flavorRef": flavor_id,
+            "imageRef": image_id,
+            "security_groups": security_groups,
+            "user_data": userdata,
+            "key_name": key_name
+        }
+        logging.info("creating vm: %s", body)
+        return self.nova.servers.create(body=body)
 
     @initialize_openstack
     @openstack_exception
@@ -133,7 +137,8 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg present_name: string
         '''
 
-        servers = self.nova.servers.list(search_opts={'name': preset_name})
+        logging.info("listing vm: %s", preset_name)
+        servers = self.nova.servers.list(params={'name': preset_name})
         result = []
         for server in servers:
             result.append(self._map_vm_structure(server))
@@ -148,6 +153,7 @@ class OpenStackDriver(AbstractIaasDriver):
          Terminate VM
          :arg vm_id: string
         '''
+        logging.info("killing vm: %s", vm_id)
         return self.nova.servers.force_delete(vm_id)
 
     @initialize_openstack
@@ -165,6 +171,7 @@ class OpenStackDriver(AbstractIaasDriver):
         '''
         Returns list of flavors from Openstack
         '''
+        logging.info("listing flavors")
         return self.nova.flavors.list()
 
     @openstack_exception
@@ -172,6 +179,7 @@ class OpenStackDriver(AbstractIaasDriver):
         '''
         Returns list of images from OpenStack
         '''
+        logging.info("listing images")
         return self.glance.images.list()
 
     def _map_vm_structure(self, vm):
