@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+from collections import Counter
 
 
 class Preset:
@@ -60,23 +61,11 @@ class Preset:
         vms = await self.list_vms()
 
         missing = self.count - len(vms) if len(vms) < self.count else 0
-        vms_stat = {'running': 0, 'pending': 0, 'dead': 0, 'unknown': 0}
-        for vm in vms:
-            if vm.is_running():
-                vms_stat['running'] += 1
-                continue
-            if vm.is_pending():
-                vms_stat['pending'] += 1
-                continue
-            if vm.is_dead():
-                vms_stat['dead'] += 1
-                continue
-            vms_stat['unknown'] += 1
-
+        vms_stat = Counter([vm.get_state() for vm in vms])
         logging.info(
-            'VMs Status: %s expected, %s in iaas, %s running, %s pending, %s dead, %s unknown, %s missing',
-            self.count, len(vms), vms_stat['running'], vms_stat['pending'], vms_stat['dead'], vms_stat['unknown'],
-            missing, extra=self._extra
+            'VMs Status: %s expected, %s in iaas, %s running, %s pending, %s terminated, %s error, %s unknown, %s missing',
+            self.count, len(vms), vms_stat['running'], vms_stat['pending'], vms_stat['terminated'],
+            vms_stat['error'], vms_stat['unknown'], missing, extra=self._extra
         )
         for vm in vms:
             if vm.is_dead():

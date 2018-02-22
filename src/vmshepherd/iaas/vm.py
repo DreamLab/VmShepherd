@@ -93,3 +93,6 @@ class Vm:
 
     def is_pending(self):
         return self.state == VmState.PENDING
+
+    def get_state(self):
+        return self.state.value
