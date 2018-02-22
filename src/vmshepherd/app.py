@@ -13,7 +13,7 @@ class VmShepherd:
         self.config = config
         self.root_dir = os.path.dirname(__file__)
         self.instance_id = gen_id(rnd_length=5)
-
+        logging.info("Starting")
         self.setup_logging()
 
         self.runtime_manager = Drivers.get(

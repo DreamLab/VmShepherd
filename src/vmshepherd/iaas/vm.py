@@ -90,3 +90,6 @@ class Vm:
 
     def is_dead(self):
         return self.state in (VmState.TERMINATED, VmState.ERROR)
+
+    def get_state(self):
+        return self.state.value
