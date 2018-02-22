@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 from enum import Enum
 
 
@@ -54,10 +55,13 @@ class Vm:
         self.tags = tags
         self.flavor = flavor
         self.image = image
-        if isinstance(created, (int, float)):
+        if isinstance(created, datetime.datetime):
+            self.created = created
+        elif isinstance(created, (int, float)):
             self.created = datetime.datetime.fromtimestamp(created)
         else:
-            self.created = created
+            # actually it's not so crucial to fail
+            self.created = time.time()
 
     def __str__(self):
         return f'VM id={self.id} preset={self.name} state={self.state} ip={self.ip}'
@@ -69,7 +73,7 @@ class Vm:
         return True
 
     def __gt__(self, other):
-        return self.ip > other.ip
+        return self.created > other.created
 
     def __hash__(self):
         return hash(self.id)
