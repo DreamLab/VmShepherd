@@ -1,5 +1,6 @@
 '''
 '''
+from jinja2 import Template
 from .preset import Preset
 from vmshepherd.drivers import Drivers
 from vmshepherd.utils import get_merged_dict_recursively, async_load_from_file
@@ -45,4 +46,7 @@ class AbstractConfigurationDriver:
         if config['userdata'] and config['userdata'].startswith('file://'):
             path = '/'.join([self._path, config['userdata'].replace('file://','')])
             config['userdata'] = async_load_from_file(path)
+
+        tpl = Template(config['userdata'])
+        config['userdata'] = tpl.render(**(config['metadata']))
 
