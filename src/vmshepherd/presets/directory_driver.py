@@ -25,3 +25,7 @@ class DirectoryDriver(AbstractConfigurationDriver):
                 if preset is not None:
                     presets[preset_name] = self.create_preset(preset)
         self._presets = presets
+
+    def reconfigure(self, config, defaults):
+        super().reload(config, defaults)
+        sefl._path = config.get('path', self._path)

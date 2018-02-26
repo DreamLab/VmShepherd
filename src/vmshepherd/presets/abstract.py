@@ -17,6 +17,9 @@ class AbstractConfigurationDriver:
     async def get_presets_list(self):
         raise NotImplementedError
 
+    async def reload(self):
+        raise NotImplementedError
+
     def create_preset(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
@@ -35,5 +38,5 @@ class AbstractConfigurationDriver:
             iaas=iaas, healthcheck=healthcheck
         )
 
-    def reload(self):
-        raise NotImplementedError
+    def reconfigure(self, config, defaults):
+        self.defaults = defaults

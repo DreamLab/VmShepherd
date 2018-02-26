@@ -76,3 +76,6 @@ class AbstractIaasDriver:
         """
 
         raise NotImplementedError
+
+    def reconfigure(self, config):
+        pass

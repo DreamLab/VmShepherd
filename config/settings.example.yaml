@@ -3,6 +3,8 @@ log_level: info
 web: True
 listen_port: 8888
 
+worker_interval: 5
+
 runtime:
   driver: InMemoryDriver
 

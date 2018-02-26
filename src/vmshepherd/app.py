@@ -27,7 +27,11 @@ class VmShepherd:
             defaults=self.config.get('defaults', {})
         )
 
-        self.worker = Worker(self, 5, autostart=self.config.get('autostart', True))
+        self.worker = Worker(
+            runtime=self.runtime_manager, presets=self.preset_manager,
+            interval=int(self.config.get('worker_interval', 5)),
+            autostart=self.config.get('autostart', True)
+        )
 
         if self.config.get('web'):
             port = self.config.get('listen_port', 8888)
@@ -48,3 +52,9 @@ class VmShepherd:
         if logger.getEffectiveLevel() == logging.DEBUG:
             logging.debug('DEBUG mode enabled')
         prefix_logging(self.instance_id)
+
+    def reload(self, with_config=None):
+        new_cfg = with_config or {}
+        self.runtime_manager.reconfigure(new_cfg.get('runtime'))
+        self.preset_manager.reconfigure(new_cfg.get('presets'), new_cfg.get('defaults'))
+        Drivers.flush()

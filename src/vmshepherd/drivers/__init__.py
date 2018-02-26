@@ -22,10 +22,6 @@ class Drivers:
                 raise RuntimeError(f"Cannot find driver {cfg['driver']} for {group}.")
         return cls._loaded[_hash]
 
-    def reload(self):
-        for drv in self._loaded:
-            drv.reload()
-
     @classmethod
-    def unload_all(cls):
+    def flush(cls):
         cls._loaded = {}

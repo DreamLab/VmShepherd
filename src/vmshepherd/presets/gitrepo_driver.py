@@ -69,3 +69,8 @@ class GitRepoDriver(AbstractConfigurationDriver):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
+
+    def reconfigure(self, config, defaults):
+        super().reload(config, defaults)
+        self._clone_dir = config.get('clone_dir', self._clone_dir)
+        self._repos = config.get('repositories', self._repos)
