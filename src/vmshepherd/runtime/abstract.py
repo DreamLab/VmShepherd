@@ -77,5 +77,5 @@ class AbstractRuntimeData:
     async def release_lock(self, name):
         return await self._release_lock(name)
 
-    def reload(self, config):
+    def reconfigure(self, config):
         pass
