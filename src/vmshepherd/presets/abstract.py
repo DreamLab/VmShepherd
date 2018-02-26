@@ -2,7 +2,7 @@
 '''
 from .preset import Preset
 from vmshepherd.drivers import Drivers
-from vmshepherd.utils import get_merged_dict_recursively
+from vmshepherd.utils import get_merged_dict_recursively, async_load_from_file
 
 
 class AbstractConfigurationDriver:
@@ -10,6 +10,7 @@ class AbstractConfigurationDriver:
     def __init__(self, runtime, defaults):
         self.runtime = runtime
         self.defaults = defaults
+        self._path = ''
 
     async def get(self, preset_name):
         raise NotImplementedError
@@ -17,7 +18,7 @@ class AbstractConfigurationDriver:
     async def get_presets_list(self):
         raise NotImplementedError
 
-    def create_preset(self, config):
+    async def create_preset(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )
@@ -30,6 +31,8 @@ class AbstractConfigurationDriver:
         healthcheck = Drivers.get('healthcheck', healthcheck_cfg)
         config['healthcheck'] = healthcheck_cfg
 
+        await self._load_preset_userdata(config)
+
         return Preset(
             config['name'], config, runtime=self.runtime,
             iaas=iaas, healthcheck=healthcheck
@@ -37,3 +40,9 @@ class AbstractConfigurationDriver:
 
     def reload(self):
         raise NotImplementedError
+
+    async def _load_preset_userdata(self, config):
+        if config['userdata'] and config['userdata'].startswith('file://'):
+            path = '/'.join([self._path, config['userdata'].replace('file://','')])
+            config['userdata'] = async_load_from_file(path)
+

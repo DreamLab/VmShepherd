@@ -13,7 +13,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
     def __init__(self, repositories, runtime, defaults, clone_dir=None):
         super().__init__(runtime, defaults)
         self._presets = {}
-        self._clone_dir = clone_dir or os.path.join(tempfile.gettempdir(), 'vmshepherd')
+        self._path = clone_dir or os.path.join(tempfile.gettempdir(), 'vmshepherd')
         self._repos = repositories
 
     async def get(self, preset_name):
@@ -27,7 +27,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
         self._assure_clone_dir_exists()
         for name, repo in self._repos.items():
             try:
-                path = os.path.join(self._clone_dir, name)
+                path = os.path.join(self._path, name)
                 await self._clone_or_update(path, repo)
                 repo_presets = await self._load_repos_presets(name, path)
                 presets.update(repo_presets)
@@ -44,7 +44,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
                 # prepend repo name to preset_name
                 preset['name'] = preset_name = f"{repo_name}.{preset['name']}"
                 if preset is not None:
-                    loaded[preset_name] = self.create_preset(preset)
+                    loaded[preset_name] = await self.create_preset(preset)
         return loaded
 
     async def _clone_or_update(self, path, repo):
@@ -65,7 +65,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
 
     def _assure_clone_dir_exists(self):
         try:
-            os.makedirs(self._clone_dir)
+            os.makedirs(self._path)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
