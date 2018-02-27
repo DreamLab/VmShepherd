@@ -23,7 +23,7 @@ class DummyIaasDriver(AbstractIaasDriver):
 
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config=None):
         """
         Init: create list of vms.
         """
