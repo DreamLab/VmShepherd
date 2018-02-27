@@ -33,7 +33,6 @@ class AbstractConfigurationDriver:
         config['healthcheck'] = healthcheck_cfg
 
         await self._load_preset_userdata(config, base_path)
-        print(config)
 
         return Preset(
             config['name'], config, runtime=self.runtime,
