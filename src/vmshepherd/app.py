@@ -54,7 +54,7 @@ class VmShepherd:
         prefix_logging(self.instance_id)
 
     def reload(self, with_config=None):
-        new_cfg = with_config or {}
-        self.runtime_manager.reconfigure(new_cfg.get('runtime'))
-        self.preset_manager.reconfigure(new_cfg.get('presets'), new_cfg.get('defaults'))
+        self.config = with_config or self.config
+        self.runtime_manager.reconfigure(self.config.get('runtime'))
+        self.preset_manager.reconfigure(self.config.get('presets'), self.config.get('defaults'))
         Drivers.flush()

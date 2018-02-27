@@ -5,10 +5,10 @@ from vmshepherd.utils import async_load_from_file
 
 class DirectoryDriver(AbstractConfigurationDriver):
 
-    def __init__(self, path, runtime, defaults):
+    def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
         self._presets = {}
-        self._path = path
+        self._path = config['path']
 
     async def get(self, preset_name):
         return self._presets[preset_name]

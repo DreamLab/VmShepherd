@@ -14,7 +14,7 @@ class Drivers:
                 if entry_point.name == cfg['driver']:
                     _class = entry_point.load()
                     try:
-                        cls._loaded[_hash] = _class(**cfg.get('driver_params', {}), **kwargs)
+                        cls._loaded[_hash] = _class(config=cfg, **kwargs)
                     except Exception as exc:
                         raise RuntimeError(f"Cannot load driver {cfg['driver']} for {group}.") from exc
                     break

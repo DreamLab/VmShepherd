@@ -10,11 +10,11 @@ from vmshepherd.utils import async_load_from_file
 
 class GitRepoDriver(AbstractConfigurationDriver):
 
-    def __init__(self, repositories, runtime, defaults, clone_dir=None):
+    def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
         self._presets = {}
-        self._clone_dir = clone_dir or os.path.join(tempfile.gettempdir(), 'vmshepherd')
-        self._repos = repositories
+        self._clone_dir = config.get('clone_dir', os.path.join(tempfile.gettempdir(), 'vmshepherd'))
+        self._repos = config['repositories']
 
     async def get(self, preset_name):
         return self._presets[preset_name]

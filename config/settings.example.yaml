@@ -10,24 +10,21 @@ runtime:
 
 presets:
   driver: DirectoryDriver
-  driver_params:
-    path: config/presets.d
+  path: config/presets.d
 
 defaults:
 
   iaas:
     driver: DummyIaasDriver
-    driver_params:
-      api_key: asd
-      api_secret: asd
+    api_key: asd
+    api_secret: asd
 
   healthcheck:
     driver: HttpHealthcheck
-    driver_params:
-      conn_timeout: 1   # (optional, default:1)
-      read_timeout: 1   # (optional, default: 1)
-      port: 7007        # (optional, default: 80)
-      path: /           # (optional, default: /)
-      method: GET       # (optional, default: GET)
-      check_status: 200 # (optional, default: 200)
+    conn_timeout: 1   # (optional, default:1)
+    read_timeout: 1   # (optional, default: 1)
+    port: 7007        # (optional, default: 80)
+    path: /           # (optional, default: /)
+    method: GET       # (optional, default: GET)
+    check_status: 200 # (optional, default: 200)
     terminate_heatlh_failed_delay: 10
