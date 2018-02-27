@@ -28,4 +28,4 @@ class DirectoryDriver(AbstractConfigurationDriver):
 
     def reconfigure(self, config, defaults):
         super().reload(config, defaults)
-        sefl._path = config.get('path', self._path)
+        self._path = config.get('path', self._path)
