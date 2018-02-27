@@ -1,5 +1,5 @@
-from unittest.mock import Mock, patch
 from aiounittest import AsyncTestCase, futurized
+from unittest.mock import Mock, patch
 from vmshepherd.presets import gitrepo_driver
 
 
@@ -61,12 +61,11 @@ class TestGitRepo(AsyncTestCase):
         self.mock_os.path.exists.return_value = True
         self.mock_process.returncode = 1
 
-        with self.assertRaises(RuntimeError) as e:
+        with self.assertRaises(RuntimeError):
             await self.driver._clone_or_update('/tmp', 'blah')
 
         self.mock_process.communicate.assert_called_once_with()
         self.mock_subprocess_exec.assert_called_once_with('git', '-C', '/tmp', 'pull', stderr=-1, stdout=-1)
-
 
     async def test_load_repos_presets(self):
         self.driver.create_preset = Mock()
