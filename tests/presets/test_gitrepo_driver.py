@@ -1,7 +1,7 @@
 from aiounittest import AsyncTestCase, futurized
+from tests.common import example_config
 from unittest.mock import Mock, patch
 from vmshepherd.presets import gitrepo_driver
-from tests.common import example_config
 
 
 class MockItem:
