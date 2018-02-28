@@ -33,7 +33,7 @@ class AbstractConfigurationDriver:
         config['healthcheck'] = healthcheck_cfg
 
         self._render_preset_userdata(config)
-        
+
         return Preset(
             config['name'], config, runtime=self.runtime,
             iaas=iaas, healthcheck=healthcheck
