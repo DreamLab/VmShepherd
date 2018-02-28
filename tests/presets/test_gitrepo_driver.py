@@ -1,6 +1,7 @@
 from aiounittest import AsyncTestCase, futurized
 from unittest.mock import Mock, patch
 from vmshepherd.presets import gitrepo_driver
+from tests.common import example_config
 
 
 class MockItem:
@@ -13,9 +14,8 @@ class TestGitRepo(AsyncTestCase):
 
     def setUp(self):
         self.mock_runtime = Mock()
-        self.mock_os = patch(
-            'vmshepherd.presets.gitrepo_driver.os'
-        ).start()
+        self.patch_os = patch('vmshepherd.presets.gitrepo_driver.os')
+        self.mock_os = self.patch_os.start()
 
         self.mock_process = Mock()
         self.mock_process.communicate.return_value = futurized(('STDOUT', 'STDERR'))
@@ -27,12 +27,12 @@ class TestGitRepo(AsyncTestCase):
 
         self.config = {
             'repositories': {
-                r'paas': 'git://testrepm/paas.git',
+                'paas': 'git://testrepm/paas.git',
                 'db': 'git://stash/db.git',
             },
             'clone_dir': '/tmp/'
         }
-        self.driver = gitrepo_driver.GitRepoDriver(self.config, self.mock_runtime, {})
+        self.driver = gitrepo_driver.GitRepoDriver(self.config, self.mock_runtime, example_config['defaults'])
 
     def tearDown(self):
         patch.stopall()
@@ -68,7 +68,10 @@ class TestGitRepo(AsyncTestCase):
         self.mock_subprocess_exec.assert_called_once_with('git', '-C', '/tmp', 'pull', stderr=-1, stdout=-1)
 
     async def test_load_repos_presets(self):
-        self.driver.create_preset = Mock()
-        self.mock_os.path.isfile.return_value = True
-        self.mock_os.path.scandir.return_value = [MockItem('A_lala'), MockItem('R_wawa')]
-        await self.driver._load_repos_presets('blah', 'git://repo.git')
+        self.patch_os.stop()
+        res = await self.driver._load_repos_presets('blah', example_config['presets']['path'])
+        self.assertEqual(res['blah.test-preset'].count, 1)
+        self.assertEqual(res['blah.test-preset'].name, 'blah.test-preset')
+        self.assertEqual(res['blah.test-preset'].config['flavor'], 'm1.small')
+        self.assertEqual(res['blah.test-preset'].config['image'], 'fedora-27')
+        self.assertEqual(res['blah.test-preset'].config['meta_tags'], {'key1': 'value1'})
