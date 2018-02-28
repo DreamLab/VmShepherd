@@ -40,11 +40,11 @@ class GitRepoDriver(AbstractConfigurationDriver):
         for item in os.scandir(path):
             if os.path.isfile(item.path) and os.path.splitext(item.path)[1] == '.conf':
                 preset = await async_load_from_yaml_file(item.path)
-
                 # prepend repo name to preset_name
                 preset['name'] = preset_name = f"{repo_name}.{preset['name']}"
                 if preset is not None:
-                    loaded[preset_name] = await self.create_preset(preset, path)
+                    await self.inject_preset_userdata(preset, path)
+                    loaded[preset_name] = self.create_preset(preset)
         return loaded
 
     async def _clone_or_update(self, path, repo):

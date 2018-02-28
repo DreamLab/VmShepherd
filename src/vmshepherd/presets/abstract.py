@@ -19,7 +19,7 @@ class AbstractConfigurationDriver:
     async def get_presets_list(self):
         raise NotImplementedError
 
-    async def create_preset(self, config, base_path):
+    def create_preset(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )
@@ -32,8 +32,8 @@ class AbstractConfigurationDriver:
         healthcheck = Drivers.get('healthcheck', healthcheck_cfg)
         config['healthcheck'] = healthcheck_cfg
 
-        await self._load_preset_userdata(config, base_path)
-
+        self._render_preset_userdata(config)
+        
         return Preset(
             config['name'], config, runtime=self.runtime,
             iaas=iaas, healthcheck=healthcheck
@@ -42,12 +42,14 @@ class AbstractConfigurationDriver:
     def reload(self):
         raise NotImplementedError
 
-    async def _load_preset_userdata(self, config, base_path):
-        if config['userdata'] and config['userdata'].startswith('file://'):
-            path = os.path.join(base_path, config['userdata'].replace('file://',''))
+    async def inject_preset_userdata(self, config, path):
+        if 'userdata' not in config or not config['userdata']:
+            return
+        if config['userdata'].startswith('file://'):
+            path = os.path.join(path, config['userdata'].replace('file://',''))
             config['userdata'] = await async_load_from_file(path)
 
-        if config['meta_tags']:
-            tpl = Template(config['userdata'])
-            config['userdata'] = tpl.render(**config['meta_tags'])
+    def _render_preset_userdata(self, config):
+        tpl = Template(config['userdata'])
+        config['userdata'] = tpl.render(**config)
 
