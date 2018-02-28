@@ -5,14 +5,14 @@ from .abstract import AbstractHealthcheck
 
 class HttpHealthcheck(AbstractHealthcheck):
 
-    def __init__(self, method='GET', path='/', port=80, check_status=200, conn_timeout=1,
-                 read_timeout=1):
-        self.method = method
-        self.path = path
-        self.port = port
-        self.check_status = check_status
-        self.conn_timeout = conn_timeout
-        self.read_timeout = read_timeout
+    def __init__(self, config=None):
+        config = config or {}
+        self.method = config.get('method', 'GET')
+        self.path = config.get('path', '/')
+        self.port = config.get('port', 80)
+        self.check_status = config.get('check_status', 200)
+        self.conn_timeout = config.get('conn_timeout', 1)
+        self.read_timeout = config.get('read_timeout', 1)
 
     def __str__(self):
         return f'HTTP on {self.port} with {self.method} {self.path} expecting {self.check_status}'

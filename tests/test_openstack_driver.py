@@ -60,14 +60,7 @@ class TestOpenStackDriver(AsyncTestCase):
         mock_list_images = patch('vmshepherd.iaas.OpenStackDriver._list_images').start()
         mock_list_images.return_value = futurized([])
 
-        osd = OpenStackDriver(auth_url=self.config['auth_url'],
-                              username=self.config['username'],
-                              password=self.config['password'],
-                              project_name=self.config['project_name'],
-                              user_domain_name=self.config['user_domain_name'],
-                              project_domain_name=self.config['project_domain_name'],
-                              api_version=self.config['api_version'],
-                              image_owner_ids=self.config['image_owner_ids'])
+        osd = OpenStackDriver(self.config)
 
         osd.flavors_map = bidict()
         osd.flavors_map['testflavorid'] = 'testflavorname'
@@ -100,14 +93,8 @@ class TestOpenStackDriver(AsyncTestCase):
         mock_list_images = patch('vmshepherd.iaas.OpenStackDriver._list_images').start()
         mock_list_images.return_value = futurized([image])
 
-        osd = OpenStackDriver(auth_url=self.config['auth_url'],
-                              username=self.config['username'],
-                              password=self.config['password'],
-                              project_name=self.config['project_name'],
-                              user_domain_name=self.config['user_domain_name'],
-                              project_domain_name=self.config['project_domain_name'],
-                              api_version=self.config['api_version'],
-                              image_owner_ids=self.config['image_owner_ids'])
+        osd = OpenStackDriver(self.config)
+
         await osd.initialize()
         self.assertEqual(osd.flavors_map['flavorid'], 'flavorname')
         self.assertEqual(osd.images_map['imageid'], 'imagename')

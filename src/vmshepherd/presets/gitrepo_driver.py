@@ -10,11 +10,11 @@ from vmshepherd.utils import async_load_from_yaml_file
 
 class GitRepoDriver(AbstractConfigurationDriver):
 
-    def __init__(self, repositories, runtime, defaults, clone_dir=None):
+    def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
         self._presets = {}
-        self._path = clone_dir or os.path.join(tempfile.gettempdir(), 'vmshepherd')
-        self._repos = repositories
+        self._clone_dir = config.get('clone_dir', os.path.join(tempfile.gettempdir(), 'vmshepherd'))
+        self._repos = config['repositories']
 
     async def get(self, preset_name):
         return self._presets[preset_name]
@@ -27,7 +27,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
         self._assure_clone_dir_exists()
         for name, repo in self._repos.items():
             try:
-                path = os.path.join(self._path, name)
+                path = os.path.join(self._clone_dir, name)
                 await self._clone_or_update(path, repo)
                 repo_presets = await self._load_repos_presets(name, path)
                 presets.update(repo_presets)
@@ -65,7 +65,12 @@ class GitRepoDriver(AbstractConfigurationDriver):
 
     def _assure_clone_dir_exists(self):
         try:
-            os.makedirs(self._path)
+            os.makedirs(self._clone_dir)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
+
+    def reconfigure(self, config, defaults):
+        super().reload(config, defaults)
+        self._clone_dir = config.get('clone_dir', self._clone_dir)
+        self._repos = config.get('repositories', self._repos)

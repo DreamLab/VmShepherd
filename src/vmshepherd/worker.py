@@ -8,9 +8,9 @@ class Worker:
     ERROR = 'ERROR'
     OK = 'OK'
 
-    def __init__(self, app, interval=1, autostart=True):
-        self.presets = app.preset_manager
-        self.runtime = app.runtime_manager
+    def __init__(self, runtime, presets, interval=1, autostart=True):
+        self.presets = presets
+        self.runtime = runtime
         self._interval = interval
         self._running = False
         self._start_time = 0
@@ -18,9 +18,13 @@ class Worker:
             asyncio.ensure_future(self.run_forever())
 
     async def run_forever(self):
-        while True:
+        self._forever = True
+        while self._forever:
             await self.run_once()
             await asyncio.sleep(self._interval)
+
+    def stop(self):
+        self._forever = False
 
     async def run_once(self):
         if self._running:

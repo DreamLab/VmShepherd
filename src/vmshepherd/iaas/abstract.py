@@ -24,6 +24,9 @@ class AbstractIaasDriver:
     Define API to implement in specific IaasDrivers like Openstack or EC2.
     """
 
+    def __init__(self, config=None):
+        pass
+
     async def create_vm(self, preset_name: str, image: str, flavor: str, security_groups: List=None,
                         userdata: Dict=None, key_name: str=None, availability_zone: str=None,
                         subnet: str=None) -> Any:
@@ -76,3 +79,6 @@ class AbstractIaasDriver:
         """
 
         raise NotImplementedError
+
+    def reconfigure(self, config):
+        pass
