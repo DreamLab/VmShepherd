@@ -28,5 +28,5 @@ class DirectoryDriver(AbstractConfigurationDriver):
         self._presets = presets
 
     def reconfigure(self, config, defaults):
-        super().reload(config, defaults)
+        super().reconfigure(config, defaults)
         self._path = config.get('path', self._path)

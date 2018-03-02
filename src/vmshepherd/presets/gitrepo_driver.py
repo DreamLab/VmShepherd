@@ -71,6 +71,6 @@ class GitRepoDriver(AbstractConfigurationDriver):
                 raise
 
     def reconfigure(self, config, defaults):
-        super().reload(config, defaults)
+        super().reconfigure(config, defaults)
         self._clone_dir = config.get('clone_dir', self._clone_dir)
         self._repos = config.get('repositories', self._repos)
