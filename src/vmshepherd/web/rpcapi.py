@@ -1,6 +1,7 @@
 import logging
 from aiohttp_jsonrpc import handler
 
+
 class RpcApi(handler.JSONRPCView):
 
     TIMEDSHUTDOWN = 'timed-shutdown'
@@ -21,7 +22,7 @@ class RpcApi(handler.JSONRPCView):
         for vm in vms:
             logging.error(f'........................ {vm}')
             result_vms[vm.id] = {
-                'iaas_vm_ip' : vm.ip[0],
+                'iaas_vm_ip': vm.ip[0],
                 'state': vm.state.value
                 }
         return preset.count, result_vms

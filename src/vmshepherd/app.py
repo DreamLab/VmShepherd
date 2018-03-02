@@ -4,7 +4,7 @@ import os
 from vmshepherd.drivers import Drivers
 from vmshepherd.utils import gen_id, prefix_logging
 from vmshepherd.worker import Worker
-from vmshepherd.www import WebServer
+from vmshepherd.web import WebServer
 
 
 class VmShepherd:
@@ -33,8 +33,9 @@ class VmShepherd:
             autostart=self.config.get('autostart', True)
         )
 
-        if self.config.get('web'):
-            port = self.config.get('listen_port', 8888)
+        web = self.config.get('web', {})
+        if web.get('panel', False) or web.get('rpcapi', False):
+            port = web.get('listen_port', 8888)
             logging.info('Starting server, listening on %s.', port)
             self.web = WebServer(self, port)
             asyncio.ensure_future(self.web.start())
