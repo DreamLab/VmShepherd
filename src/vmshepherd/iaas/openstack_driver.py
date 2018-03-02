@@ -1,13 +1,11 @@
 import logging
 import time
 from .abstract import AbstractIaasDriver
-from .exception import IaasException, IaasPresetConfigurationException, IaasCommunicationException, IaasAuthException
+from .exception import IaasException
 from .vm import Vm, VmState
 from bidict import bidict
 from datetime import datetime
-from keystoneauth1 import exceptions as keystoneauth_exceptions
-from novaclient.exceptions import ClientException, NotFound, MethodNotAllowed, NotAcceptable
-from asyncnovaclient import NovaClient, GlanceClient, AuthPassword
+from asyncopenstackclient import NovaClient, GlanceClient, AuthPassword
 from simplejson.errors import JSONDecodeError
 
 
@@ -23,18 +21,6 @@ class OpenStackDriver(AbstractIaasDriver):
         async def wrap(*args, **kwargs):
             try:
                 return await func(*args, **kwargs)
-            except keystoneauth_exceptions.http.Unauthorized as e:
-                logging.error(e)
-                raise IaasAuthException
-            except keystoneauth_exceptions.auth.AuthorizationFailure as e:
-                logging.error(e)
-                raise IaasAuthException
-            except (NotFound, MethodNotAllowed, NotAcceptable) as e:
-                logging.error(e)
-                raise IaasCommunicationException
-            except ClientException as e:
-                logging.error(e)
-                raise IaasPresetConfigurationException
             except Exception as e:
                 logging.error(e)
                 raise IaasException
@@ -190,7 +176,7 @@ class OpenStackDriver(AbstractIaasDriver):
         flavor = self.flavors_map.get(vm['flavor'].get('id'))
         image = self.images_map.get(vm['image'].get('id'))
         state = self._map_vm_status(vm['status'])
-        iaasvm = Vm(self, vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags',[]), flavor=flavor,
+        iaasvm = Vm(self, vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags', []), flavor=flavor,
                     image=image)
         return iaasvm
 
