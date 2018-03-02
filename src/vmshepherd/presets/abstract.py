@@ -49,10 +49,9 @@ class AbstractConfigurationDriver:
         if 'userdata' not in config or not config['userdata']:
             return
         if config['userdata'].startswith('file://'):
-            path = os.path.join(path, config['userdata'].replace('file://',''))
+            path = os.path.join(path, config['userdata'].replace('file://', ''))
             config['userdata'] = await async_load_from_file(path)
 
     def _render_preset_userdata(self, config):
         tpl = Template(config['userdata'])
         config['userdata'] = tpl.render(**config)
-
