@@ -1,8 +1,8 @@
 '''
 '''
 import os
-from jinja2 import Template
 from .preset import Preset
+from jinja2 import Template
 from vmshepherd.drivers import Drivers
 from vmshepherd.utils import get_merged_dict_recursively, async_load_from_file
 
