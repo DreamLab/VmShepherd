@@ -15,7 +15,7 @@ class TestVmShepherdInitWithDummyDrivers(AsyncTestCase):
 
     def setUp(self):
         super().setUp()
-        Drivers.unload_all()
+        Drivers.flush()
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_initialize_preset_manager(self):
@@ -35,7 +35,7 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
 
     def setUp(self):
         super().setUp()
-        Drivers.unload_all()
+        Drivers.flush()
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_run(self):
@@ -93,7 +93,7 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 
     def setUp(self):
         super().setUp()
-        Drivers.unload_all()
+        Drivers.flush()
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_locking(self):

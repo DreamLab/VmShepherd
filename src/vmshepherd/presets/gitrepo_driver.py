@@ -5,16 +5,16 @@ import os
 import tempfile
 from .abstract import AbstractConfigurationDriver
 from asyncio.subprocess import PIPE
-from vmshepherd.utils import async_load_from_file
+from vmshepherd.utils import async_load_from_yaml_file
 
 
 class GitRepoDriver(AbstractConfigurationDriver):
 
-    def __init__(self, repositories, runtime, defaults, clone_dir=None):
+    def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
         self._presets = {}
-        self._clone_dir = clone_dir or os.path.join(tempfile.gettempdir(), 'vmshepherd')
-        self._repos = repositories
+        self._clone_dir = config.get('clone_dir', os.path.join(tempfile.gettempdir(), 'vmshepherd'))
+        self._repos = config['repositories']
 
     async def get(self, preset_name):
         return self._presets[preset_name]
@@ -38,10 +38,12 @@ class GitRepoDriver(AbstractConfigurationDriver):
     async def _load_repos_presets(self, repo_name, path):
         loaded = {}
         for item in os.scandir(path):
-            if os.path.isfile(item.path):
-                preset_name = '.'.join([repo_name, item.name.replace('.conf', '')])
-                preset = await async_load_from_file(item.path)
+            if os.path.isfile(item.path) and os.path.splitext(item.path)[1] == '.conf':
+                preset = await async_load_from_yaml_file(item.path)
+                # prepend repo name to preset_name
+                preset['name'] = preset_name = f"{repo_name}.{preset['name']}"
                 if preset is not None:
+                    await self.inject_preset_userdata(preset, path)
                     loaded[preset_name] = self.create_preset(preset)
         return loaded
 
@@ -59,7 +61,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
 
         if process.returncode != 0:
             logging.error('Git error: %s %s %s', path, repo, stderr)
-            raise RuntimeError('Could not fetch presets ({path}) from {repo}')
+            raise RuntimeError(f'Could not fetch presets ({path}) from {repo}')
 
     def _assure_clone_dir_exists(self):
         try:
@@ -67,3 +69,8 @@ class GitRepoDriver(AbstractConfigurationDriver):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
+
+    def reconfigure(self, config, defaults):
+        super().reconfigure(config, defaults)
+        self._clone_dir = config.get('clone_dir', self._clone_dir)
+        self._repos = config.get('repositories', self._repos)

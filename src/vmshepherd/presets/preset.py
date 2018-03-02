@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+from collections import Counter
 
 
 class Preset:
@@ -14,7 +15,8 @@ class Preset:
         self.count = config['count']
         self.created = 0
         self.terminated = 0
-
+        self.healthcheck_terminated = 0
+        self._extra = {'preset': self.name}
         self._locked = False
         self.info = None
 
@@ -24,11 +26,11 @@ class Preset:
     async def __aenter__(self):
         self.info = await self.runtime.get_preset_data(self.name)
         # TODO: literal, magic numbers should be taken from config
-        require_manage = time.time() - self.info.last_managed > 10
+        require_manage = time.time() - self.info.last_managed > int(self.config.get('manage_interval', 60))
         if not require_manage:
             return False
 
-        expired = time.time() - self.info.last_managed > 120
+        expired = time.time() - self.info.last_managed > int(self.config.get('manage_expire', 120))
         self._locked = await self.runtime.acquire_lock(self.name)
 
         return expired or self._locked
@@ -49,7 +51,7 @@ class Preset:
                 await self.iaas.create_vm(**args)
                 self.created += 1
             except Exception:
-                logging.error('Could not create vm with %s', args)
+                logging.error('Could not create vm with %s', args, extra=self._extra)
 
     async def list_vms(self):
         vms = await self.iaas.list_vms(self.name)
@@ -59,19 +61,27 @@ class Preset:
         vms = await self.list_vms()
 
         missing = self.count - len(vms) if len(vms) < self.count else 0
-
+        vms_stat = Counter([vm.get_state() for vm in vms])
         logging.info(
-            '%s iaas_count: %s preset_count: %s missing: %s',
-            self.name, len(vms), self.count, missing
+            'VMs Status: %s expected, %s in iaas, %s running, %s pending, %s terminated, %s error, %s unknown, %s missing',
+            self.count, len(vms), vms_stat['running'], vms_stat['pending'], vms_stat['terminated'],
+            vms_stat['error'], vms_stat['unknown'], missing, extra=self._extra
         )
         for vm in vms:
             if vm.is_dead():
+                logging.info("Terminate %s", vm, extra=self._extra)
+                await vm.terminate()
                 missing += 1
                 self.terminated += 1
-                await vm.terminate()
 
+        logging.debug("Create %s Vm", missing, extra=self._extra)
         await self._create_vms(missing)
         await self._healthcheck(vms)
+        logging.info(
+            'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
+            self.terminated, self.healthcheck_terminated, missing, len(self.info.failed_checks),
+            extra=self._extra
+        )
 
     async def _healthcheck(self, vms):
         _healthchecks = {}
@@ -79,23 +89,23 @@ class Preset:
             if vm.is_running():
                 _healthchecks[vm] = asyncio.ensure_future(self.healthcheck.is_healthy(vm))
         await asyncio.gather(*list(_healthchecks.values()), return_exceptions=True)
-        missing = 0
         current_fails = []
 
         for vm, state_check in _healthchecks.items():
             # if check failed
             if not state_check.result():
                 current_fails.append(vm.id)
-                last_failed = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
+                failed_since = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
                 count_fails = self.info.failed_checks.get(vm.id, {}).get('count', 0)
-                self.info.failed_checks[vm.id] = {'time': time.time(), 'count': count_fails + 1}
+                self.info.failed_checks[vm.id] = {'time': failed_since, 'count': count_fails + 1}
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
-                if terminate_heatlh_failed_delay >= 0:
-                    if terminate_heatlh_failed_delay + last_failed < time.time():
-                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails, last_failed)
-                        missing += 1
+                if terminate_heatlh_failed_delay >= 0 and count_fails > 5:
+                    if terminate_heatlh_failed_delay + failed_since < time.time():
+                        logging.debug("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails,
+                                      failed_since, extra=self._extra)
                         await self._terminate_vm(vm)
+                        self.healthcheck_terminated += 1
 
-        for vm in self.info.failed_checks:
-            if vm not in current_fails:
-                del self.info.failed_checks[vm.id]
+        for vm_id in list(self.info.failed_checks.keys()):
+            if vm_id not in current_fails:
+                del self.info.failed_checks[vm_id]
