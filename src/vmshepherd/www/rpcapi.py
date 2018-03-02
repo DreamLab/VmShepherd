@@ -14,7 +14,6 @@ class RpcApi(handler.JSONRPCView):
         :arg string preset: preset name (e.g. C_DEV-apps-dev)
         """
         vmshepherd = self.request.app.vmshepherd
-        logging.error(dir(vmshepherd.preset_manager))
         await vmshepherd.preset_manager.reload()
         preset = await vmshepherd.preset_manager.get(preset)
         vms = await preset.list_vms()
@@ -27,7 +26,7 @@ class RpcApi(handler.JSONRPCView):
                 }
         return preset.count, result_vms
 
-    async def rpc_discard_vm(self, preset, vm_id):
+    async def rpc_terminate_vm(self, preset, vm_id):
         """Discard vm in specified preset
 
         :arg string preset: preset name
@@ -36,10 +35,6 @@ class RpcApi(handler.JSONRPCView):
         Returns string OK
         """
         vmshepherd = self.request.app.vmshepherd
-        await vmshepherd.preset_manager._terminate_vm(vm_id)
+        preset = await vmshepherd.preset_manager.get(preset)
+        await preset.iaas.terminate_vm(vm_id)
         return 'OK'
-        #cfg = yield self.get_preset_cfg(preset)
-        #iaas_api = self._get_iaas_api(preset, cfg)
-        #yield iaas_api.discard_vm(vm_id)
-        #logging.info("Discard vm %s", vm_id)
-        #return 'OK'
