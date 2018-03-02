@@ -20,7 +20,6 @@ class RpcApi(handler.JSONRPCView):
         vms = await preset.list_vms()
         result_vms = {}
         for vm in vms:
-            logging.error(f'........................ {vm}')
             result_vms[vm.id] = {
                 'iaas_vm_ip': vm.ip[0],
                 'state': vm.state.value
