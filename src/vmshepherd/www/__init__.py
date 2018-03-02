@@ -3,7 +3,8 @@ import jinja2
 import os
 import time
 from aiohttp import web
-
+import logging
+from .rpcapi import RpcApi
 
 class WebServer(web.Application):
 
@@ -26,6 +27,7 @@ class WebServer(web.Application):
         self.router.add_static(
             '/static/', path=os.path.join(webroot, 'static'), name='static'
         )
+        self.router.add_route('POST', '/rpcapi', RpcApi)
 
     async def start(self):
         runner = web.AppRunner(self)
