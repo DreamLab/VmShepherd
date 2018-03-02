@@ -35,7 +35,8 @@ class AbstractConfigurationDriver:
         healthcheck = Drivers.get('healthcheck', healthcheck_cfg)
         config['healthcheck'] = healthcheck_cfg
 
-        self._render_preset_userdata(config)
+        if 'userdata' in config:
+            self._render_preset_userdata(config)
 
         return Preset(
             config['name'], config, runtime=self.runtime,
