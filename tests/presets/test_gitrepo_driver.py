@@ -1,5 +1,6 @@
 from aiounittest import AsyncTestCase, futurized
 from tests.common import example_config
+from unittest import mock
 from unittest.mock import Mock, patch
 from vmshepherd.presets import gitrepo_driver
 
@@ -75,3 +76,14 @@ class TestGitRepo(AsyncTestCase):
         self.assertEqual(res['blah.test-preset'].config['flavor'], 'm1.small')
         self.assertEqual(res['blah.test-preset'].config['image'], 'fedora-27')
         self.assertEqual(res['blah.test-preset'].config['meta_tags'], {'key1': 'value1'})
+
+    async def test_reload(self):
+        self.mock_os.path.join.side_effect = lambda a, b: (a + b)
+        self.driver._clone_or_update = Mock(return_value=futurized(None))
+        self.driver._assure_clone_dir_exists = Mock(return_value=True)
+        self.driver._load_repos_presets = Mock(return_value=futurized({}))
+        await self.driver.reload()
+        self.driver._load_repos_presets.assert_has_calls([
+            mock.call('paas', '/tmp/paas'), mock.call('db', '/tmp/db')
+        ])
+        self.assertEqual(self.driver._load_repos_presets.call_count, 2)
