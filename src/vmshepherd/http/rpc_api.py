@@ -17,7 +17,7 @@ class RpcApi(handler.JSONRPCView):
         result_vms = {}
         for vm in vms:
             result_vms[vm.id] = {
-                'iaas_vm_ip': vm.ip[0],
+                'ip': vm.ip[0],
                 'state': vm.state.value
                 }
         return preset.count, result_vms

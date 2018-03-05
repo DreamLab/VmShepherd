@@ -6,15 +6,15 @@ import time
 
 mock_list_vms = {
     "1243454353": {
-        "iaas_vm_ip": "10.177.51.8",
+        "ip": "10.177.51.8",
         "state": "running"
     },
     "4535646466": {
-        "iaas_vm_ip": "10.177.51.9",
+        "ip": "10.177.51.9",
         "state": "running"
     },
     "5465465643": {
-        "iaas_vm_ip": "10.177.51.10",
+        "ip": "10.177.51.10",
         "state": "running"
     }
 }
