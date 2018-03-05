@@ -3,15 +3,12 @@ from aiohttp_jsonrpc import handler
 
 class RpcApi(handler.JSONRPCView):
 
-    TIMEDSHUTDOWN = 'timed-shutdown'
-    DISCARD = 'discard'
-
     async def rpc_list_vms(self, preset):
         """ List VMs for preset, with runtime states.
 
-        Returns expected VMs count and dict with runtime VMs data.
-
         :arg string preset: preset name (e.g. C_DEV-apps-dev)
+        :returns: expected VMs count and dict with runtime VMs data.
+
         """
         vmshepherd = self.request.app.vmshepherd
         await vmshepherd.preset_manager.reload()
@@ -30,8 +27,8 @@ class RpcApi(handler.JSONRPCView):
 
         :arg string preset: preset name
         :arg int vm_id: Vm's id
+        :returns: string OK
 
-        Returns string OK
         """
         vmshepherd = self.request.app.vmshepherd
         preset = await vmshepherd.preset_manager.get(preset)
