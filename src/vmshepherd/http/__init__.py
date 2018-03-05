@@ -8,15 +8,14 @@ from .rpc_api import RpcApi
 
 class WebServer(web.Application):
 
-    def __init__(self, vmshepherd, port=8888):
+    def __init__(self, vmshepherd, port=8888, panel=None, rpc_api=None):
         super().__init__()
 
         self.port = port
         self.vmshepherd = vmshepherd
-        web = vmshepherd.config.get('web')
-        if web.get('panel'):
+        if panel:
             self.start_panel()
-        if web.get('rpc_api'):
+        if rpc_api:
             self.start_rpc_api()
 
     def start_panel(self):
