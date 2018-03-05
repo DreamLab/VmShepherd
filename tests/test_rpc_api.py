@@ -43,12 +43,12 @@ class TestRpcApi(AsyncTestCase):
         mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({})
         self.rpcapi = RpcApi(mock_request)
 
-    async def test_rcp_list_vms(self):
-        ret = await self.rpcapi.rpc_list_vms('C_DEV-app-dev')
+    async def test_list_vms(self):
+        ret = await self.rpcapi.list_vms('C_DEV-app-dev')
         self.assertEqual(ret[1],  mock_list_vms)
         self.assertEqual(ret[0], 3)
 
-    async def test_rpc_terminate_vm_success(self):
-        ret = await self.rpcapi.rpc_terminate_vm('C_DEV-app-dev', 12345)
+    async def test_terminate_vm_success(self):
+        ret = await self.rpcapi.terminate_vm('C_DEV-app-dev', 12345)
         self.assertEqual(ret, 'OK')
         self.mock_preset_manager.iaas.terminate_vm.assert_called_with(12345)

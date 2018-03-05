@@ -3,7 +3,11 @@ from aiohttp_jsonrpc import handler
 
 class RpcApi(handler.JSONRPCView):
 
-    async def rpc_list_vms(self, preset):
+    def __init__(self, request):
+        super().__init__(request)
+        self.METHOD_PREFIX = ''
+
+    async def list_vms(self, preset):
         """ List VMs for preset, with runtime states.
 
         :arg string preset: preset name (e.g. C_DEV-apps-dev)
@@ -22,7 +26,7 @@ class RpcApi(handler.JSONRPCView):
                 }
         return preset.count, result_vms
 
-    async def rpc_terminate_vm(self, preset, vm_id):
+    async def terminate_vm(self, preset, vm_id):
         """Discard vm in specified preset
 
         :arg string preset: preset name
