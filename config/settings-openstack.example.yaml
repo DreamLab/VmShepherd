@@ -1,7 +1,9 @@
 log_level: info
 
-web: True
-listen_port: 8888
+web: 
+    pane: True
+    rpc_api: True
+    listen_port: 8888
 
 runtime:
   driver: InMemoryDriver

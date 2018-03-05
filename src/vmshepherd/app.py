@@ -4,7 +4,7 @@ import os
 from vmshepherd.drivers import Drivers
 from vmshepherd.utils import gen_id, prefix_logging
 from vmshepherd.worker import Worker
-from vmshepherd.web import WebServer
+from vmshepherd.http import WebServer
 
 
 class VmShepherd:
@@ -34,7 +34,7 @@ class VmShepherd:
         )
 
         web = self.config.get('web', {})
-        if web.get('panel', False) or web.get('rpcapi', False):
+        if web.get('panel', False) or web.get('rpc_api', False):
             port = web.get('listen_port', 8888)
             logging.info('Starting server, listening on %s.', port)
             self.web = WebServer(self, port)

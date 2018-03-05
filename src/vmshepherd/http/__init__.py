@@ -3,7 +3,7 @@ import jinja2
 import os
 import time
 from aiohttp import web
-from .rpcapi import RpcApi
+from .rpc_api import RpcApi
 
 
 class WebServer(web.Application):
@@ -16,8 +16,8 @@ class WebServer(web.Application):
         web = vmshepherd.config.get('web')
         if web.get('panel'):
             self.start_panel()
-        if web.get('rpcapi'):
-            self.start_rpcapi()
+        if web.get('rpc_api'):
+            self.start_rpc_api()
 
     def start_panel(self):
         webroot = os.path.dirname(__file__)
@@ -34,7 +34,7 @@ class WebServer(web.Application):
             '/static/', path=os.path.join(webroot, 'static'), name='static'
         )
 
-    def start_rpcapi(self):
+    def start_rpc_api(self):
         self.router.add_route('POST', '/rpcapi', RpcApi)
 
     async def start(self):

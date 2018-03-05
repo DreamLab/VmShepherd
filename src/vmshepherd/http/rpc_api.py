@@ -1,4 +1,3 @@
-import logging
 from aiohttp_jsonrpc import handler
 
 
