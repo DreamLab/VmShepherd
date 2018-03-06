@@ -2,8 +2,8 @@ import aiohttp_jinja2
 import jinja2
 import os
 import time
-from aiohttp import web
 from .rpc_api import RpcApi
+from aiohttp import web
 
 
 class WebServer(web.Application):
