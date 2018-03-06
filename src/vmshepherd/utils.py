@@ -27,12 +27,14 @@ def load_config_file(path):
 
 async def async_load_from_file(path):
     async with aiofiles.open(path, mode='r') as f:
-        contents = await f.read()
-        data = yaml.load(contents)
+        data = await f.read()
     return data
 
 
-# Following functions are used in dummy drivers
+async def async_load_from_yaml_file(path):
+    contents = await async_load_from_file(path)
+    return yaml.load(contents)
+
 
 def add_async_delay(func):
     async def wrapper(*args, **kwargs):

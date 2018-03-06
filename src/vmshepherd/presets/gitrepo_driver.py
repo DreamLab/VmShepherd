@@ -5,7 +5,7 @@ import os
 import tempfile
 from .abstract import AbstractConfigurationDriver
 from asyncio.subprocess import PIPE
-from vmshepherd.utils import async_load_from_file
+from vmshepherd.utils import async_load_from_yaml_file
 
 
 class GitRepoDriver(AbstractConfigurationDriver):
@@ -38,12 +38,12 @@ class GitRepoDriver(AbstractConfigurationDriver):
     async def _load_repos_presets(self, repo_name, path):
         loaded = {}
         for item in os.scandir(path):
-            if os.path.isfile(item.path):
-                preset = await async_load_from_file(item.path)
-
+            if os.path.isfile(item.path) and os.path.splitext(item.path)[1] == '.conf':
+                preset = await async_load_from_yaml_file(item.path)
                 # prepend repo name to preset_name
                 preset['name'] = preset_name = f"{repo_name}.{preset['name']}"
                 if preset is not None:
+                    await self.inject_preset_userdata(preset, path)
                     loaded[preset_name] = self.create_preset(preset)
         return loaded
 

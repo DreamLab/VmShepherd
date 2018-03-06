@@ -1,6 +1,6 @@
 import os
 from .abstract import AbstractConfigurationDriver
-from vmshepherd.utils import async_load_from_file
+from vmshepherd.utils import async_load_from_yaml_file
 
 
 class DirectoryDriver(AbstractConfigurationDriver):
@@ -21,8 +21,9 @@ class DirectoryDriver(AbstractConfigurationDriver):
         for item in os.scandir(self._path):
             if os.path.isfile(item.path):
                 preset_name = item.name.replace('.conf', '')
-                preset = await async_load_from_file(item.path)
+                preset = await async_load_from_yaml_file(item.path)
                 if preset is not None:
+                    await self.inject_preset_userdata(preset, self._path)
                     presets[preset_name] = self.create_preset(preset)
         self._presets = presets
 
