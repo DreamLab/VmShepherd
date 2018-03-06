@@ -14,11 +14,11 @@ class WebServer(web.Application):
         self.port = port
         self.vmshepherd = vmshepherd
         if panel:
-            self.start_panel()
+            self.configure_panel()
         if rpc_api:
-            self.start_rpc_api()
+            self.configure_rpc_api()
 
-    def start_panel(self):
+    def configure_panel(self):
         webroot = os.path.dirname(__file__)
 
         self.template_path = os.path.join(webroot, 'templates')
@@ -33,7 +33,7 @@ class WebServer(web.Application):
             '/static/', path=os.path.join(webroot, 'static'), name='static'
         )
 
-    def start_rpc_api(self):
+    def configure_rpc_api(self):
         self.router.add_route('POST', '/rpcapi', RpcApi)
 
     async def start(self):
