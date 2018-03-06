@@ -2,9 +2,9 @@ import asyncio
 import logging
 import os
 from vmshepherd.drivers import Drivers
+from vmshepherd.http import WebServer
 from vmshepherd.utils import gen_id, prefix_logging
 from vmshepherd.worker import Worker
-from vmshepherd.http import WebServer
 
 
 class VmShepherd:
