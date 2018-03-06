@@ -1,6 +1,6 @@
 log_level: info
 
-web: 
+http:
     pane: True
     rpc_api: True
     listen_port: 8888
