@@ -1,8 +1,8 @@
+import time
 from aiounittest import futurized, AsyncTestCase
 from unittest.mock import patch, Mock
 from vmshepherd.http.rpc_api import RpcApi
 from vmshepherd.iaas.vm import Vm, VmState
-import time
 
 mock_list_vms = {
     "1243454353": {
