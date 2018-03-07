@@ -18,12 +18,7 @@ class RpcApi(handler.JSONRPCView):
         await vmshepherd.preset_manager.reload()
         preset = await vmshepherd.preset_manager.get(preset)
         vms = await preset.list_vms()
-        result_vms = {}
-        for vm in vms:
-            result_vms[vm.id] = {
-                'ip': vm.ip[0],
-                'state': vm.state.value
-                }
+        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value} for vm in vms}
         return preset.count, result_vms
 
     async def terminate_vm(self, preset, vm_id):
