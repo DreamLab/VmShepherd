@@ -3,9 +3,9 @@ import time
 from .abstract import AbstractIaasDriver
 from .exception import IaasException
 from .vm import Vm, VmState
+from asyncopenstackclient import NovaClient, GlanceClient, AuthPassword
 from bidict import bidict
 from datetime import datetime
-from asyncopenstackclient import NovaClient, GlanceClient, AuthPassword
 from simplejson.errors import JSONDecodeError
 
 
