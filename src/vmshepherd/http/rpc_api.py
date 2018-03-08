@@ -11,7 +11,6 @@ class RpcApi(handler.JSONRPCView):
         """ List VMs for preset, with runtime states.
 
         :arg string preset: preset name (e.g. C_DEV-apps-dev)
-        :returns: expected VMs count and dict with runtime VMs data.
 
         """
         vmshepherd = self.request.app.vmshepherd
@@ -22,11 +21,10 @@ class RpcApi(handler.JSONRPCView):
         return preset.count, result_vms
 
     async def terminate_vm(self, preset, vm_id):
-        """Discard vm in specified preset
+        """ Discard vm in specified preset
 
         :arg string preset: preset name
         :arg int vm_id: Vm's id
-        :returns: string OK
 
         """
         vmshepherd = self.request.app.vmshepherd
