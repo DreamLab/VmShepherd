@@ -2,17 +2,23 @@ import aiohttp_jinja2
 import jinja2
 import os
 import time
+from .rpc_api import RpcApi
 from aiohttp import web
 
 
 class WebServer(web.Application):
 
-    def __init__(self, vmshepherd, port=8888):
+    def __init__(self, vmshepherd, port=8888, panel=None, rpc_api=None):
         super().__init__()
 
         self.port = port
         self.vmshepherd = vmshepherd
+        if panel:
+            self.configure_panel()
+        if rpc_api:
+            self.configure_rpc_api()
 
+    def configure_panel(self):
         webroot = os.path.dirname(__file__)
 
         self.template_path = os.path.join(webroot, 'templates')
@@ -26,6 +32,9 @@ class WebServer(web.Application):
         self.router.add_static(
             '/static/', path=os.path.join(webroot, 'static'), name='static'
         )
+
+    def configure_rpc_api(self):
+        self.router.add_route('POST', '/api', RpcApi)
 
     async def start(self):
         runner = web.AppRunner(self)

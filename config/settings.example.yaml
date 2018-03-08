@@ -1,7 +1,9 @@
 log_level: info
 
-web: True
-listen_port: 8888
+http:
+    panel: True
+    rpc_api: True
+    listen_port: 8888
 
 worker_interval: 5
 
