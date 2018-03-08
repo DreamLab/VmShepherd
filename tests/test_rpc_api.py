@@ -4,21 +4,6 @@ from unittest.mock import patch, Mock
 from vmshepherd.http.rpc_api import RpcApi
 from vmshepherd.iaas.vm import Vm, VmState
 
-mock_list_vms = {
-    "1243454353": {
-        "ip": "10.177.51.8",
-        "state": "running"
-    },
-    "4535646466": {
-        "ip": "10.177.51.9",
-        "state": "running"
-    },
-    "5465465643": {
-        "ip": "10.177.51.10",
-        "state": "running"
-    }
-}
-
 
 class TestRpcApi(AsyncTestCase):
 
@@ -31,21 +16,40 @@ class TestRpcApi(AsyncTestCase):
         mock_request = Mock()
         mock_preset_manager = Mock()
         mock_preset_data = [
-                    Vm(self, '1243454353', 'C_DEV-app-dev', ['10.177.51.8'], time.time(), state=VmState.RUNNING),
-                    Vm(self, '4535646466', 'C_DEV-app-dev', ['10.177.51.9'], time.time(), state=VmState.RUNNING),
-                    Vm(self, '5465465643', 'C_DEV-app-dev', ['10.177.51.10'], time.time(), state=VmState.RUNNING)
-                ]
+            Vm(self, '1243454353', 'C_DEV-app-dev',
+               ['10.177.51.8'], time.time(), state=VmState.RUNNING),
+            Vm(self, '4535646466', 'C_DEV-app-dev',
+               ['10.177.51.9'], time.time(), state=VmState.RUNNING),
+            Vm(self, '5465465643', 'C_DEV-app-dev',
+               ['10.177.51.10'], time.time(), state=VmState.RUNNING)
+        ]
         mock_preset_manager.list_vms.return_value = futurized(mock_preset_data)
         mock_preset_manager.count = 3
         self.mock_preset_manager = mock_preset_manager
         mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
-        mock_request.app.vmshepherd.preset_manager.get.return_value = futurized(mock_preset_manager)
-        mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({})
+        mock_request.app.vmshepherd.preset_manager.get.return_value = futurized(
+            mock_preset_manager)
+        mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({
+        })
         self.rpcapi = RpcApi(mock_request)
+        self.mock_list_vms = {
+            "1243454353": {
+                "ip": "10.177.51.8",
+                "state": "running"
+            },
+            "4535646466": {
+                "ip": "10.177.51.9",
+                "state": "running"
+            },
+            "5465465643": {
+                "ip": "10.177.51.10",
+                "state": "running"
+            }
+        }
 
     async def test_list_vms(self):
         ret = await self.rpcapi.list_vms('C_DEV-app-dev')
-        self.assertEqual(ret[1],  mock_list_vms)
+        self.assertEqual(ret[1], self.mock_list_vms)
         self.assertEqual(ret[0], 3)
 
     async def test_terminate_vm_success(self):

@@ -34,7 +34,7 @@ class WebServer(web.Application):
         )
 
     def configure_rpc_api(self):
-        self.router.add_route('POST', '/rpcapi', RpcApi)
+        self.router.add_route('POST', '/api', RpcApi)
 
     async def start(self):
         runner = web.AppRunner(self)
