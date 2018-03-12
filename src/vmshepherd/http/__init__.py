@@ -8,15 +8,15 @@ from aiohttp import web
 
 class WebServer(web.Application):
 
-    def __init__(self, vmshepherd, port=8888, panel=None, rpc_api=None):
+    def __init__(self, vmshepherd, port=8888, panel=None, api=None):
         super().__init__()
 
         self.port = port
         self.vmshepherd = vmshepherd
         if panel:
             self.configure_panel()
-        if rpc_api:
-            self.configure_rpc_api()
+        if api:
+            self.configure_api()
 
     def configure_panel(self):
         webroot = os.path.dirname(__file__)
@@ -33,7 +33,7 @@ class WebServer(web.Application):
             '/static/', path=os.path.join(webroot, 'static'), name='static'
         )
 
-    def configure_rpc_api(self):
+    def configure_api(self):
         self.router.add_route('POST', '/api', RpcApi)
 
     async def start(self):
