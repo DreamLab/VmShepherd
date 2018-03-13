@@ -49,7 +49,7 @@
               <li><b>Meta-tags:</b>
                 <ul>
                   {% for k, v in data['preset'].config.get('meta_tags', {}).items() %}
-                    <li><b>{{ k }}</b>: {v}</li>
+                    <li><b>{{ k }}</b>: {{ v }}</li>
                   {% endfor %}
                 </ul>
               </li>
