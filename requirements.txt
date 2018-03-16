@@ -4,3 +4,4 @@ aiofiles
 bidict
 aiohttp_jinja2
 AsyncOpenStackClient
+aiohttp_jsonrpc==0.1.0
