@@ -1,6 +1,6 @@
 from aiounittest import futurized, AsyncTestCase
 from bidict import bidict
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from vmshepherd.iaas import OpenStackDriver
 
 
@@ -30,28 +30,29 @@ class TestOpenStackDriver(AsyncTestCase):
             ]
         }
 
-        self.vm = MockVM()
-        self.vm.name = 'test-vm-name'
-        self.vm.id = '099fds8f9ds89fdsf'
-        self.vm.metadata = []
-        self.vm.status = 'ACTIVE'
-        self.vm.created = '2018-02-02T14:29:49Z'
-        self.vm.updated = '2018-02-02T14:30:00Z'
-        self.vm.tags = []
-        self.vm.addresses = {
-            'pl-krk-2-int-301-c2-int-1': [
-                {
-                    'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:29:f1:bb',
-                    'version': 4,
-                    'addr': '10.185.138.36',
-                    'OS-EXT-IPS:type': 'fixed'
-                }
-            ]
+        self.vm = {
+            'name': 'test-vm-name',
+            'id': '099fds8f9ds89fdsf',
+            'metadata': [],
+            'status': 'ACTIVE',
+            'created': '2018-02-02T14:29:49Z',
+            'updated': '2018-02-02T14:30:00Z',
+            'tags': [],
+            'addresses': {
+                'pl-krk-2-int-301-c2-int-1': [
+                    {
+                        'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:29:f1:bb',
+                        'version': 4,
+                        'addr': '10.185.138.36',
+                        'OS-EXT-IPS:type': 'fixed'
+                    }
+                ]
+            },
+            'flavor': {'id': 'testflavorid'},
+            'image': {'id': 'testimgid'}
         }
-        self.vm.flavor = {'id': 'testflavorid'}
-        self.vm.image = {'id': 'testimgid'}
 
-    async def test__map_vm_structure(self):
+    async def test_map_vm_structure(self):
         '''
         Test if mapped structure is correct
         '''
@@ -68,6 +69,7 @@ class TestOpenStackDriver(AsyncTestCase):
         osd.images_map['testimgid'] = 'testimgname'
 
         result = osd._map_vm_structure(self.vm)
+
         self.assertEqual(result.id, '099fds8f9ds89fdsf')
         self.assertEqual(result.name, 'test-vm-name')
         self.assertEqual(result.metadata, [])
@@ -80,14 +82,16 @@ class TestOpenStackDriver(AsyncTestCase):
         '''
         test if initialize method set flavors and images properties
         '''
-        image = Mock()
-        image.id = 'imageid'
-        image.name = 'imagename'
-        image.created_at = '2018-02-02T14:30:00Z'
-        image.tags = ['latest']
-        flavor = Mock()
-        flavor.id = 'flavorid'
-        flavor.name = 'flavorname'
+        image = {
+            'id': 'imageid',
+            'name': 'imagename',
+            'created_at': '2018-02-02T14:30:00Z',
+            'tags': ['latest']
+        }
+        flavor = {
+            'id': 'flavorid',
+            'name': 'flavorname'
+        }
         mock_list_flavors = patch('vmshepherd.iaas.OpenStackDriver._list_flavors').start()
         mock_list_flavors.return_value = futurized([flavor])
         mock_list_images = patch('vmshepherd.iaas.OpenStackDriver._list_images').start()

@@ -3,8 +3,5 @@ aiohttp==3.0.0
 aiofiles
 bidict
 aiohttp_jinja2
-python-novaclient==10.0.0
-python-glanceclient==2.9.1
-keystoneauth1==3.4.0
-python-keystoneclient==3.10.0
+AsyncOpenStackClient
 aiohttp_jsonrpc==0.1.0

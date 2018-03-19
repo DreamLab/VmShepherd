@@ -1,16 +1,12 @@
 import logging
 import time
 from .abstract import AbstractIaasDriver
-from .exception import IaasException, IaasPresetConfigurationException, IaasCommunicationException, IaasAuthException
+from .exception import IaasException
 from .vm import Vm, VmState
+from asyncopenstackclient import NovaClient, GlanceClient, AuthPassword
 from bidict import bidict
 from datetime import datetime
-from glanceclient.v2 import Client as glanceclient
-from keystoneauth1 import session
-from keystoneauth1 import exceptions as keystoneauth_exceptions
-from keystoneauth1.identity import v3
-from novaclient import client as novaclient
-from novaclient.exceptions import ClientException, NotFound, MethodNotAllowed, NotAcceptable
+from simplejson.errors import JSONDecodeError
 
 
 class OpenStackDriver(AbstractIaasDriver):
@@ -25,18 +21,6 @@ class OpenStackDriver(AbstractIaasDriver):
         async def wrap(*args, **kwargs):
             try:
                 return await func(*args, **kwargs)
-            except keystoneauth_exceptions.http.Unauthorized as e:
-                logging.error(e)
-                raise IaasAuthException
-            except keystoneauth_exceptions.auth.AuthorizationFailure as e:
-                logging.error(e)
-                raise IaasAuthException
-            except (NotFound, MethodNotAllowed, NotAcceptable) as e:
-                logging.error(e)
-                raise IaasCommunicationException
-            except ClientException as e:
-                logging.error(e)
-                raise IaasPresetConfigurationException
             except Exception as e:
                 logging.error(e)
                 raise IaasException
@@ -48,16 +32,17 @@ class OpenStackDriver(AbstractIaasDriver):
 
         '''
         async def wrap(self, *args, **kwargs):
-            if not hasattr(self, 'openstacksess') or self.openstacksess.verify is not True:
-                self.auth = v3.Password(auth_url=self.config['auth_url'],
-                                        username=self.config['username'],
-                                        password=self.config['password'],
-                                        project_name=self.config['project_name'],
-                                        user_domain_name=self.config['user_domain_name'],
-                                        project_domain_name=self.config['project_domain_name'])
-                self.openstacksess = session.Session(auth=self.auth)
-                self.nova = novaclient.Client(self.config['api_version'], session=self.openstacksess)
-                self.glance = glanceclient('2', session=self.openstacksess)
+            if not hasattr(self, 'auth') or self.auth.verify() is True:
+                self.auth = AuthPassword(auth_url=self.config['auth_url'],
+                                         username=self.config['username'],
+                                         password=self.config['password'],
+                                         project_name=self.config['project_name'],
+                                         user_domain_name=self.config['user_domain_name'],
+                                         project_domain_name=self.config['project_domain_name'])
+                self.nova = NovaClient(self.config['api_version'], session=self.auth)
+                self.glance = GlanceClient(session=self.auth)
+                await self.nova.init_api()
+                await self.glance.init_api()
 
             if not hasattr(self, 'last_init') or self.last_init < (time.time() - 60):
                 await self.initialize()
@@ -77,7 +62,7 @@ class OpenStackDriver(AbstractIaasDriver):
         self.images_details = {}
 
         for flavor in flavors:
-            self.flavors_map.put(flavor.id, flavor.name, on_dup_key='OVERWRITE', on_dup_val='OVERWRITE')
+            self.flavors_map.put(flavor['id'], flavor['name'], on_dup_key='OVERWRITE', on_dup_val='OVERWRITE')
 
         for image in images:
             # @TODO filetes :
@@ -85,12 +70,12 @@ class OpenStackDriver(AbstractIaasDriver):
             # if hasattr(image, 'owner_id') and  image.owner_id in self.config['image_owner_ids']:
             #  @TODO enable filtering by tag
             # if 'lastest' in image.tags:
-            self.images_details[image.id] = {
-                'name': image.name,
-                'created_at': image.created_at,
-                'latest': 'latest' in image.tags
+            self.images_details[image['id']] = {
+                'name': image['name'],
+                'created_at': image['created_at'],
+                'latest': 'latest' in image['tags']
             }
-            self.images_map.put(image.id, image.name, on_dup_key='OVERWRITE', on_dup_val='OVERWRITE')
+            self.images_map.put(image['id'], image['name'], on_dup_key='OVERWRITE', on_dup_val='OVERWRITE')
 
     @initialize_openstack
     @openstack_exception
@@ -113,8 +98,17 @@ class OpenStackDriver(AbstractIaasDriver):
 
         image_id = self.images_map.inv.get(image)
         flavor_id = self.flavors_map.inv.get(flavor)
-        return self.nova.servers.create(preset_name, flavor=flavor_id, image=image_id, security_groups=security_groups,
-                                        userdata=userdata, key_name=key_name)
+        body = {
+            "server": {
+                "name": preset_name,
+                "flavorRef": flavor_id,
+                "imageRef": image_id,
+                "security_groups": [{"name": group} for group in security_groups],
+                "user_data": userdata,
+            }
+        }
+        result = await self.nova.api.servers.create(body=body)
+        return result.body["server"]
 
     @initialize_openstack
     @openstack_exception
@@ -124,9 +118,9 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg present_name: string
         '''
 
-        servers = self.nova.servers.list(search_opts={'name': f'^{preset_name}$'})
+        servers = await self.nova.api.servers.list(params={'name': f'^{preset_name}$'})
         result = []
-        for server in servers:
+        for server in servers.body["servers"]:
             result.append(self._map_vm_structure(server))
         return result
 
@@ -136,7 +130,13 @@ class OpenStackDriver(AbstractIaasDriver):
          Terminate VM
          :arg vm_id: string
         '''
-        return self.nova.servers.force_delete(vm_id)
+        try:
+            await self.nova.api.servers.force_delete(vm_id)
+        except JSONDecodeError as exc:
+            logging.info("nova sent 'content-type: application/json' but no content appeared, whatever")
+            pass
+        except Exception:
+            raise
 
     @initialize_openstack
     @openstack_exception
@@ -146,21 +146,24 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg vm_id: string
         :returns vm: object
         '''
-        return self._map_vm_structure(self.nova.servers.get(vm_id))
+        result = await self.nova.api.servers.get(vm_id)
+        return self._map_vm_structure(result.body["server"])
 
     @openstack_exception
     async def _list_flavors(self):
         '''
         Returns list of flavors from Openstack
         '''
-        return self.nova.flavors.list()
+        result = await self.nova.api.flavors.list()
+        return result.body['flavors']
 
     @openstack_exception
     async def _list_images(self):
         '''
         Returns list of images from OpenStack
         '''
-        return self.glance.images.list()
+        result = await self.glance.api.images.list()
+        return result.body['images']
 
     def _map_vm_structure(self, vm):
         '''
@@ -168,12 +171,12 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg vm: object
         :returns object
         '''
-        ip = self._extract_ips(vm.addresses)
-        created = datetime.strptime(vm.created, '%Y-%m-%dT%H:%M:%SZ')
-        flavor = self.flavors_map.get(vm.flavor.get('id'))
-        image = self.images_map.get(vm.image.get('id'))
-        state = self._map_vm_status(vm.status)
-        iaasvm = Vm(self, vm.id, vm.name, ip, created, state=state, metadata=vm.metadata, tags=vm.tags, flavor=flavor,
+        ip = self._extract_ips(vm['addresses'])
+        created = datetime.strptime(vm['created'], '%Y-%m-%dT%H:%M:%SZ')
+        flavor = self.flavors_map.get(vm['flavor'].get('id'))
+        image = self.images_map.get(vm['image'].get('id'))
+        state = self._map_vm_status(vm['status'])
+        iaasvm = Vm(self, vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags', []), flavor=flavor,
                     image=image)
         return iaasvm
 

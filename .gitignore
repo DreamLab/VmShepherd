@@ -4,6 +4,7 @@
 *~
 /.project
 /.pydevproject
+**/*.orig
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -52,6 +53,7 @@ pip-delete-this-directory.txt
 nosetests.xml
 coverage.xml
 htmlcov
+report.xml
 
 # Translations
 *.mo
@@ -75,3 +77,6 @@ docs/_build
 .bootstrap
 .appveyor.token
 *.bak
+
+# ctags
+tags
