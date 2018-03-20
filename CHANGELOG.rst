@@ -9,5 +9,11 @@ Changelog
 
 0.6.0 (2018-02-01)
 ------------------
+
 * web panel
 * rpc api
+
+0.7.0 (2018-03-20)
+------------------
+
+* AsyncOpenStackClient
