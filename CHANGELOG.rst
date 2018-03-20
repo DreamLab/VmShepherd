@@ -2,10 +2,10 @@
 Changelog
 =========
 
-0.0.3 (2018-02-01)
+0.7.0 (2018-03-20)
 ------------------
 
-* initial
+* AsyncOpenStackClient
 
 0.6.0 (2018-02-01)
 ------------------
@@ -13,7 +13,7 @@ Changelog
 * web panel
 * rpc api
 
-0.7.0 (2018-03-20)
+0.0.3 (2018-02-01)
 ------------------
 
-* AsyncOpenStackClient
+* initial
