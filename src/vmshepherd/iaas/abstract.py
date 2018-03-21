@@ -29,7 +29,7 @@ class AbstractIaasDriver:
 
     async def create_vm(self, preset_name: str, image: str, flavor: str, security_groups: List=None,
                         userdata: Dict=None, key_name: str=None, availability_zone: str=None,
-                        subnet: str=None) -> Any:
+                        subnets: List=None) -> Any:
         """
         Create (boot) a new server.
 
@@ -42,7 +42,7 @@ class AbstractIaasDriver:
                       keypair to inject into the instance.
         :arg string availability_zone: Name of the availability zone for instance
                                   placement.
-        :arg string subnet: Name of the subnet for instance placement.
+        :arg string subnets: List of the subnets for instance placement.
 
         Returns Any vm_id.
         """
