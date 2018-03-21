@@ -80,7 +80,7 @@ class OpenStackDriver(AbstractIaasDriver):
     @initialize_openstack
     @openstack_exception
     async def create_vm(self, preset_name, image, flavor, security_groups=None,
-                        userdata=None, key_name=None, availability_zone=None, nics=None):
+                        userdata=None, key_name=None, availability_zone=None, subnets=None):
         '''
           Create VM
          :arg preset_name: string
@@ -90,7 +90,7 @@ class OpenStackDriver(AbstractIaasDriver):
          :arg userdata: dict
          :arg key_name: string
          :arg availability_zone: string
-         :arg nics: list
+         :arg subnets: list
          :returns list Vm objects
          @TODO
          1. returns image id
@@ -109,8 +109,8 @@ class OpenStackDriver(AbstractIaasDriver):
         }
         if availability_zone is not None:
             body["server"].update({"availability_zone": availability_zone})
-        if nics is not None:
-            body["server"].update({"networks": [{'uuid': network['net-id']} for network in nics]})
+        if subnets is not None:
+            body["server"].update({"networks": [{'uuid': subnet['net-id']} for subnet in subnets]})
 
         result = await self.nova.api.servers.create(body=body)
         return result.body["server"]
