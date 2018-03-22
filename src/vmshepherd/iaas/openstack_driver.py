@@ -1,3 +1,4 @@
+import base64
 import logging
 import time
 from .abstract import AbstractIaasDriver
@@ -87,7 +88,7 @@ class OpenStackDriver(AbstractIaasDriver):
          :arg image: string image id
          :arg flavor: string flavor id
          :arg security_groups:  list
-         :arg userdata: dict
+         :arg userdata: string
          :arg key_name: string
          :arg availability_zone: string
          :arg subnets: list
@@ -95,7 +96,6 @@ class OpenStackDriver(AbstractIaasDriver):
          @TODO
          1. returns image id
         '''
-
         image_id = self.images_map.inv.get(image)
         flavor_id = self.flavors_map.inv.get(flavor)
         body = {
@@ -111,6 +111,10 @@ class OpenStackDriver(AbstractIaasDriver):
             body["server"].update({"availability_zone": availability_zone})
         if subnets is not None:
             body["server"].update({"networks": [{'uuid': subnet['net-id']} for subnet in subnets]})
+        if userdata is not None:
+            userdata = userdata.encode('utf-8')
+            userdata = base64.b64encode(userdata).decode('utf-8')
+            body["server"].update({"user_data": userdata})
 
         result = await self.nova.api.servers.create(body=body)
         return result.body["server"]
