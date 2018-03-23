@@ -25,8 +25,9 @@ class Data:
 
 class AbstractRuntimeData:
 
-    def __init__(self, instance_id):
+    def __init__(self, instance_id, config):
         self.instance_id = instance_id
+        self.preset_lock_ttl = config.get('preset_lock_ttl', 60)
 
     async def _acquire_lock(self, name: str) -> bool:
         ''' Locks preset during manage process, any other VMgr instance won't disrubt it.

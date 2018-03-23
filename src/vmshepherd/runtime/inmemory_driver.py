@@ -8,7 +8,7 @@ class InMemoryDriver(AbstractRuntimeData):
     '''
 
     def __init__(self, instance_id, config=None):
-        super().__init__(instance_id)
+        super().__init__(instance_id, config)
         self._storage = {}
         self._locks = {}
 
