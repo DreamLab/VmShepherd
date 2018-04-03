@@ -1,3 +1,4 @@
+import copy
 from aiohttp_jsonrpc import handler
 
 
@@ -31,3 +32,17 @@ class RpcApi(handler.JSONRPCView):
         preset = await vmshepherd.preset_manager.get(preset)
         await preset.iaas.terminate_vm(vm_id)
         return 'OK'
+
+    async def get_vm_metadata(self, preset, vm_id):
+        """ Get vm metadata
+
+        :arg string preset: preset name
+        :arg int vm_id: Vm's id
+
+        """
+        vmshepherd = self.request.app.vmshepherd
+        preset = await vmshepherd.preset_manager.get(preset)
+        vm_info = await preset.iaas.get_vm(vm_id)
+        ret_info = copy.deepcopy(vm_info.metadata) if vm_info.metadata else {}
+        ret_info['tags'] = vm_info.tags
+        return ret_info
