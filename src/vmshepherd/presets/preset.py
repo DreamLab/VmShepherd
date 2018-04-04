@@ -60,11 +60,14 @@ class Preset:
     async def manage(self):
         vms = await self.list_vms()
 
-        missing = self.count - len(vms) if len(vms) < self.count else 0
         vms_stat = Counter([vm.get_state() for vm in vms])
+        logging.info("%s", str(vms_stat))
+        missing = self.count - len(vms) - vms_stat['nearbyshutdown'] if len(vms) - vms_stat['nearbyshutdown'] < self.count else 0
         logging.info(
-            'VMs Status: %s expected, %s in iaas, %s running, %s pending, %s terminated, %s error, %s unknown, %s missing',
-            self.count, len(vms), vms_stat['running'], vms_stat['pending'], vms_stat['terminated'],
+            'VMs Status: %s expected, %s in iaas, %s running, %s nearbyshutdown, %s pending, aftertimeshutdown %s, '
+            '%s terminated, %s error, %s unknown, %s missing',
+            self.count, len(vms), vms_stat['running'], vms_stat['nearbyshutdown'], vms_stat['pending'],
+            vms_stat['aftertimeshutdown'], vms_stat['terminated'],
             vms_stat['error'], vms_stat['unknown'], missing, extra=self._extra
         )
         for vm in vms:

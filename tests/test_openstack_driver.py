@@ -33,7 +33,7 @@ class TestOpenStackDriver(AsyncTestCase):
         self.vm = {
             'name': 'test-vm-name',
             'id': '099fds8f9ds89fdsf',
-            'metadata': [],
+            'metadata': {},
             'status': 'ACTIVE',
             'created': '2018-02-02T14:29:49Z',
             'updated': '2018-02-02T14:30:00Z',
@@ -72,7 +72,7 @@ class TestOpenStackDriver(AsyncTestCase):
 
         self.assertEqual(result.id, '099fds8f9ds89fdsf')
         self.assertEqual(result.name, 'test-vm-name')
-        self.assertEqual(result.metadata, [])
+        self.assertEqual(result.metadata, {})
         self.assertEqual(str(result.state), 'VmState.RUNNING')
         self.assertEqual(result.ip, ['10.185.138.36'])
         self.assertEqual(result.flavor, 'testflavorname')

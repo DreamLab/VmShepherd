@@ -45,7 +45,8 @@ class DummyIaasDriver(AbstractIaasDriver):
             'state': VmState.RUNNING,
             'flavor': flavor,
             'image': image,
-            'metadata': {'timed-shutdown-at': 1522753481, 'test-meta': 'abctest'},
+            'metadata': {'test-meta': 'abctest'},
+            'timed_shutdown_at': 1522753481,
             'tags': ['a-tag', 'b-tag', 'c-tag']
         }
         logging.debug('Prepare vm: %s', info)
