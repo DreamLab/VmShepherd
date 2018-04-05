@@ -33,7 +33,7 @@ class OpenStackDriver(AbstractIaasDriver):
 
         '''
         async def wrap(self, *args, **kwargs):
-            if not hasattr(self, 'auth') or self.auth.verify() is True:
+            if not hasattr(self, 'auth') or self.auth.is_token_valid() is True:
                 self.auth = AuthPassword(auth_url=self.config['auth_url'],
                                          username=self.config['username'],
                                          password=self.config['password'],
