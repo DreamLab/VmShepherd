@@ -4,10 +4,13 @@ from aiohttp_jsonrpc import handler
 
 class RpcApi(handler.JSONRPCView):
 
-    def __init__(self, request, allowed_methods=None):
-        super().__init__(request)
+    def __init__(self, allowed_methods=None):
         self.METHOD_PREFIX = ''
         self.allowed_methods = allowed_methods
+
+    async def handler(self, request):
+        self._request = request
+        return await self
 
     def enabled_checker(func):
         '''

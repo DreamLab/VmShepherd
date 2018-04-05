@@ -61,7 +61,6 @@ class Preset:
         vms = await self.list_vms()
 
         vms_stat = Counter([vm.get_state() for vm in vms])
-        logging.info("%s", str(vms_stat))
         missing = self.count - len(vms) - vms_stat['nearbyshutdown'] if len(vms) - vms_stat['nearbyshutdown'] < self.count else 0
         logging.info(
             'VMs Status: %s expected, %s in iaas, %s running, %s nearbyshutdown, %s pending, aftertimeshutdown %s, '

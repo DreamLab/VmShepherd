@@ -1,9 +1,15 @@
 log_level: info
 
 http:
-    panel: True
-    api: True
-    listen_port: 8888
+  panel: True
+  api: True
+# example of allowed_methods list
+#  api: 
+#    allowed_methods: 
+#      - list_vms
+#      - terminate_vm
+#      - get_vm_metadata
+  listen_port: 8888
 
 worker_interval: 5
 
