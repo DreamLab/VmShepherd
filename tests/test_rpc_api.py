@@ -31,7 +31,8 @@ class TestRpcApi(AsyncTestCase):
             mock_preset_manager)
         mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({
         })
-        self.rpcapi = RpcApi(mock_request)
+        self.rpcapi = RpcApi()
+        self.rpcapi._request = mock_request
         self.mock_list_vms = {
             "1243454353": {
                 "ip": "10.177.51.8",
