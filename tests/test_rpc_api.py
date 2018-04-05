@@ -14,7 +14,7 @@ class TestRpcApi(AsyncTestCase):
     def setUp(self):
         super().setUp()
         mock_request = Mock()
-        mock_preset_manager = Mock()
+        self.mock_preset_manager = Mock()
         mock_preset_data = [
             Vm(self, '1243454353', 'C_DEV-app-dev',
                ['10.177.51.8'], time.time(), state=VmState.RUNNING),
@@ -23,14 +23,15 @@ class TestRpcApi(AsyncTestCase):
             Vm(self, '5465465643', 'C_DEV-app-dev',
                ['10.177.51.10'], time.time(), state=VmState.RUNNING)
         ]
-        mock_preset_manager.list_vms.return_value = futurized(mock_preset_data)
-        mock_preset_manager.count = 3
-        self.mock_preset_manager = mock_preset_manager
-        mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
+        self.mock_preset_manager.list_vms.return_value = futurized(mock_preset_data)
+        self.mock_preset_manager.count = 3
+        self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
+        self.mock_preset_manager.iaas.get_vm.return_value = futurized(mock_preset_data[0])
         mock_request.app.vmshepherd.preset_manager.get.return_value = futurized(
-            mock_preset_manager)
+            self.mock_preset_manager)
         mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({
         })
+        mock_request.remote = ['10.177.51.8']
         self.rpcapi = RpcApi()
         self.rpcapi._request = mock_request
         self.mock_list_vms = {
@@ -57,3 +58,13 @@ class TestRpcApi(AsyncTestCase):
         ret = await self.rpcapi.terminate_vm('C_DEV-app-dev', 12345)
         self.assertEqual(ret, 'OK')
         self.mock_preset_manager.iaas.terminate_vm.assert_called_with(12345)
+
+    async def test_get_vm_metadata_success(self):
+        ret = await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
+        self.assertEqual(ret, {'tags': None, 'timed_shutdown_at': None})
+        self.mock_preset_manager.iaas.get_vm.assert_called_with(12345)
+
+    async def test_get_vm_metadata_fail(self):
+        self.rpcapi._request.remote = ['127.0.0.1']
+        with self.assertRaises(Exception):
+            await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
