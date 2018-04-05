@@ -184,7 +184,7 @@ class OpenStackDriver(AbstractIaasDriver):
         created = datetime.strptime(vm['created'], '%Y-%m-%dT%H:%M:%SZ')
         flavor = self.flavors_map.get(vm['flavor'].get('id'))
         image = self.images_map.get(vm['image'].get('id'))
-        timed_shutdown_at = vm.get('metadata', {}).get('iaas_timed_shutdown')
+        timed_shutdown_at = int(vm.get('metadata', {}).get('iaas_timed_shutdown')) if vm.get('metadata',{}).get('iaas_timed_shutdown') else None
         state = self._map_vm_status(vm['status'], timed_shutdown_at)
         iaasvm = Vm(self, vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags', []), flavor=flavor,
                     image=image, timed_shutdown_at=timed_shutdown_at)
@@ -224,7 +224,7 @@ class OpenStackDriver(AbstractIaasDriver):
             now = time.time()
             if timed_shutdown_at < now:
                 state = VmState.AFTERTIMESHUTDOWN
-            elif time.time() + self.config.get('shutdown_time_delta', 900) < timed_shutdown_at:
+            elif (timed_shutdown_at - now) < self.config.get('shutdown_time_delta', 900):
                 state = VmState.NEARBYSHUTDOWN
 
         return state
