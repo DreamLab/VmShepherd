@@ -16,9 +16,11 @@ class WebServer(web.Application):
         api_conf = config.get('api')
 
         self.vmshepherd = vmshepherd
-        if panel_conf:
+        panel_enabled = panel_conf.get('enabled', True) if isinstance(panel_conf, dict) else panel_conf
+        if panel_enabled:
             self.configure_panel()
-        if api_conf:
+        api_enabled = api_conf.get('enabled', True) if isinstance(api_conf, dict) else api_conf
+        if api_enabled:
             allowed_methods = None
             if isinstance(api_conf, dict):
                 allowed_methods = api_conf.get('allowed_methods')
