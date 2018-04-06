@@ -207,7 +207,7 @@ class OpenStackDriver(AbstractIaasDriver):
                 'DELETED',
                 'SHUTOFF',
                 'SOFT_DELETED',
-                'SUSPENDED'  # do ustalenia
+                'SUSPENDED'
             ],
             VmState.PENDING: [
                 'BUILD',
