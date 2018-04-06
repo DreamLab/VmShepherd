@@ -225,7 +225,7 @@ class OpenStackDriver(AbstractIaasDriver):
             now = time.time()
             if timed_shutdown_at < now:
                 state = VmState.AFTERTIMESHUTDOWN
-            elif (timed_shutdown_at - now) < self.config.get('shutdown_time_delta', 900):
+            elif (timed_shutdown_at - now) < self.config.get('shutdown_grace_period', 900):
                 state = VmState.NEARBYSHUTDOWN
 
         return state
