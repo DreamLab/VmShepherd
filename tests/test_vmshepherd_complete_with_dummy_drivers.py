@@ -74,10 +74,10 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
         )
         self.assertTrue(vm_list[0].is_running())
 
-        # third run - virtual machine goes in NEARBYSHUTDOWN
+        # third run - virtual machine goes in NEARBY_SHUTDOWN
         #  - new vm should be created
 
-        vm_list[0].state = VmState.NEARBYSHUTDOWN
+        vm_list[0].state = VmState.NEARBY_SHUTDOWN
         await self.vmshepherd.run(run_once=True)
 
         vm_list = await preset.list_vms()
@@ -89,10 +89,10 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
         self.assertFalse(vm_list[0].is_dead())
         self.assertTrue(vm_list[1].is_running())
 
-        # fourth run - virtual machine goes in AFTERTIMESHUTDOWN
+        # fourth run - virtual machine goes in AFTER_TIME_SHUTDOWN
         #  - vm should be terminated
 
-        vm_list[0].state = VmState.AFTERTIMESHUTDOWN
+        vm_list[0].state = VmState.AFTER_TIME_SHUTDOWN
         await self.vmshepherd.run(run_once=True)
 
         vm_list = await preset.list_vms()

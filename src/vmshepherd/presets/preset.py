@@ -64,10 +64,10 @@ class Preset:
         vms_stat = Counter([vm.get_state() for vm in vms])
         missing = self.count - len(vms) if len(vms) < self.count else 0
         logging.info(
-            'VMs Status: %s expected, %s in iaas, %s running, %s nearbyshutdown, %s pending, aftertimeshutdown %s, '
+            'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, after time shutdown %s, '
             '%s terminated, %s error, %s unknown, %s missing',
-            self.count, len(vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBYSHUTDOWN.value],
-            vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTERTIMESHUTDOWN.value],
+            self.count, len(vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value],
+            vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
             vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
         for vm in vms:
@@ -75,7 +75,7 @@ class Preset:
                 logging.info("Terminate %s", vm, extra=self._extra)
                 await vm.terminate()
                 self.terminated += 1
-        to_create = self.count - (len(vms) - self.terminated - vms_stat[VmState.NEARBYSHUTDOWN.value])
+        to_create = self.count - (len(vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
         to_create = to_create if to_create > 0 else 0
         logging.debug("Create %s Vm", to_create, extra=self._extra)
         await self._create_vms(to_create)

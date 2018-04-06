@@ -17,8 +17,8 @@ class VmState(Enum):
     """
 
     RUNNING = 'running'
-    NEARBYSHUTDOWN = 'nearbyshutdown'
-    AFTERTIMESHUTDOWN = 'aftertimeshutdown'
+    NEARBY_SHUTDOWN = 'nearby_shutdown'
+    AFTER_TIME_SHUTDOWN = 'after_time_shutdown'
     TERMINATED = 'terminated'
     PENDING = 'pending'
     UNKNOWN = 'unknown'
@@ -90,10 +90,10 @@ class Vm:
         return await self.manager.terminate_vm(self.id)
 
     def is_running(self):
-        return self.state in (VmState.RUNNING, VmState.NEARBYSHUTDOWN)
+        return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN)
 
     def is_dead(self):
-        return self.state in (VmState.TERMINATED, VmState.ERROR, VmState.AFTERTIMESHUTDOWN)
+        return self.state in (VmState.TERMINATED, VmState.ERROR, VmState.AFTER_TIME_SHUTDOWN)
 
     def get_state(self):
         return self.state.value
