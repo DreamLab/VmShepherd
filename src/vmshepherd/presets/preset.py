@@ -2,6 +2,7 @@ import asyncio
 import logging
 import time
 from collections import Counter
+from vmshepherd.iaas.vm import VmState
 
 
 class Preset:
@@ -65,16 +66,16 @@ class Preset:
         logging.info(
             'VMs Status: %s expected, %s in iaas, %s running, %s nearbyshutdown, %s pending, aftertimeshutdown %s, '
             '%s terminated, %s error, %s unknown, %s missing',
-            self.count, len(vms), vms_stat['running'], vms_stat['nearbyshutdown'], vms_stat['pending'],
-            vms_stat['aftertimeshutdown'], vms_stat['terminated'],
-            vms_stat['error'], vms_stat['unknown'], missing, extra=self._extra
+            self.count, len(vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBYSHUTDOWN.value],
+            vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTERTIMESHUTDOWN.value],
+            vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
         for vm in vms:
             if vm.is_dead():
                 logging.info("Terminate %s", vm, extra=self._extra)
                 await vm.terminate()
                 self.terminated += 1
-        to_create = self.count - (len(vms) - self.terminated - vms_stat['nearbyshutdown'])
+        to_create = self.count - (len(vms) - self.terminated - vms_stat[VmState.NEARBYSHUTDOWN.value])
         to_create = to_create if to_create > 0 else 0
         logging.debug("Create %s Vm", to_create, extra=self._extra)
         await self._create_vms(to_create)
