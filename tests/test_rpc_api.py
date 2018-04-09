@@ -61,7 +61,7 @@ class TestRpcApi(AsyncTestCase):
 
     async def test_get_vm_metadata_success(self):
         ret = await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
-        self.assertEqual(ret, {'tags': None, 'timed_shutdown_at': None})
+        self.assertEqual(ret, {'tags': None, 'iaas_shutdown': None})
         self.mock_preset_manager.iaas.get_vm.assert_called_with(12345)
 
     async def test_get_vm_metadata_fail(self):
