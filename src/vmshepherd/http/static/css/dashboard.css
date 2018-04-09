@@ -107,4 +107,10 @@ td.error {background-color: #F5A9A9 !important}
   font-weight: bold;
   color: red;
 }
+td.warning {background-color: #F5A9A9 !important}
+.vm-state-warning{
+  font-weight: bold;
+  color: yellow;
+}
+
 td a:hover {text-decoration: underline;}

@@ -17,6 +17,8 @@ class VmState(Enum):
     """
 
     RUNNING = 'running'
+    NEARBY_SHUTDOWN = 'nearby_shutdown'
+    AFTER_TIME_SHUTDOWN = 'after_time_shutdown'
     TERMINATED = 'terminated'
     PENDING = 'pending'
     UNKNOWN = 'unknown'
@@ -30,7 +32,7 @@ class Vm:
     """
 
     def __init__(self, manager, id, name, ip, created, state=VmState.UNKNOWN, metadata=None, tags=None,
-                 flavor=None, image=None):
+                 flavor=None, image=None, timed_shutdown_at=None):
 
         """ Init for VM.
 
@@ -44,6 +46,7 @@ class Vm:
         :arg list tags: Vm tags.
         :arg string flavor: Vm flavor name.
         :arg string image: Vm image name.
+        :arg int timed_shutdown_at: Timestamp when VM will be terminated.
         """
 
         self.manager = manager
@@ -55,6 +58,7 @@ class Vm:
         self.tags = tags
         self.flavor = flavor
         self.image = image
+        self.timed_shutdown_at = timed_shutdown_at
         if isinstance(created, datetime.datetime):
             self.created = created
         elif isinstance(created, (int, float)):
@@ -86,10 +90,10 @@ class Vm:
         return await self.manager.terminate_vm(self.id)
 
     def is_running(self):
-        return self.state == VmState.RUNNING
+        return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN)
 
     def is_dead(self):
-        return self.state in (VmState.TERMINATED, VmState.ERROR)
+        return self.state in (VmState.TERMINATED, VmState.ERROR, VmState.AFTER_TIME_SHUTDOWN)
 
     def get_state(self):
         return self.state.value

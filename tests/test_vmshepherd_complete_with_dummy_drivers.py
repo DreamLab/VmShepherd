@@ -74,11 +74,25 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
         )
         self.assertTrue(vm_list[0].is_running())
 
-        # third run - virtual machine goes in TERMINATED
-        #  - terminated vm should be skipped
+        # third run - virtual machine goes in NEARBY_SHUTDOWN
         #  - new vm should be created
 
-        vm_list[0].state = VmState.TERMINATED
+        vm_list[0].state = VmState.NEARBY_SHUTDOWN
+        await self.vmshepherd.run(run_once=True)
+
+        vm_list = await preset.list_vms()
+        self.assertEqual(
+            vm_list,
+            [VmMock(1, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small'),
+             VmMock(2, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
+        )
+        self.assertFalse(vm_list[0].is_dead())
+        self.assertTrue(vm_list[1].is_running())
+
+        # fourth run - virtual machine goes in AFTER_TIME_SHUTDOWN
+        #  - vm should be terminated
+
+        vm_list[0].state = VmState.AFTER_TIME_SHUTDOWN
         await self.vmshepherd.run(run_once=True)
 
         vm_list = await preset.list_vms()
@@ -86,7 +100,18 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
             vm_list,
             [VmMock(2, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(vm_list[0].is_running())
+
+        # last run - virtual machine goes in TERMINATED
+        #  - vm should be terminated
+
+        vm_list[0].state = VmState.TERMINATED
+        await self.vmshepherd.run(run_once=True)
+
+        vm_list = await preset.list_vms()
+        self.assertEqual(
+            vm_list,
+            [VmMock(3, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
+        )
 
 
 class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):

@@ -107,7 +107,7 @@
             <td>{{ loop.index }}</td>
             <td>{{ vm.id }}</td>
             <td>{{ vm.ip|join(", ") }}</td>
-            <td {%if data['runtime'].failed_checks.get(vm.id) %} class="error" {% endif %}>
+            <td {%if data['runtime'].failed_checks.get(vm.id) %} class="error" {% elif vm.state.value in ['nearbyshutdown', 'aftertimeshutdown'] %} class="warning" {% endif %}>
               {{ vm.state.value|upper }}
               {%if data['runtime'].failed_checks.get(vm.id) %}
                 Healthcheck fails for {{ data['now']|int - data['runtime'].failed_checks[vm.id]['time']|int }}s, count: {{data['runtime'].failed_checks[vm.id]['count'] }})

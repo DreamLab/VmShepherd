@@ -35,11 +35,7 @@ class VmShepherd:
 
         http = self.config.get('http', None)
         if http:
-            panel = http.get('panel', None)
-            api = http.get('api', False)
-            port = http.get('listen_port', 8888)
-            logging.info('Starting server, listening on %s.', port)
-            self.web = WebServer(self, port, panel, api)
+            self.web = WebServer(self, http)
             asyncio.ensure_future(self.web.start())
 
     async def run(self, run_once=False):

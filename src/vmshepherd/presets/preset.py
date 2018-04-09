@@ -2,6 +2,7 @@ import asyncio
 import logging
 import time
 from collections import Counter
+from vmshepherd.iaas.vm import VmState
 
 
 class Preset:
@@ -60,33 +61,35 @@ class Preset:
     async def manage(self):
         vms = await self.list_vms()
 
-        missing = self.count - len(vms) if len(vms) < self.count else 0
         vms_stat = Counter([vm.get_state() for vm in vms])
+        missing = self.count - len(vms) if len(vms) < self.count else 0
         logging.info(
-            'VMs Status: %s expected, %s in iaas, %s running, %s pending, %s terminated, %s error, %s unknown, %s missing',
-            self.count, len(vms), vms_stat['running'], vms_stat['pending'], vms_stat['terminated'],
-            vms_stat['error'], vms_stat['unknown'], missing, extra=self._extra
+            'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, after time shutdown %s, '
+            '%s terminated, %s error, %s unknown, %s missing',
+            self.count, len(vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value],
+            vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
+            vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
         for vm in vms:
             if vm.is_dead():
                 logging.info("Terminate %s", vm, extra=self._extra)
                 await vm.terminate()
-                missing += 1
                 self.terminated += 1
-
-        logging.debug("Create %s Vm", missing, extra=self._extra)
-        await self._create_vms(missing)
+        to_create = self.count - (len(vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
+        to_create = to_create if to_create > 0 else 0
+        logging.debug("Create %s Vm", to_create, extra=self._extra)
+        await self._create_vms(to_create)
         await self._healthcheck(vms)
         logging.info(
             'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
-            self.terminated, self.healthcheck_terminated, missing, len(self.info.failed_checks),
+            self.terminated, self.healthcheck_terminated, to_create, len(self.info.failed_checks),
             extra=self._extra
         )
 
     async def _healthcheck(self, vms):
         _healthchecks = {}
         for vm in vms:
-            if vm.is_running():
+            if not vm.is_dead():
                 _healthchecks[vm] = asyncio.ensure_future(self.healthcheck.is_healthy(vm))
         await asyncio.gather(*list(_healthchecks.values()), return_exceptions=True)
         current_fails = []

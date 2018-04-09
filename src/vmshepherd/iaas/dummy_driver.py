@@ -27,15 +27,6 @@ class DummyIaasDriver(AbstractIaasDriver):
         """
         Init: create list of vms.
         """
-        self.info = {
-            'id': 0,
-            'name': '',
-            'ip': ['127.0.0.1'],
-            'created': 0,
-            'state': VmState.RUNNING,
-            'flavor': 'xxxxxxxx',
-            'image': 'yyyyyyyy',
-        }
         self._vms = {}
         self._id_it = next_id()
 
@@ -53,7 +44,10 @@ class DummyIaasDriver(AbstractIaasDriver):
             'created': 0,
             'state': VmState.RUNNING,
             'flavor': flavor,
-            'image': image
+            'image': image,
+            'metadata': {'test-meta': 'abctest'},
+            'timed_shutdown_at': 1522753481,
+            'tags': ['a-tag', 'b-tag', 'c-tag']
         }
         logging.debug('Prepare vm: %s', info)
         vm = Vm(self, **info)

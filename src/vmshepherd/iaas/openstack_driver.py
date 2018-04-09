@@ -184,12 +184,14 @@ class OpenStackDriver(AbstractIaasDriver):
         created = datetime.strptime(vm['created'], '%Y-%m-%dT%H:%M:%SZ')
         flavor = self.flavors_map.get(vm['flavor'].get('id'))
         image = self.images_map.get(vm['image'].get('id'))
-        state = self._map_vm_status(vm['status'])
+        timed_shutdown_at = vm.get('metadata', {}).get('iaas_timed_shutdown')
+        timed_shutdown_at = int(timed_shutdown_at) if timed_shutdown_at else None
+        state = self._map_vm_status(vm['status'], timed_shutdown_at)
         iaasvm = Vm(self, vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags', []), flavor=flavor,
-                    image=image)
+                    image=image, timed_shutdown_at=timed_shutdown_at)
         return iaasvm
 
-    def _map_vm_status(self, openstack_status):
+    def _map_vm_status(self, openstack_status, timed_shutdown_at=None):
         '''
          Map openstack vm statuses to vmshepherd vm statuses
          openstack vm statuses: ACTIVE, BUILD, DELETED, ERROR, HARD_REBOOT, MIGRATING, PASSWORD, PAUSED, REBOOT,
@@ -205,7 +207,7 @@ class OpenStackDriver(AbstractIaasDriver):
                 'DELETED',
                 'SHUTOFF',
                 'SOFT_DELETED',
-                'SUSPENDED'  # do ustalenia
+                'SUSPENDED'
             ],
             VmState.PENDING: [
                 'BUILD',
@@ -214,11 +216,19 @@ class OpenStackDriver(AbstractIaasDriver):
             VmState.RUNNING: ['ACTIVE']
         }
 
+        state = VmState.UNKNOWN
         for vmstate, value in statuses.items():
             if openstack_status in value:
-                return vmstate
+                state = vmstate
+                break
+        if timed_shutdown_at:
+            now = time.time()
+            if timed_shutdown_at < now:
+                state = VmState.AFTER_TIME_SHUTDOWN
+            elif (timed_shutdown_at - now) < self.config.get('shutdown_grace_period', 900):
+                state = VmState.NEARBY_SHUTDOWN
 
-        return VmState.UNKNOWN
+        return state
 
     def _extract_ips(self, data):
         '''

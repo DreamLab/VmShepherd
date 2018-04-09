@@ -37,7 +37,6 @@ class AbstractConfigurationDriver:
 
         if 'userdata' in config:
             self._render_preset_userdata(config)
-
         return Preset(
             config['name'], config, runtime=self.runtime,
             iaas=iaas, healthcheck=healthcheck
