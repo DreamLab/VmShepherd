@@ -64,5 +64,5 @@ class RpcApi(handler.JSONRPCView):
             raise Exception("Calling for VM(ip:{}) info is not allowed from {}".format(vm_info.ip, self.request.remote))
         ret_info = copy.deepcopy(vm_info.metadata) if vm_info.metadata else {}
         ret_info['tags'] = vm_info.tags
-        ret_info['timed_shutdown_at'] = vm_info.timed_shutdown_at
+        ret_info['iaas_shutdown'] = vm_info.timed_shutdown_at
         return ret_info
