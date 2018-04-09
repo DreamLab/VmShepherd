@@ -64,7 +64,7 @@ class Preset:
         vms_stat = Counter([vm.get_state() for vm in vms])
         missing = self.count - len(vms) if len(vms) < self.count else 0
         logging.info(
-            'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, after time shutdown %s, '
+            'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, %s after time shutdown, '
             '%s terminated, %s error, %s unknown, %s missing',
             self.count, len(vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value],
             vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
