@@ -40,7 +40,7 @@ class OpenStackDriver(AbstractIaasDriver):
                                          project_name=self.config['project_name'],
                                          user_domain_name=self.config['user_domain_name'],
                                          project_domain_name=self.config['project_domain_name'])
-                self.nova = NovaClient(self.config['api_version'], session=self.auth)
+                self.nova = NovaClient(session=self.auth)
                 self.glance = GlanceClient(session=self.auth)
                 await self.nova.init_api()
                 await self.glance.init_api()

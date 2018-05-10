@@ -3,5 +3,5 @@ aiohttp==3.0.0
 aiofiles
 bidict
 aiohttp_jinja2
-AsyncOpenStackClient==0.2.3
+AsyncOpenStackClient==0.5.1 
 aiohttp_jsonrpc==0.1.0
