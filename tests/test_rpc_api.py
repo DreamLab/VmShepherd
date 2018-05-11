@@ -1,0 +1,70 @@
+import time
+from aiounittest import futurized, AsyncTestCase
+from unittest.mock import patch, Mock
+from vmshepherd.http.rpc_api import RpcApi
+from vmshepherd.iaas.vm import Vm, VmState
+
+
+class TestRpcApi(AsyncTestCase):
+
+    def tearDown(self):
+        patch.stopall()
+        super().tearDown()
+
+    def setUp(self):
+        super().setUp()
+        mock_request = Mock()
+        self.mock_preset_manager = Mock()
+        mock_preset_data = [
+            Vm(self, '1243454353', 'C_DEV-app-dev',
+               ['10.177.51.8'], time.time(), state=VmState.RUNNING),
+            Vm(self, '4535646466', 'C_DEV-app-dev',
+               ['10.177.51.9'], time.time(), state=VmState.RUNNING),
+            Vm(self, '5465465643', 'C_DEV-app-dev',
+               ['10.177.51.10'], time.time(), state=VmState.RUNNING)
+        ]
+        self.mock_preset_manager.list_vms.return_value = futurized(mock_preset_data)
+        self.mock_preset_manager.count = 3
+        self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
+        self.mock_preset_manager.iaas.get_vm.return_value = futurized(mock_preset_data[0])
+        mock_request.app.vmshepherd.preset_manager.get.return_value = futurized(
+            self.mock_preset_manager)
+        mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({
+        })
+        mock_request.remote = ['10.177.51.8']
+        self.rpcapi = RpcApi()
+        self.rpcapi._request = mock_request
+        self.mock_list_vms = {
+            "1243454353": {
+                "ip": "10.177.51.8",
+                "state": "running"
+            },
+            "4535646466": {
+                "ip": "10.177.51.9",
+                "state": "running"
+            },
+            "5465465643": {
+                "ip": "10.177.51.10",
+                "state": "running"
+            }
+        }
+
+    async def test_list_vms(self):
+        ret = await self.rpcapi.list_vms('C_DEV-app-dev')
+        self.assertEqual(ret[1], self.mock_list_vms)
+        self.assertEqual(ret[0], 3)
+
+    async def test_terminate_vm_success(self):
+        ret = await self.rpcapi.terminate_vm('C_DEV-app-dev', 12345)
+        self.assertEqual(ret, 'OK')
+        self.mock_preset_manager.iaas.terminate_vm.assert_called_with(12345)
+
+    async def test_get_vm_metadata_success(self):
+        ret = await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
+        self.assertEqual(ret, {'tags': None, 'iaas_shutdown': None})
+        self.mock_preset_manager.iaas.get_vm.assert_called_with(12345)
+
+    async def test_get_vm_metadata_fail(self):
+        self.rpcapi._request.remote = ['127.0.0.1']
+        with self.assertRaises(Exception):
+            await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)

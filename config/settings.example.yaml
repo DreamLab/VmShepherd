@@ -1,0 +1,38 @@
+log_level: info
+
+http:
+  panel: True
+  api: True
+# example of allowed_methods list
+#  api: 
+#    allowed_methods: 
+#      - list_vms
+#      - terminate_vm
+#      - get_vm_metadata
+  listen_port: 8888
+
+worker_interval: 5
+
+runtime:
+  driver: InMemoryDriver
+
+presets:
+  driver: DirectoryDriver
+  path: config/presets.d
+
+defaults:
+
+  iaas:
+    driver: DummyIaasDriver
+    api_key: asd
+    api_secret: asd
+
+  healthcheck:
+    driver: HttpHealthcheck
+    conn_timeout: 1   # (optional, default:1)
+    read_timeout: 1   # (optional, default: 1)
+    port: 7007        # (optional, default: 80)
+    path: /           # (optional, default: /)
+    method: GET       # (optional, default: GET)
+    check_status: 200 # (optional, default: 200)
+    terminate_heatlh_failed_delay: 10

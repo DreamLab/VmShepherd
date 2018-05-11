@@ -1,0 +1,7 @@
+pyyaml
+aiohttp==3.0.0
+aiofiles
+bidict
+aiohttp_jinja2
+AsyncOpenStackClient==0.5.2
+aiohttp_jsonrpc==0.1.0

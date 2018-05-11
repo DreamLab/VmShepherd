@@ -1,0 +1,60 @@
+
+Changelog
+=========
+
+0.7.7 (2018-05-10)
+------------------
+
+* bump AsyncOpenStackClient (0.5.2)
+
+0.7.6 (2018-05-10)
+------------------
+
+* bump AsyncOpenStackClient (0.5.1)
+
+0.7.5 (2018-04-09)
+------------------
+
+* runtime driver abstract fix
+
+0.7.4 (2018-03-22)
+------------------
+
+* cleanup, verify
+
+
+0.7.3 (2018-03-22)
+------------------
+
+* bump AsyncOpenStackClient (+ compat)
+
+
+0.7.2 (2018-03-22)
+------------------
+
+* user-data base64
+
+
+0.7.1 (2018-03-21)
+------------------
+
+* multiple network interfaces
+
+
+0.7.0 (2018-03-20)
+------------------
+
+* AsyncOpenStackClient
+
+
+0.6.0 (2018-02-01)
+------------------
+
+* web panel
+* rpc api
+
+
+0.0.3 (2018-02-01)
+------------------
+
+* initial

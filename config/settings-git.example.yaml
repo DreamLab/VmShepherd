@@ -1,0 +1,32 @@
+log_level: info
+
+http:
+    panel: True
+    api: True
+    listen_port: 8888
+
+runtime:
+  driver: InMemoryDriver
+
+presets:
+  driver: GitRepoDriver
+  repositories:
+    paas: http://kwarunek@stash.grupa.onet/scm/paas/vms-paas-presets.git
+        # db: http://user:paas@github.com/blahblah/foo
+
+defaults:
+
+  iaas:
+    driver: DummyIaasDriver
+    api_key: asd
+    api_secret: asd
+
+  healthcheck:
+    driver: HttpHealthcheck
+    conn_timeout: 1   # (optional, default:1)
+    read_timeout: 1   # (optional, default: 1)
+    port: 7007        # (optional, default: 80)
+    path: /           # (optional, default: /)
+    method: GET       # (optional, default: GET)
+    check_status: 200 # (optional, default: 200)
+    terminate_heatlh_failed_delay: 10

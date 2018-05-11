@@ -1,0 +1,34 @@
+log_level: info
+
+http:
+    panel: True
+    api: True
+    listen_port: 8888
+
+runtime:
+  driver: InMemoryDriver
+
+presets:
+  driver: DirectoryDriver
+  path: config/presets.d
+
+defaults:
+
+  iaas:
+    driver: OpenStackDriver
+    auth_url: http://KEYSTONE:5000/v3
+    username: USER
+    password: PASS
+    user_domain_name: default    # for auth only
+    image_owner_ids:
+      - user
+
+  healthcheck:
+    driver: HttpHealthcheck
+    conn_timeout: 1   # (optional, default:1)
+    read_timeout: 1   # (optional, default: 1)
+    port: 7007        # (optional, default: 80)
+    path: /           # (optional, default: /)
+    method: GET       # (optional, default: GET)
+    check_status: 200 # (optional, default: 200)
+    terminate_heatlh_failed_delay: 10
