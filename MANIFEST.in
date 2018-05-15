@@ -12,6 +12,7 @@ include Pipfile.lock
 
 include CHANGELOG.rst
 include README.rst
+include LICENSE
 include requirements.txt
 include test-requirements.txt
 
