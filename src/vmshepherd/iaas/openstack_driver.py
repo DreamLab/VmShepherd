@@ -98,26 +98,24 @@ class OpenStackDriver(AbstractIaasDriver):
         '''
         image_id = self.images_map.inv.get(image)
         flavor_id = self.flavors_map.inv.get(flavor)
-        body = {
-            "server": {
-                "name": preset_name,
-                "flavorRef": flavor_id,
-                "imageRef": image_id,
-                "security_groups": [{"name": group} for group in security_groups],
-                "user_data": userdata
-            }
+        spec = {
+            "name": preset_name,
+            "flavorRef": flavor_id,
+            "imageRef": image_id,
+            "security_groups": [{"name": group} for group in security_groups],
+            "user_data": userdata
         }
         if availability_zone is not None:
-            body["server"].update({"availability_zone": availability_zone})
+            spec.update({"availability_zone": availability_zone})
         if subnets is not None:
-            body["server"].update({"networks": [{'uuid': subnet['net-id']} for subnet in subnets]})
+            spec.update({"networks": [{'uuid': subnet['net-id']} for subnet in subnets]})
         if userdata is not None:
             userdata = userdata.encode('utf-8')
             userdata = base64.b64encode(userdata).decode('utf-8')
-            body["server"].update({"user_data": userdata})
+            spec.update({"user_data": userdata})
 
-        result = await self.nova.api.servers.create(body=body)
-        return result.body["server"]
+        result = await self.nova.servers.create(server=spec)
+        return result["server"]
 
     @initialize_openstack
     @openstack_exception
@@ -127,9 +125,9 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg present_name: string
         '''
 
-        servers = await self.nova.api.servers.list(params={'name': f'^{preset_name}$'})
+        response = await self.nova.servers.list(name=f'^{preset_name}$')
         result = []
-        for server in servers.body["servers"]:
+        for server in response['servers']:
             result.append(self._map_vm_structure(server))
         return result
 
@@ -140,7 +138,7 @@ class OpenStackDriver(AbstractIaasDriver):
          :arg vm_id: string
         '''
         try:
-            await self.nova.api.servers.force_delete(vm_id)
+            await self.nova.servers.force_delete(vm_id)
         except JSONDecodeError as exc:
             logging.info("nova sent 'content-type: application/json' but no content appeared, whatever")
             pass
@@ -155,24 +153,24 @@ class OpenStackDriver(AbstractIaasDriver):
         :arg vm_id: string
         :returns vm: object
         '''
-        result = await self.nova.api.servers.get(vm_id)
-        return self._map_vm_structure(result.body["server"])
+        result = await self.nova.servers.get(vm_id)
+        return self._map_vm_structure(result["server"])
 
     @openstack_exception
     async def _list_flavors(self):
         '''
         Returns list of flavors from Openstack
         '''
-        result = await self.nova.api.flavors.list()
-        return result.body['flavors']
+        result = await self.nova.flavors.list()
+        return result['flavors']
 
     @openstack_exception
     async def _list_images(self):
         '''
         Returns list of images from OpenStack
         '''
-        result = await self.glance.api.images.list()
-        return result.body['images']
+        result = await self.glance.images.list()
+        return result['images']
 
     def _map_vm_structure(self, vm):
         '''
