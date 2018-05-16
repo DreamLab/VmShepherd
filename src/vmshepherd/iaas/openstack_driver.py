@@ -99,22 +99,20 @@ class OpenStackDriver(AbstractIaasDriver):
         image_id = self.images_map.inv.get(image)
         flavor_id = self.flavors_map.inv.get(flavor)
         spec = {
-            "server": {
-                "name": preset_name,
-                "flavorRef": flavor_id,
-                "imageRef": image_id,
-                "security_groups": [{"name": group} for group in security_groups],
-                "user_data": userdata
-            }
+            "name": preset_name,
+            "flavorRef": flavor_id,
+            "imageRef": image_id,
+            "security_groups": [{"name": group} for group in security_groups],
+            "user_data": userdata
         }
         if availability_zone is not None:
-            spec["server"].update({"availability_zone": availability_zone})
+            spec.update({"availability_zone": availability_zone})
         if subnets is not None:
-            spec["server"].update({"networks": [{'uuid': subnet['net-id']} for subnet in subnets]})
+            spec.update({"networks": [{'uuid': subnet['net-id']} for subnet in subnets]})
         if userdata is not None:
             userdata = userdata.encode('utf-8')
             userdata = base64.b64encode(userdata).decode('utf-8')
-            spec["server"].update({"user_data": userdata})
+            spec.update({"user_data": userdata})
 
         result = await self.nova.servers.create(server=spec)
         return result["server"]
