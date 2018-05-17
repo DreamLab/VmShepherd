@@ -116,7 +116,7 @@
             <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
             <td>
               {% for name, link in data['preset']['config'].get('panel_links', {}).items() %}
-                <a href="{{ link.replace('ip', (vm.ip or []).pop()) }}">{{ name }}</a> 
+                <a href="{{ link.replace('ip', (vm.ip or ["#"]).pop()) }}">{{ name }}</a> 
               {% endfor %}
             </td>
           </tr>
