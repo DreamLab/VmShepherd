@@ -1,8 +1,6 @@
 log_level: info
 
 http:
-  panel: True
-  api: True
 # example of allowed_methods list
 #  api: 
 #    allowed_methods: 

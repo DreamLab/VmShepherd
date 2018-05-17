@@ -13,7 +13,6 @@ class VmShepherd:
         self.config = config
         self.root_dir = os.path.dirname(__file__)
         self.instance_id = gen_id(rnd_length=5)
-        logging.info("Starting")
         self.setup_logging()
 
         self.runtime_manager = Drivers.get(
@@ -33,9 +32,9 @@ class VmShepherd:
             autostart=self.config.get('autostart', True)
         )
 
-        http = self.config.get('http', None)
-        if http:
-            self.web = WebServer(self, http)
+        http_conf = self.config.get('http', None)
+        if http_conf:
+            self.web = WebServer(self, http_conf)
             asyncio.ensure_future(self.web.start())
 
     async def run(self, run_once=False):

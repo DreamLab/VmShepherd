@@ -12,19 +12,10 @@ class WebServer(web.Application):
     def __init__(self, vmshepherd, config=None):
         super().__init__()
         self.port = config.get('listen_port', 8888)
-        panel_conf = config.get('panel')
-        api_conf = config.get('api')
-
+        allowed_methods = config.get('api', {}).get('allowed_methods')
         self.vmshepherd = vmshepherd
-        panel_enabled = panel_conf.get('enabled', True) if isinstance(panel_conf, dict) else panel_conf
-        if panel_enabled:
-            self.configure_panel()
-        api_enabled = api_conf.get('enabled', True) if isinstance(api_conf, dict) else api_conf
-        if api_enabled:
-            allowed_methods = None
-            if isinstance(api_conf, dict):
-                allowed_methods = api_conf.get('allowed_methods')
-            self.configure_api(allowed_methods)
+        self.configure_panel()
+        self.configure_api(allowed_methods)
 
     def configure_panel(self):
         webroot = os.path.dirname(__file__)
@@ -42,7 +33,6 @@ class WebServer(web.Application):
         )
 
     def configure_api(self, allowed_methods=None):
-        logging.info("Api allowed methods: %s", allowed_methods if allowed_methods else 'all')
         self.router.add_route('POST', '/api', RpcApi(allowed_methods).handler)
 
     async def start(self):

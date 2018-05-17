@@ -13,13 +13,12 @@ class RpcApi(handler.JSONRPCView):
         return await self
 
     def enabled_checker(func):
-        '''
-            Access decorator
-        '''
-        async def wrap(self, *args, **kwargs):
+        """ Access decorator
+        """
+        def wrap(self, *args, **kwargs):
             if self.allowed_methods and isinstance(self.allowed_methods, list) and func.__name__ not in self.allowed_methods:
                 raise Exception("Method {} is disabled".format(func.__name__))
-            return await func(self, *args, **kwargs)
+            return func(self, *args, **kwargs)
         return wrap
 
     @enabled_checker
@@ -60,8 +59,6 @@ class RpcApi(handler.JSONRPCView):
         vmshepherd = self.request.app.vmshepherd
         preset = await vmshepherd.preset_manager.get(preset)
         vm_info = await preset.iaas.get_vm(vm_id)
-        if self.request.remote != vm_info.ip:
-            raise Exception("Calling for VM(ip:{}) info is not allowed from {}".format(vm_info.ip, self.request.remote))
         ret_info = copy.deepcopy(vm_info.metadata) if vm_info.metadata else {}
         ret_info['tags'] = vm_info.tags
         ret_info['iaas_shutdown'] = vm_info.timed_shutdown_at
