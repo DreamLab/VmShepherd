@@ -63,8 +63,3 @@ class TestRpcApi(AsyncTestCase):
         ret = await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
         self.assertEqual(ret, {'tags': None, 'iaas_shutdown': None})
         self.mock_preset_manager.iaas.get_vm.assert_called_with(12345)
-
-    async def test_get_vm_metadata_fail(self):
-        self.rpcapi._request.remote = ['127.0.0.1']
-        with self.assertRaises(Exception):
-            await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
