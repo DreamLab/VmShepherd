@@ -1,7 +1,8 @@
+aiofiles==0.3.2
+aiohttp==3.2.1
+aiohttp-jinja2==1.0.0
+aiohttp-jsonrpc==0.1.0
+AsyncOpenStackClient==0.6.2
+aiounittest==1.1.0
+bidict==0.17.2
 pyyaml
-aiohttp==3.0.0
-aiofiles
-bidict
-aiohttp_jinja2
-AsyncOpenStackClient==0.6.0
-aiohttp_jsonrpc==0.1.0
