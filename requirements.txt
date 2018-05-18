@@ -4,6 +4,5 @@ aiohttp-jinja2==1.0.0
 aiohttp-jsonrpc==0.1.0
 AsyncOpenStackClient==0.6.1
 aiounittest==1.1.0
-async-timeout==3.0.0
 bidict==0.17.2
-Jinja2==2.10
+pyyaml
