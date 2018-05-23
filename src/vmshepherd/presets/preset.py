@@ -7,38 +7,57 @@ from vmshepherd.iaas.vm import VmState
 
 class Preset:
 
-    def __init__(self, name: str, config: dict, runtime: object, iaas=None, healthcheck=None):
-        self.iaas = iaas
-        self.healthcheck = healthcheck
-        self.config = config
+    def __init__(self, name: str):
+        self.iaas = None
+        self.healthcheck = None
+        self.runtime_mgr = None
+        self.runtime = None
+        self.config = {}
         self.name = name
-        self.runtime = runtime
-        self.count = config['count']
+        self.count = 0
         self.created = 0
         self.terminated = 0
         self.healthcheck_terminated = 0
         self._extra = {'preset': self.name}
         self._locked = False
-        self.info = None
+        self._vms = []
+
+    @property
+    def vms(self):
+        return self._vms
+
+    def configure(self, config: dict, runtime_mgr: object, iaas: object, healthcheck: object):
+        self.iaas = iaas
+        self.healthcheck = healthcheck
+        self.config = config
+        self.count = config['count']
+        self.runtime_mgr = runtime
+
+    def _reset_counters(self):
+        self.created = 0
+        self.terminated = 0
+        self.healthcheck_terminated = 0
 
     async def _terminate_vm(self, vm):
         await vm.terminate()
 
     async def __aenter__(self):
-        self.info = await self.runtime.get_preset_data(self.name)
-        # TODO: literal, magic numbers should be taken from config
-        require_manage = time.time() - self.info.last_managed > int(self.config.get('manage_interval', 60))
+        self.runtime = await self.runtime_mgr.get_preset_data(self.name)
+        require_manage = time.time() - self.runtime.last_managed > int(self.config.get('manage_interval', 60))
         if not require_manage:
             return False
 
-        expired = time.time() - self.info.last_managed > int(self.config.get('manage_expire', 120))
-        self._locked = await self.runtime.acquire_lock(self.name)
+        expired = time.time() - self.runtime.last_managed > int(self.config.get('manage_expire', 120))
+        self._locked = await self.runtime_mgr.acquire_lock(self.name)
+
+        self._reset_counters()
 
         return expired or self._locked
 
     async def __aexit__(self, exc_type, exc, tb):
         if self._locked:
-            await self.runtime.set_preset_data(self.name, self.info)
+            self._locked = False
+            await self.runtime.set_preset_data(self.name, self.runtime)
             await self.runtime.release_lock(self.name)
 
     async def _create_vms(self, count):
@@ -54,15 +73,11 @@ class Preset:
             except Exception:
                 logging.error('Could not create vm with %s', args, extra=self._extra)
 
-    async def list_vms(self):
-        vms = await self.iaas.list_vms(self.name)
-        return vms
-
     async def manage(self):
-        vms = await self.list_vms()
+        self.vms = await self.iaas.list_vms(self.name)
 
-        vms_stat = Counter([vm.get_state() for vm in vms])
-        missing = self.count - len(vms) if len(vms) < self.count else 0
+        vms_stat = Counter([vm.get_state() for vm in self.vms])
+        missing = self.count - len(self.vms) if len(self.vms) < self.count else 0
         logging.info(
             'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, %s after time shutdown, '
             '%s terminated, %s error, %s unknown, %s missing',
@@ -70,19 +85,19 @@ class Preset:
             vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
             vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
-        for vm in vms:
+        for vm in self.vms:
             if vm.is_dead():
                 logging.info("Terminate %s", vm, extra=self._extra)
                 await vm.terminate()
                 self.terminated += 1
-        to_create = self.count - (len(vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
+        to_create = self.count - (len(self.vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
         to_create = to_create if to_create > 0 else 0
         logging.debug("Create %s Vm", to_create, extra=self._extra)
         await self._create_vms(to_create)
-        await self._healthcheck(vms)
+        await self._healthcheck(self.vms)
         logging.info(
             'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
-            self.terminated, self.healthcheck_terminated, to_create, len(self.info.failed_checks),
+            self.terminated, self.healthcheck_terminated, to_create, len(self.runtime.failed_checks),
             extra=self._extra
         )
 
@@ -98,9 +113,9 @@ class Preset:
             # if check failed
             if not state_check.result():
                 current_fails.append(vm.id)
-                failed_since = self.info.failed_checks.get(vm.id, {}).get('time', time.time())
-                count_fails = self.info.failed_checks.get(vm.id, {}).get('count', 0)
-                self.info.failed_checks[vm.id] = {'time': failed_since, 'count': count_fails + 1}
+                failed_since = self.runtime.failed_checks.get(vm.id, {}).get('time', time.time())
+                count_fails = self.runtime.failed_checks.get(vm.id, {}).get('count', 0)
+                self.runtime.failed_checks[vm.id] = {'time': failed_since, 'count': count_fails + 1}
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if terminate_heatlh_failed_delay >= 0 and count_fails > 5:
                     if terminate_heatlh_failed_delay + failed_since < time.time():
@@ -109,6 +124,6 @@ class Preset:
                         await self._terminate_vm(vm)
                         self.healthcheck_terminated += 1
 
-        for vm_id in list(self.info.failed_checks.keys()):
+        for vm_id in list(self.runtime.failed_checks.keys()):
             if vm_id not in current_fails:
-                del self.info.failed_checks[vm_id]
+                del self.runtime.failed_checks[vm_id]

@@ -32,6 +32,11 @@ class AbstractConfigurationDriver:
         for name in to_remove:
             del self._presets[name]
 
+        for name, preset in self._presets.items():
+            config = 
+            params = self._prepare_preset_params(config)
+            preset.configure(**params)
+
     async def _get(self, preset_name):
         raise NotImplementedError
 
@@ -41,7 +46,7 @@ class AbstractConfigurationDriver:
     async def reload(self):
         raise NotImplementedError
 
-    def _prepare_preset(self, config):
+    def _prepare_preset_params(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )
@@ -56,10 +61,11 @@ class AbstractConfigurationDriver:
 
         if 'userdata' in config:
             self._render_preset_userdata(config)
-        return Preset(
-            config['name'], config, runtime=self.runtime,
+
+        return {
+            config=config, runtime_mgr=self.runtime,
             iaas=iaas, healthcheck=healthcheck
-        )
+        }
 
     def reconfigure(self, config, defaults):
         self.defaults = defaults
