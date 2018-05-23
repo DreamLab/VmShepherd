@@ -14,7 +14,6 @@ class AbstractConfigurationDriver:
         self.defaults = defaults
         self._presets = {}
 
-
     def get_preset(self, preset_name):
         return self._presets[preset_name]
 
@@ -27,7 +26,7 @@ class AbstractConfigurationDriver:
         fresh_presets = set(await self._list())
         loaded_presets = set(self._presets.keys())
         to_add = fresh_presets - loaded_presets
-        to_remove = loaded_presets
+        to_remove = loaded_presets - fresh_presets
         for name in to_add:
             self._presets[name] = Preset(name)
         for name in to_remove:
@@ -42,7 +41,7 @@ class AbstractConfigurationDriver:
     async def reload(self):
         raise NotImplementedError
 
-    def _get_preset_create_preset(self, config):
+    def _prepare_preset(self, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )

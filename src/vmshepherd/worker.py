@@ -51,13 +51,12 @@ class Worker:
     async def _manage(self):
         await self.presets.reload()
 
-        presets = await self.presets.get_presets_list()
+        presets = await self.presets.list_presets(fresh=True)
         cnt_presets, cnt_managed, cnt_failed_presets = len(presets), 0, 0
 
-        for name in presets:
+        for name, preset in presets.items():
 
             try:
-                preset = await self.presets.get(name)
                 async with preset as locked:
                     if locked:
                         cnt_managed += 1
