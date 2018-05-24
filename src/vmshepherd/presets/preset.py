@@ -7,7 +7,7 @@ from vmshepherd.iaas.vm import VmState
 
 class Preset:
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, origin: str):
         self.iaas = None
         self.healthcheck = None
         self.runtime_mgr = None
@@ -18,6 +18,7 @@ class Preset:
         self.created = 0
         self.terminated = 0
         self.healthcheck_terminated = 0
+        self.origin = origin
         self._extra = {'preset': self.name}
         self._locked = False
         self._vms = []
@@ -25,6 +26,10 @@ class Preset:
     @property
     def vms(self):
         return self._vms
+
+    @property
+    def path(self):
+        return self.origin
 
     def configure(self, config: dict, runtime_mgr: object, iaas: object, healthcheck: object):
         self.iaas = iaas

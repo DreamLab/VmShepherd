@@ -14,6 +14,20 @@ class AbstractConfigurationDriver:
         self.defaults = defaults
         self._presets = {}
 
+    async def _get_preset_spec(self, preset_name: str):
+        """ Returns configuration of specific preset
+        """
+        raise NotImplementedError
+
+    async def _list(self):
+        """ Returns lists  of presets. Technically it must return `dict` of:
+
+                name1 => origin1
+                name2 => origin2
+        """
+        raise NotImplementedError
+
+
     def get_preset(self, preset_name):
         return self._presets[preset_name]
 
@@ -23,30 +37,27 @@ class AbstractConfigurationDriver:
         return self._presets
 
     async def refresh_presets(self):
-        fresh_presets = set(await self._list())
+        _presets = await self._list()
+
+        fresh_presets = set(_presets.keys())
         loaded_presets = set(self._presets.keys())
         to_add = fresh_presets - loaded_presets
         to_remove = loaded_presets - fresh_presets
+
         for name in to_add:
-            self._presets[name] = Preset(name)
+            self._presets[name] = Preset(name=name, origin=_presets[name])
         for name in to_remove:
             del self._presets[name]
 
         for name, preset in self._presets.items():
-            config = 
-            params = self._prepare_preset_params(config)
+            spec = await self._get_preset_spec(name)
+            params = await self._prepare_preset_params(preset, spec)
             preset.configure(**params)
-
-    async def _get(self, preset_name):
-        raise NotImplementedError
-
-    async def _list(self):
-        raise NotImplementedError
 
     async def reload(self):
         raise NotImplementedError
 
-    def _prepare_preset_params(self, config):
+    await def _prepare_preset_params(self, preset, config):
         iaas_cfg = get_merged_dict_recursively(
             self.defaults.get('iaas', {}), config.get('iaas', {})
         )
@@ -60,6 +71,7 @@ class AbstractConfigurationDriver:
         config['healthcheck'] = healthcheck_cfg
 
         if 'userdata' in config:
+            await self.inject_preset_userdata(config, preset.path)
             self._render_preset_userdata(config)
 
         return {

@@ -5,46 +5,49 @@ import os
 import tempfile
 from .abstract import AbstractConfigurationDriver
 from asyncio.subprocess import PIPE
+from collections import namedtuple
 from vmshepherd.utils import async_load_from_yaml_file
+
+
+PresetSpec = namedtuple('name config origin')
 
 
 class GitRepoDriver(AbstractConfigurationDriver):
 
     def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
-        self._presets = {}
         self._clone_dir = config.get('clone_dir', os.path.join(tempfile.gettempdir(), 'vmshepherd'))
         self._repos = config['repositories']
+        self._specs = {}
 
-    async def get(self, preset_name):
-        return self._presets[preset_name]
+    async def _get_preset_spec(self, preset_name: str):
+        return self._specs[preset_name]
 
-    async def get_presets_list(self):
-        return list(self._presets.keys())
+    async def _list(self):
+        await self.reload()
+        return {name: spec.origin for name, spec in self._specs}
 
     async def reload(self):
-        presets = {}
+        _tmp_specs = {}
         self._assure_clone_dir_exists()
         for name, repo in self._repos.items():
             try:
                 path = os.path.join(self._clone_dir, name)
                 await self._clone_or_update(path, repo)
-                repo_presets = await self._load_repos_presets(name, path)
-                presets.update(repo_presets)
+                added = await self._load_repo(name, path)
+                _tmp_specs.update(added)
             except Exception:
                 logging.exception('GitReposDriver: Could not load %s from %s', name, repo)
-        self._presets = presets
+        self._specs = _tmp_specs
 
-    async def _load_repos_presets(self, repo_name, path):
+    async def _load_repo(self, repo_name, path):
         loaded = {}
         for item in os.scandir(path):
             if os.path.isfile(item.path) and os.path.splitext(item.path)[1] == '.conf':
-                preset = await async_load_from_yaml_file(item.path)
+                config = await async_load_from_yaml_file(item.path)
                 # prepend repo name to preset_name
-                preset['name'] = preset_name = f"{repo_name}.{preset['name']}"
-                if preset is not None:
-                    await self.inject_preset_userdata(preset, path)
-                    loaded[preset_name] = self.create_preset(preset)
+                config['name'] = preset_name = f"{repo_name}.{config['name']}"
+                loaded[preset_name] = PresetSpec(preset_name, config, item.path)
         return loaded
 
     async def _clone_or_update(self, path, repo):
