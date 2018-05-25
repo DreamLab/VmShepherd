@@ -7,7 +7,7 @@ from vmshepherd.iaas.vm import VmState
 
 class Preset:
 
-    def __init__(self, name: str, origin: str):
+    def __init__(self, name: str):
         self.iaas = None
         self.healthcheck = None
         self.runtime_mgr = None
@@ -18,7 +18,6 @@ class Preset:
         self.created = 0
         self.terminated = 0
         self.healthcheck_terminated = 0
-        self.origin = origin
         self._extra = {'preset': self.name}
         self._locked = False
         self._vms = []
@@ -27,16 +26,12 @@ class Preset:
     def vms(self):
         return self._vms
 
-    @property
-    def path(self):
-        return self.origin
-
     def configure(self, config: dict, runtime_mgr: object, iaas: object, healthcheck: object):
         self.iaas = iaas
         self.healthcheck = healthcheck
         self.config = config
         self.count = config['count']
-        self.runtime_mgr = runtime
+        self.runtime_mgr = runtime_mgr
 
     def _reset_counters(self):
         self.created = 0
@@ -62,8 +57,8 @@ class Preset:
     async def __aexit__(self, exc_type, exc, tb):
         if self._locked:
             self._locked = False
-            await self.runtime.set_preset_data(self.name, self.runtime)
-            await self.runtime.release_lock(self.name)
+            await self.runtime_mgr.set_preset_data(self.name, self.runtime)
+            await self.runtime_mgr.release_lock(self.name)
 
     async def _create_vms(self, count):
         for i in range(count):
@@ -79,27 +74,27 @@ class Preset:
                 logging.error('Could not create vm with %s', args, extra=self._extra)
 
     async def manage(self):
-        self.vms = await self.iaas.list_vms(self.name)
+        self._vms = await self.iaas.list_vms(self.name)
 
-        vms_stat = Counter([vm.get_state() for vm in self.vms])
-        missing = self.count - len(self.vms) if len(self.vms) < self.count else 0
+        vms_stat = Counter([vm.get_state() for vm in self._vms])
+        missing = self.count - len(self._vms) if len(self._vms) < self.count else 0
         logging.info(
             'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, %s after time shutdown, '
             '%s terminated, %s error, %s unknown, %s missing',
-            self.count, len(vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value],
+            self.count, len(self._vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value],
             vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
             vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
-        for vm in self.vms:
+        for vm in self._vms:
             if vm.is_dead():
                 logging.info("Terminate %s", vm, extra=self._extra)
                 await vm.terminate()
                 self.terminated += 1
-        to_create = self.count - (len(self.vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
+        to_create = self.count - (len(self._vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
         to_create = to_create if to_create > 0 else 0
         logging.debug("Create %s Vm", to_create, extra=self._extra)
         await self._create_vms(to_create)
-        await self._healthcheck(self.vms)
+        await self._healthcheck(self._vms)
         logging.info(
             'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
             self.terminated, self.healthcheck_terminated, to_create, len(self.runtime.failed_checks),

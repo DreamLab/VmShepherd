@@ -5,11 +5,7 @@ import os
 import tempfile
 from .abstract import AbstractConfigurationDriver
 from asyncio.subprocess import PIPE
-from collections import namedtuple
 from vmshepherd.utils import async_load_from_yaml_file
-
-
-PresetSpec = namedtuple('name config origin')
 
 
 class GitRepoDriver(AbstractConfigurationDriver):
@@ -24,10 +20,10 @@ class GitRepoDriver(AbstractConfigurationDriver):
         return self._specs[preset_name]
 
     async def _list(self):
-        await self.reload()
-        return {name: spec.origin for name, spec in self._specs}
+        await self._reload()
+        return self._specs.keys()
 
-    async def reload(self):
+    async def _reload(self):
         _tmp_specs = {}
         self._assure_clone_dir_exists()
         for name, repo in self._repos.items():
@@ -47,7 +43,8 @@ class GitRepoDriver(AbstractConfigurationDriver):
                 config = await async_load_from_yaml_file(item.path)
                 # prepend repo name to preset_name
                 config['name'] = preset_name = f"{repo_name}.{config['name']}"
-                loaded[preset_name] = PresetSpec(preset_name, config, item.path)
+                config['userdata_source_root'] = path
+                loaded[preset_name] = config
         return loaded
 
     async def _clone_or_update(self, path, repo):

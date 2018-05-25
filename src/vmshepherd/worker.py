@@ -35,7 +35,7 @@ class Worker:
         self._start_time = time.time()
         logging.info('VmShepherd start cycle...')
 
-        result, cnt_presets, cnt_failed_presets = self.ERROR, -1, -1
+        result, cnt_managed, cnt_presets, cnt_failed_presets = self.ERROR, 0, -1, -1
         try:
             result, cnt_presets, cnt_managed, cnt_failed_presets = await self._manage()
         except Exception:
@@ -49,9 +49,7 @@ class Worker:
         return result
 
     async def _manage(self):
-        await self.presets.reload()
-
-        presets = await self.presets.list_presets(fresh=True)
+        presets = await self.presets.list_presets(refresh=True)
         cnt_presets, cnt_managed, cnt_failed_presets = len(presets), 0, 0
 
         for name, preset in presets.items():

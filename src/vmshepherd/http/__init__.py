@@ -47,18 +47,17 @@ class Panel(web.View):
 
     @aiohttp_jinja2.template('index.html.jinja2')
     async def get(self):
-        vms = self.request.app.vmshepherd
-        data = {'presets': {}, 'config': vms.config}
-        await vms.preset_manager.reload()
-        presets = await vms.preset_manager.get_presets_list()
-        runtime = vms.runtime_manager
+        shepherd = self.request.app.vmshepherd
+        data = {'presets': {}, 'config': shepherd.config}
+        presets = await shepherd.preset_manager.list_presets()
+        runtime = shepherd.runtime_manager
         for name in presets:
-            preset = await vms.preset_manager.get(name)
+            preset = shepherd.preset_manager.get_preset(name)
             data['presets'][name] = {
                 'preset': preset,
-                'vms': await preset.list_vms(),
+                'vms': preset.vms,
                 'runtime': await runtime.get_preset_data(name),
-                'vmshepherd_id': vms.instance_id,
+                'vmshepherd_id': shepherd.instance_id,
                 'now': time.time()
             }
         return data
