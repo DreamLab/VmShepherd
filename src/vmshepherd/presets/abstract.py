@@ -35,6 +35,9 @@ class AbstractConfigurationDriver:
     async def refresh_presets(self):
         _presets = await self._list()
 
+        if self._presets is None:
+            self._presets = {}
+
         fresh_presets = set(_presets)
         loaded_presets = set(self._presets.keys())
         to_add = fresh_presets - loaded_presets

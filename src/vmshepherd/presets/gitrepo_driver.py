@@ -20,10 +20,10 @@ class GitRepoDriver(AbstractConfigurationDriver):
         return self._specs[preset_name]
 
     async def _list(self):
-        await self._reload()
+        await self.reload()
         return self._specs.keys()
 
-    async def _reload(self):
+    async def reload(self):
         _tmp_specs = {}
         self._assure_clone_dir_exists()
         for name, repo in self._repos.items():
