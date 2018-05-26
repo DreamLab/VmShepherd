@@ -12,7 +12,7 @@ class AbstractConfigurationDriver:
     def __init__(self, runtime, defaults):
         self.runtime = runtime
         self.defaults = defaults
-        self._presets = {}
+        self._presets = None
 
     async def _get_preset_spec(self, preset_name: str):
         """ Returns configuration of specific preset
@@ -28,7 +28,7 @@ class AbstractConfigurationDriver:
         return self._presets[preset_name]
 
     async def list_presets(self, refresh=True):
-        if refresh:
+        if refresh or self._presets is None:
             await self.refresh_presets()
         return self._presets
 
