@@ -7,8 +7,6 @@ include .coveragerc
 include .editorconfig
 
 include Makefile
-include Pipfile
-include Pipfile.lock
 
 include CHANGELOG.rst
 include README.rst
