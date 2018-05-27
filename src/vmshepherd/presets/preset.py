@@ -43,11 +43,11 @@ class Preset:
 
     async def __aenter__(self):
         self.runtime = await self.runtime_mgr.get_preset_data(self.name)
-        require_manage = time.time() - self.runtime.last_managed > int(self.config.get('manage_interval', 60))
+        require_manage = time.time() - self.runtime.last_managed > self.config.get('manage_interval', 60)
         if not require_manage:
             return False
 
-        expired = time.time() - self.runtime.last_managed > int(self.config.get('manage_expire', 120))
+        expired = time.time() - self.runtime.last_managed > self.config.get('manage_expire', 120)
         self._locked = await self.runtime_mgr.acquire_lock(self.name)
 
         self._reset_counters()
