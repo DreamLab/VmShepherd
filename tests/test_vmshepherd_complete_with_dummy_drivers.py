@@ -41,7 +41,7 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
         # zero run - should create on vm
         await self.vmshepherd.run(run_once=True)
 
-        # first run 
+        # first run
         await self.vmshepherd.run(run_once=True)
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
@@ -72,45 +72,6 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
             preset.vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-
-        # # third run - virtual machine goes in NEARBY_SHUTDOWN
-        # #  - new vm should be created
-
-        # vm_list[0].state = VmState.NEARBY_SHUTDOWN
-        # await self.vmshepherd.run(run_once=True)
-
-        # vm_list = await preset.list_vms()
-        # self.assertEqual(
-            # vm_list,
-            # [VmMock(1, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small'),
-             # VmMock(2, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        # )
-        # self.assertFalse(vm_list[0].is_dead())
-        # self.assertTrue(vm_list[1].is_running())
-
-        # # fourth run - virtual machine goes in AFTER_TIME_SHUTDOWN
-        # #  - vm should be terminated
-
-        # vm_list[0].state = VmState.AFTER_TIME_SHUTDOWN
-        # await self.vmshepherd.run(run_once=True)
-
-        # vm_list = await preset.list_vms()
-        # self.assertEqual(
-            # vm_list,
-            # [VmMock(2, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        # )
-
-        # # last run - virtual machine goes in TERMINATED
-        # #  - vm should be terminated
-
-        # vm_list[0].state = VmState.TERMINATED
-        # await self.vmshepherd.run(run_once=True)
-
-        # vm_list = await preset.list_vms()
-        # self.assertEqual(
-            # vm_list,
-            # [VmMock(3, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        # )
 
 
 class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
@@ -146,6 +107,6 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            vm_list,
+            preset.vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
