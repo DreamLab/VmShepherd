@@ -5,9 +5,7 @@ VmShepherd
 .. toctree::
    :maxdepth: 2
 
-   getting_started
-   extending
-   reference/index
+   user/getting_started
    changelog
 
 Indices and tables
