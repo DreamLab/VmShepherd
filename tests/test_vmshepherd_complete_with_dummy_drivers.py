@@ -19,11 +19,10 @@ class TestVmShepherdInitWithDummyDrivers(AsyncTestCase):
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_initialize_preset_manager(self):
-        await self.vmshepherd.preset_manager.reload()
-        presets_list = await self.vmshepherd.preset_manager.get_presets_list()
-        self.assertEqual(presets_list, ['test-preset'])
+        presets_list = await self.vmshepherd.preset_manager.list_presets()
+        self.assertEqual(list(presets_list.keys()), ['test-preset'])
 
-        preset = await self.vmshepherd.preset_manager.get('test-preset')
+        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(preset.count, 1)
 
     async def test_initialize_iaas(self):
@@ -39,78 +38,39 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_run(self):
-        # first run - should create on vm
+        # zero run - should create on vm
         await self.vmshepherd.run(run_once=True)
 
-        preset = await self.vmshepherd.preset_manager.get('test-preset')
-        vm_list = await preset.list_vms()
-        self.assertEqual(
-            vm_list,
-            [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        )
-        self.assertTrue(vm_list[0].is_running())
-
-        # second run - there should be no change
+        # first run
         await self.vmshepherd.run(run_once=True)
 
-        vm_list = await preset.list_vms()
+        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            vm_list,
+            preset.vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(vm_list[0].is_running())
+        self.assertTrue(preset.vms[0].is_running())
+
+        # # second run - there should be no change
+        await self.vmshepherd.run(run_once=True)
+
+        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
+        self.assertEqual(
+            preset.vms,
+            [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
+        )
+        self.assertTrue(preset.vms[0].is_running())
 
         # third run - virtual machine goes in ERROR
         #  - failed vm should be terminated
-        #  - new vm should be created
+        #  - new vm should schdule new vm
 
-        vm_list[0].state = VmState.ERROR
+        preset.vms[0].state = VmState.ERROR
         await self.vmshepherd.run(run_once=True)
 
-        vm_list = await preset.list_vms()
         self.assertEqual(
-            vm_list,
-            [VmMock(1, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        )
-        self.assertTrue(vm_list[0].is_running())
-
-        # third run - virtual machine goes in NEARBY_SHUTDOWN
-        #  - new vm should be created
-
-        vm_list[0].state = VmState.NEARBY_SHUTDOWN
-        await self.vmshepherd.run(run_once=True)
-
-        vm_list = await preset.list_vms()
-        self.assertEqual(
-            vm_list,
-            [VmMock(1, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small'),
-             VmMock(2, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        )
-        self.assertFalse(vm_list[0].is_dead())
-        self.assertTrue(vm_list[1].is_running())
-
-        # fourth run - virtual machine goes in AFTER_TIME_SHUTDOWN
-        #  - vm should be terminated
-
-        vm_list[0].state = VmState.AFTER_TIME_SHUTDOWN
-        await self.vmshepherd.run(run_once=True)
-
-        vm_list = await preset.list_vms()
-        self.assertEqual(
-            vm_list,
-            [VmMock(2, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
-        )
-
-        # last run - virtual machine goes in TERMINATED
-        #  - vm should be terminated
-
-        vm_list[0].state = VmState.TERMINATED
-        await self.vmshepherd.run(run_once=True)
-
-        vm_list = await preset.list_vms()
-        self.assertEqual(
-            vm_list,
-            [VmMock(3, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
+            preset.vms,
+            [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
 
 
@@ -122,25 +82,20 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
         self.vmshepherd = VmShepherd(example_config)
 
     async def test_locking(self):
-        await self.vmshepherd.preset_manager.reload()
-        preset = await self.vmshepherd.preset_manager.get('test-preset')
+        await self.vmshepherd.preset_manager.list_presets()
+        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         await asyncio.gather(
             self.vmshepherd.run(run_once=True),
             self.vmshepherd.run(run_once=True)
         )
 
-        preset = await self.vmshepherd.preset_manager.get('test-preset')
-        vm_list = await preset.list_vms()
+        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            vm_list,
-            [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
+            preset.vms, []
         )
-        self.assertTrue(vm_list[0].is_running())
 
     @expectedFailure
     async def test_example_of_bad_locking(self):
-        await self.vmshepherd.preset_manager.reload()
-
         # no lock-mechanism actually, always manage preset
         self.vmshepherd.runtime_manager.acquire_lock = Mock(return_value=futurized(True))
         self.vmshepherd.runtime_manager.release_lock = Mock(return_value=futurized(True))
@@ -150,10 +105,8 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
             self.vmshepherd.worker._manage()  # explicit call of private method to bypass run_once check
         )
 
-        preset = await self.vmshepherd.preset_manager.get('test-preset')
-        vm_list = await preset.list_vms()
+        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            vm_list,
+            preset.vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(vm_list[0].is_running())

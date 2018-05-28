@@ -84,9 +84,9 @@ class Vm:
 
     async def terminate(self):
         """ Terminate vm.
-
         """
         logging.debug('Terminate: %s', self)
+        self.state = VmState.TERMINATED
         return await self.manager.terminate_vm(self.id)
 
     def is_running(self):

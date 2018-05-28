@@ -10,22 +10,23 @@ class DirectoryDriver(AbstractConfigurationDriver):
         self._presets = {}
         self._path = config['path']
 
-    async def get(self, preset_name):
-        return self._presets[preset_name]
+    async def _get_preset_spec(self, preset_name: str):
+        return self._specs[preset_name]
 
-    async def get_presets_list(self):
-        return list(self._presets.keys())
+    async def _list(self):
+        await self._reload()
+        return self._specs.keys()
 
-    async def reload(self):
-        presets = {}
+    async def _reload(self):
+        _tmp_specs = {}
         for item in os.scandir(self._path):
             if os.path.isfile(item.path):
                 preset_name = item.name.replace('.conf', '')
-                preset = await async_load_from_yaml_file(item.path)
-                if preset is not None:
-                    await self.inject_preset_userdata(preset, self._path)
-                    presets[preset_name] = self.create_preset(preset)
-        self._presets = presets
+                config = await async_load_from_yaml_file(item.path)
+                config['name'] = preset_name = f"{config['name']}"
+                config['userdata_source_root'] = self._path
+                _tmp_specs[preset_name] = config
+        self._specs = _tmp_specs
 
     def reconfigure(self, config, defaults):
         super().reconfigure(config, defaults)

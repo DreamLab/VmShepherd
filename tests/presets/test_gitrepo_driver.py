@@ -40,7 +40,7 @@ class TestGitRepo(AsyncTestCase):
 
     def test_init(self):
         self.assertEqual('/tmp/', self.driver._clone_dir)
-        self.assertEqual({}, self.driver._presets)
+        self.assertEqual(None, self.driver._presets)
 
     async def test_clone(self):
         self.mock_os.path.exists.return_value = False
@@ -70,20 +70,20 @@ class TestGitRepo(AsyncTestCase):
 
     async def test_load_repos_presets(self):
         self.patch_os.stop()
-        res = await self.driver._load_repos_presets('blah', example_config['presets']['path'])
-        self.assertEqual(res['blah.test-preset'].count, 1)
-        self.assertEqual(res['blah.test-preset'].name, 'blah.test-preset')
-        self.assertEqual(res['blah.test-preset'].config['flavor'], 'm1.small')
-        self.assertEqual(res['blah.test-preset'].config['image'], 'fedora-27')
-        self.assertEqual(res['blah.test-preset'].config['meta_tags'], {'key1': 'value1'})
+        res = await self.driver._load_repo('blah', example_config['presets']['path'])
+        self.assertEqual(res['blah.test-preset']['count'], 1)
+        self.assertEqual(res['blah.test-preset']['name'], 'blah.test-preset')
+        self.assertEqual(res['blah.test-preset']['flavor'], 'm1.small')
+        self.assertEqual(res['blah.test-preset']['image'], 'fedora-27')
+        self.assertEqual(res['blah.test-preset']['meta_tags'], {'key1': 'value1'})
 
     async def test_reload(self):
         self.mock_os.path.join.side_effect = lambda a, b: (a + b)
         self.driver._clone_or_update = Mock(return_value=futurized(None))
         self.driver._assure_clone_dir_exists = Mock(return_value=True)
-        self.driver._load_repos_presets = Mock(return_value=futurized({}))
-        await self.driver.reload()
-        self.driver._load_repos_presets.assert_has_calls([
+        self.driver._load_repo = Mock(return_value=futurized({}))
+        await self.driver.list_presets()
+        self.driver._load_repo.assert_has_calls([
             mock.call('paas', '/tmp/paas'), mock.call('db', '/tmp/db')
         ])
-        self.assertEqual(self.driver._load_repos_presets.call_count, 2)
+        self.assertEqual(self.driver._load_repo.call_count, 2)
