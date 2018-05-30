@@ -16,7 +16,7 @@ Configuration
 
 For api you can configure which methods are available:
 
-Example:
+Example
 .........................
 
 .. code-block:: yaml
@@ -42,7 +42,7 @@ vmshepherd.http.rpc\_api module
     :show-inheritance:
 
 
-Sample calls to api:
+Sample calls to api
 -----------------
 
 Sample code is also available in `repository <.https://github.com/DreamLab/VmShepherd/blob/master/examples>`_
