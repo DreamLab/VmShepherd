@@ -7,6 +7,7 @@ VmShepherd
 
    user/getting_started
    changelog
+   development/index
 
 Indices and tables
 ==================
