@@ -10,6 +10,9 @@ VmShepherd
    extending
    reference/index
    changelog
+   user/index
+   releases/index
+   development/index
 
 Indices and tables
 ==================
