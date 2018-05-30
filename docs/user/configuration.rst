@@ -20,9 +20,10 @@ General parameters
 Runtime store
 -------------
 
-Allows to set driver for runtime store. Runtime store is used to keep data that should be shared with
+Allows to set driver for runtime store. Runtime store is used to keep data that should be shared between cycles - you can find more information in AAAAA.
 
-.. 
+.. code-block:: yaml
+
    runtime:
      driver: NameOfTheDriver
      some_arg1: host
@@ -32,10 +33,11 @@ Allows to set driver for runtime store. Runtime store is used to keep data that 
 Preset store
 ------------
 
-AAAA
+Specify preset store, preset/cluster definition. More info at ....
 
 
-.. 
+.. code-block:: yaml
+
    presets:
      driver: NameOfTheDriver
      some_arg1: host
