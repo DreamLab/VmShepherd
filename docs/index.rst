@@ -5,8 +5,8 @@ VmShepherd
 .. toctree::
    :maxdepth: 2
 
-   user/getting_started
-   changelog
+   user/index
+   releases/index
    development/index
 
 Indices and tables
