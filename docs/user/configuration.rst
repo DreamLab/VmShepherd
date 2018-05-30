@@ -13,8 +13,8 @@ Vmhepherd requires configuration to be supplied with simple `YAML <http://yaml.o
 General parameters
 ------------------
 
-- worker_interval
-- log_level
+- *worker_interval* - 
+- *log_level* - 
 
 
 Runtime store
@@ -42,6 +42,28 @@ Specify preset store, preset/cluster definition. More info at ....
      driver: NameOfTheDriver
      some_arg1: host
      some_arg2: 345
+
+http
+----
+
+This section enables you to set api/panel port, whitelist available API methods. More about API...
+
+.. code-block:: yaml
+
+    http:
+      api: 
+        allowed_methods: 
+          - list_vms
+          - terminate_vm
+          - get_vm_metadata
+      listen_port: 8888
+
+The `api.allowed_methods` params are optional and if are not provided entire API will be exposed.
+
+.. code-block:: yaml
+
+    http:
+      listen_port: 8888
 
 `defaults`
 ----------
