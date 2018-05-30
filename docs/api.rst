@@ -34,7 +34,7 @@ Code
 -----------------
 
 vmshepherd.http.rpc\_api module
--------------------------------
+................................
 
 .. automodule:: vmshepherd.http.rpc_api
     :members:
@@ -42,10 +42,14 @@ vmshepherd.http.rpc\_api module
     :show-inheritance:
 
 
-Examples of callings to api:
+Sample calls to api:
 -----------------
 
-* List virtual Machine in a preset
+Sample code is also available in `repository <.https://github.com/DreamLab/VmShepherd/blob/master/examples>`_
+
+
+List virtual Machine in a preset
+................................
 
 .. code-block:: python
    :emphasize-lines: 3,5
@@ -60,7 +64,8 @@ Examples of callings to api:
     >>> loop.run_until_complete(main())
     [2, {'1111111-1111-1111-1111-11111111': {'ip': '10.177.1.2', 'state': 'running'}, '22222-2222-2222-2222-2222222': {'ip': '10.177.1.3, 'state': 'running'}}]
 
-* Get Virtual Machine metadata
+Get Virtual Machine metadata
+.............................
 
 .. code-block:: python
    :emphasize-lines: 3,5
@@ -75,7 +80,8 @@ Examples of callings to api:
     >>> loop.run_until_complete(main())
     {'timed_shutdown': '111111111111'}
 
-* Terminate Virtual Machine
+Terminate Virtual Machine
+............................
 
 .. code-block:: python
    :emphasize-lines: 3,5
