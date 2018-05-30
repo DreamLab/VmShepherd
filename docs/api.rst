@@ -48,7 +48,7 @@ Sample calls to api:
 Sample code is also available in `repository <.https://github.com/DreamLab/VmShepherd/blob/master/examples>`_
 
 
-List virtual Machine in a preset
+List Virtual Machines in a preset
 ................................
 
 .. code-block:: python
