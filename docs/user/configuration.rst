@@ -22,7 +22,7 @@ Runtime store
 
 Allows to set driver for runtime store. Runtime store is used to keep data that should be shared with
 
-:: 
+.. 
    runtime:
      driver: NameOfTheDriver
      some_arg1: host
@@ -35,7 +35,7 @@ Preset store
 AAAA
 
 
-:: 
+.. 
    presets:
      driver: NameOfTheDriver
      some_arg1: host
@@ -44,7 +44,7 @@ AAAA
 `defaults`
 ----------
 
-TODO
+Allows to provide defaults for `iaas` and `healthcheck` configuration that will be merged with preset spec.
 
 
 Example configuration
