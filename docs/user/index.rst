@@ -9,4 +9,5 @@ VmShepherd - user manual
    installation
    configuration
    api
+   panel
 
