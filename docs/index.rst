@@ -6,6 +6,7 @@ VmShepherd
    :maxdepth: 2
 
    getting_started
+   api
    extending
    reference/index
    changelog
