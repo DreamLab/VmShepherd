@@ -14,7 +14,7 @@ Also we provide a easy way to gather information about presets and virtual machi
 Configuration
 -----------------
 
-For api you can configure which interface are available (Yo can find sample configuration `here <.https://github.com/DreamLab/VmShepherd/blob/master/config/settings.example.yaml>`_)
+For api you can configure which methods are available:
 
 Example:
 .........................

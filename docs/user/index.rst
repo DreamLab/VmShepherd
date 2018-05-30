@@ -8,4 +8,5 @@ VmShepherd - user manual
    getting_started
    installation
    configuration
+   api
 
