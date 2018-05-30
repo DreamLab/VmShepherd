@@ -2,7 +2,7 @@
 Configuration
 =============
 
-Vmhepherd requires configuration to be supplied with simple `YAML <http://yaml.org/>`_ file. Avaiable options are describe grouped in couple sections:
+Vmhepherd requires configuration to be supplied with simple `YAML <http://yaml.org/>`_ file. Available options can be grouped in couple sections:
 
     1. general parameters
     2. runtime store configuration
