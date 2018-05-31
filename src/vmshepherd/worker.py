@@ -1,9 +1,16 @@
+"""
+    Preset management worker.
+    It is responsible for listing, locking and running manage function on each preset.
+"""
+
+
 import asyncio
 import logging
 import time
 
 
 class Worker:
+    """ Preset management class """
 
     ERROR = 'ERROR'
     OK = 'OK'
@@ -49,6 +56,9 @@ class Worker:
         return result
 
     async def _manage(self):
+        """ Manage 
+       """
+
         presets = await self.presets.list_presets(refresh=True)
         cnt_presets, cnt_managed, cnt_failed_presets = len(presets), 0, 0
 
