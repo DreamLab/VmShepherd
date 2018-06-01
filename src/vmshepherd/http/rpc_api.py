@@ -32,7 +32,7 @@ class RpcApi(handler.JSONRPCView):
         Listing virtual machines in a given preset
 
         :arg string preset: preset name
-        :return:  [Size of a preset, list of virtual machines]
+        :return:  (Size of a preset, list of virtual machines)
 
             - first element of a tuple is a size of virtual machines in a preset
             - second element is a dict which contains all Virtual Machines, where every element of this dict looks like that:
