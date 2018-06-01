@@ -6,9 +6,9 @@ Api
 Description
 -----------------
 
-VMShepherd provide a RPC api which is available at `api' handler and can be configured.
-In configuration you provide a information which method is available to a user.
-This api provide a simple interface to control a Virtual Machines lifecycle in our environment.
+VMShepherd implement a RPC api which is available at `api' handler and can be configured.
+In configuration you prepare a information which method is available to a user.
+This api implement a simple interface to control a Virtual Machines lifecycle in our environment.
 Also we provide a easy way to gather information about presets and virtual machines in environment.
 
 Configuration
