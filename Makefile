@@ -3,6 +3,7 @@ install: requirements
 	  source env/bin/activate; \
 	  pip install -r test-requirements.txt; \
 	  pip install -r requirements.txt; \
+	  sudo apt-get install -y python3-pygraphviz; \
 	)
 
 test: install

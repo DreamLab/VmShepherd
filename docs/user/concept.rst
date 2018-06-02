@@ -2,14 +2,19 @@
 Concept
 =======
 
-Vmshepherd is an application to keep running group of virtual machines.
+Vmshepherd is an application to keep running groups of virtual machines.
+*Keep running* means that live VMs in IaaS should be no less than defined in configuration and if healthcheck is configured, all VMs need to pass it.
 
 
-.. automodule:: vmshepherd.iaas.vm
+States
+------
+
+Virtual Machine can be in defined state.
 
 .. autoclass:: vmshepherd.iaas.vm.VmState
 
-** Preset management flow **
+Main mangement flow
+-------------------
 
 .. graphviz::
     :caption: Global preset flow
@@ -26,7 +31,14 @@ Vmshepherd is an application to keep running group of virtual machines.
         next -> end;
     }
 
-.. automodule:: vmshepherd.worker
+For listing presets is responsible Preset Driver described **HERE**.
+Each preset is an object of Preset class.
+Each preset from list need to be locked (via the Runtime Dviver described **HERE**)
+and after lock it can be managed.
+
+
+Detailed actions in one iteration (*preset manage*)
+--------------------------------------------------
 
 .. graphviz::
     :caption: Preset management flow
@@ -37,5 +49,5 @@ Vmshepherd is an application to keep running group of virtual machines.
         "list vms" -> "terminate dead vms" -> "create missing" -> healthcheck -> end;
     }
 
-.. automodule:: vmshepherd.presets.preset
+In one cycle vmshepherd trys to maintain cluster of VMs in count defined in configuration up and running.
 

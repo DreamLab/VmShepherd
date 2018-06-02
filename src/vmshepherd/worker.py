@@ -1,9 +1,3 @@
-"""
-    Preset management worker.
-    It is responsible for listing, locking and running manage function on each preset.
-"""
-
-
 import asyncio
 import logging
 import time

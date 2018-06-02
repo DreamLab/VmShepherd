@@ -1,8 +1,3 @@
-"""
-It has also it's own configuration defined at start like image, flavor and data that can
-change on runtime like metadata and tags.
-"""
-
 import datetime
 import logging
 import time
@@ -11,9 +6,7 @@ from enum import Enum
 
 class VmState(Enum):
     """
-    **Virtual machine** (object describing it: Vm) has state normalized to ```VmState``` enum.
-
-    Standard states for a node
+    Standard states for a Virtual Machine.
 
     :var RUNNING: Vm is running.
     :var NEARBY_SHUTDOWN: Vm is running but it's minutes are numbered.
