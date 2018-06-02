@@ -24,7 +24,7 @@ Main mangement flow
         center=true;
         "list presets" -> next;
         next -> lock [label=aquire];
-        lock -> manage;
+        lock -> manage [label=locked];
         manage -> unlock;
         unlock -> next;
         lock -> next [label="lock failed"];
@@ -49,5 +49,5 @@ Detailed actions in one iteration (*preset manage*)
         "list vms" -> "terminate dead vms" -> "create missing" -> healthcheck -> end;
     }
 
-In one cycle vmshepherd trys to maintain cluster of VMs in count defined in configuration up and running.
+In one cycle vmshepherd tries to maintain cluster of VMs in count defined in configuration up and running.
 
