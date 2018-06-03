@@ -11,8 +11,9 @@ Iaas Driver
 IaaS Driver gives abstraction layer which unifies API methods making easier to use many IaaS providers.
 
 Implemented IaaS Drivers:
-1. DummyIaasDriver - iaas simulation driver
-2. OpenStackDriver - asyncopenstackclient library wrapper
+
+    1. DummyIaasDriver - iaas simulation driver
+    2. OpenStackDriver - asyncopenstackclient library wrapper
 
 
 .. toctree::
