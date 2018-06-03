@@ -23,8 +23,25 @@ Implemented IaaS Drivers:
    iaas_openstackdriver
 
 
+Runtime Driver
+--------------
+Runtime Driver implements methods to lock preset before manage it. It can be useful when many VmShepherd instances working on one list of presets.
+It also can hold runtime data - information that should be avaliable in later manage iterations. That data can be for example number of failed check for VM with ID X.
+
+Implemented Runtime Drivers:
+
+    1. InMemoryDriver - To use for only one VmShepherd instance. It holds all data in local memory.
+    2. (chcialo by sie tu opisac jeszcze PostgresDriver ale nie jest upubliczniony)
+
+
+.. toctree::
+   :maxdepth: 2
+
+   runtime_postgresdriver
+
+
 Healthcheck Driver
------------
+------------------
 Healthcheck Driver give methods to check if our application/something running on VM is working properly.
 
 Implemented Healthcheck Drivers:
