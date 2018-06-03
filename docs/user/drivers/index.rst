@@ -22,3 +22,19 @@ Implemented IaaS Drivers:
    iaas_dummydriver
    iaas_openstackdriver
 
+
+Healthcheck Driver
+-----------
+Healthcheck Driver give methods to check if our application/something running on VM is working properly.
+
+Implemented Healthcheck Drivers:
+
+    1. DummyHealthcheck - healthcheck simulation driver returning always positive check result
+    2. HttpHealthcheck - uses HTTP request
+
+
+.. toctree::
+   :maxdepth: 2
+
+   healthcheck_http
+
