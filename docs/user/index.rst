@@ -9,4 +9,6 @@ VmShepherd - user manual
    drivers/index
    installation
    configuration
+   api
+   panel
 
