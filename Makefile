@@ -1,9 +1,9 @@
 install: requirements
 	( \
 	  source env/bin/activate; \
+	  sudo apt-get install -y graphviz libgraphviz-dev pkg-config; \
 	  pip install -r test-requirements.txt; \
 	  pip install -r requirements.txt; \
-	  sudo apt-get install -y python3-pygraphviz; \
 	)
 
 test: install

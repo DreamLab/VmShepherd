@@ -1,7 +1,6 @@
 FROM python:3.6-rc-slim
 
-RUN apt-get -y update
-RUN apt-get -qq -y install make
+RUN apt-get -y update; apt-get -qq -y install make sudo
 RUN pip install tox
 
 ADD . /root/
