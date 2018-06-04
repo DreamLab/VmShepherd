@@ -30,17 +30,6 @@ Example
           - terminate_vm
           - get_vm_metadata
 
-Code
------------------
-
-vmshepherd.http.rpc\_api module
-................................
-
-.. automodule:: vmshepherd.http.rpc_api
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Sample calls to api
 -----------------
