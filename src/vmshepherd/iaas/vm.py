@@ -6,14 +6,16 @@ from enum import Enum
 
 class VmState(Enum):
     """
-    Standard states for a node
+    Standard states for a Virtual Machine.
 
     :var RUNNING: Vm is running.
+    :var NEARBY_SHUTDOWN: Vm is running but it's minutes are numbered.
+    :var AFTER_TIME_SHUTDOWN: Vm is running but it should be dead now.
     :var TERMINATED: Vm is terminated. This node can't be started later on.
     :var PENDING: Vm is pending.
+    :var UNKNOWN: Vm state is unknown.
     :var ERROR: Vm is an error state. Usually no operations can be performed
                  on the node once it ends up in the error state.
-    :var UNKNOWN: Vm state is unknown.
     """
 
     RUNNING = 'running'
