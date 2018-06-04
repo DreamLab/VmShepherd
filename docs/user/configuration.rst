@@ -32,7 +32,7 @@ Choose a runtime store driver and its options.
      some_arg1: host
      some_arg2: 345
 
-Runtime store is used to keep data that should be shared between cycles - you can find more information in AAAAA. 
+Runtime store is used to keep data that should be shared between cycles - you can find more information in `Runtime Driver section <drivers/index.html#runtime-driver>`_. 
 
 
 Preset store

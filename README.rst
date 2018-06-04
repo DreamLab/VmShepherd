@@ -5,7 +5,7 @@ VmShepherd
 Introduction
 ------------
 
-TO DO
+Vmshepherd is an application to keep running groups of virtual machines. Keep running means that live VMs in IaaS should be no less than defined in configuration and if healthcheck is configured, all VMs need to pass it.
 
 Installation
 ------------
@@ -13,6 +13,7 @@ Installation
 You can install easily from pypi.org
 
 ::
+
    pip install VmShepherd
 
 or use a docker image

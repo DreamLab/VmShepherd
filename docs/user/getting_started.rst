@@ -2,4 +2,26 @@
 Getting started
 ===============
 
-AADD
+Run VmShepherd in docker
+------------------------
+
+The simplest way to run VmShepherd with example config is to use docker.
+
+.. code-block:: bash
+   :emphasize-lines: 3,5
+ 
+   git clone https://github.com/DreamLab/VmShepherd.git
+   cd VmShepherd
+   docker build -t vmshepherd . --rm
+   docker run -it -p 8888:8888 -p 8000:8000 vmshepherd run
+
+Using python 3.6 
+
+.. code-block:: bash
+   :emphasize-lines: 3,5
+ 
+   git clone https://github.com/DreamLab/VmShepherd.git
+   cd VmShepherd
+   python setup.py install
+   vmshepherd -c config/settings.example.yaml
+
