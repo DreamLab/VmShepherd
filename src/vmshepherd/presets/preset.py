@@ -74,6 +74,7 @@ class Preset:
                 logging.error('Could not create vm with %s', args, extra=self._extra)
 
     async def manage(self):
+        """ Manage function docstring"""
         self._vms = await self.iaas.list_vms(self.name)
 
         vms_stat = Counter([vm.get_state() for vm in self._vms])
