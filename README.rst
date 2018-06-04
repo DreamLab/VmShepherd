@@ -10,31 +10,33 @@ Vmshepherd is an application to keep running groups of virtual machines. Keep ru
 Installation
 ------------
 
-You can install easily from pypi.org
+You can install easily from this repository, pypi.org
 
 ::
 
    pip install VmShepherd
 
-or use a docker image
-
-TODO
+or use a docker image (described below).
 
 Usage
 -----
 
-TODO
+After installation You need to create main configuration file(examples in config/ directory in this repo).
+Run:
 
 ::
+
    vmshepherd -c CONFIGFILE -l LOGLEVEL
 
 Development
 -----------
 
 ::
+
    make test
 
-:: Docker
+Docker
+------
 
 You can run VmShepherd locally in a development environment using docker.
 
