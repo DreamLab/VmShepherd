@@ -6,6 +6,7 @@ VmShepherd - user manual
    :maxdepth: 2
 
    getting_started
+   drivers/index
    installation
    configuration
 
