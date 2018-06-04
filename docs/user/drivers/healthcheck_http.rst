@@ -25,7 +25,5 @@ Parameters:
 4. **path** - HTTP request paht. Default: /.
 5. **method** - HTTP request method (GET, POST, ...). Default: GET.
 6. **check_status** - Check if response status is equal to given staus. Default: 200.
-7. **terminate_heatlh_failed_delay** - Seconds to wait befor terminate VM which has failed healthcheck result. 
-This parameter is used in preset dvier. Default: -1 value means that termination is skipped. 
-When terminate_heatlh_failed_delay is greater than 0 VM will be terminated when time pass and check count is greater than 5.
+7. **terminate_heatlh_failed_delay** - Seconds to wait befor terminate VM which has failed healthcheck result. This parameter is used in preset dvier. Default: -1 value means that termination is skipped. When terminate_heatlh_failed_delay is greater than 0 VM will be terminated when time pass and check count is greater than 5.
 
