@@ -1,9 +1,12 @@
 import copy
 from aiohttp_jsonrpc import handler
+from functools import wraps
 
 
 class RpcApi(handler.JSONRPCView):
-
+    """
+    RPC Api to manage virtual machines
+    """
     def __init__(self, allowed_methods=None):
         self.METHOD_PREFIX = ''
         self.allowed_methods = allowed_methods
@@ -13,20 +16,30 @@ class RpcApi(handler.JSONRPCView):
         return await self
 
     def enabled_checker(func):
-        """ Access decorator
+        """ Access decorator which checks if a RPC method is enabled by our configuration
         """
+        @wraps(func)
         def wrap(self, *args, **kwargs):
             if self.allowed_methods and isinstance(self.allowed_methods, list) and func.__name__ not in self.allowed_methods:
                 raise Exception("Method {} is disabled".format(func.__name__))
             return func(self, *args, **kwargs)
         return wrap
 
+
     @enabled_checker
     async def list_vms(self, preset):
-        """ List VMs for preset, with runtime states.
+        """
+        Listing virtual machines in a given preset
 
-        :arg string preset: preset name (e.g. C_DEV-apps-dev)
+        :arg string preset: preset name
+        :return:  (Size of a preset, list of virtual machines)
 
+            - first element of a tuple is a size of virtual machines in a preset
+            - second element is a dict which contains all Virtual Machines, where every element of this dict looks like that:
+             ``{ "VIRTUAL_MACHINE_ID": { "ip": "IP_ADDR", "state": "VM_STATE" }``
+        :rtype: tuple
+        Sample response:
+            ``( 1, {'180aa486-ee46-4628-ab1c-f4554b63231': {'ip': '172.1.1.2', 'state': 'running'}} )``
         """
         vmshepherd = self.request.app.vmshepherd
         await vmshepherd.preset_manager.reload()
@@ -40,8 +53,10 @@ class RpcApi(handler.JSONRPCView):
         """ Discard vm in specified preset
 
         :arg string preset: preset name
-        :arg int vm_id: Vm's id
-
+        :arg int vm_id: Virtual Machine id
+        :return: 'OK'
+        Sample response:
+           ``OK``
         """
         vmshepherd = self.request.app.vmshepherd
         preset = await vmshepherd.preset_manager.get(preset)
@@ -53,8 +68,11 @@ class RpcApi(handler.JSONRPCView):
         """ Get vm metadata
 
         :arg string preset: preset name
-        :arg int vm_id: Vm's id
-
+        :arg int vm_id: Virtual Machine id
+        :return:  Metadata for Virtual Machine
+        :rtype: dict
+        Sample response:
+           ``{ 'time_shutdown' : "12312312321' }``
         """
         vmshepherd = self.request.app.vmshepherd
         preset = await vmshepherd.preset_manager.get(preset)

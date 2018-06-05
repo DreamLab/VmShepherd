@@ -18,6 +18,9 @@ class WebServer(web.Application):
         self.configure_api(allowed_methods)
 
     def configure_panel(self):
+        """
+        Configure templates and routing
+        """
         webroot = os.path.dirname(__file__)
 
         self.template_path = os.path.join(webroot, 'templates')
@@ -33,9 +36,16 @@ class WebServer(web.Application):
         )
 
     def configure_api(self, allowed_methods=None):
+        """
+        Configure route for api
+        :arg list allowed_methods: List of a methods which are turned on in our api
+        """
         self.router.add_route('POST', '/api', RpcApi(allowed_methods).handler)
 
     async def start(self):
+        """
+        Initialize and start WebServer
+        """
         logging.info('Starting server, listening on %s.', self.port)
         runner = web.AppRunner(self)
         await runner.setup()
@@ -47,6 +57,9 @@ class Panel(web.View):
 
     @aiohttp_jinja2.template('index.html.jinja2')
     async def get(self):
+        """
+        Inject all preset data to Panel and Render a Home Page
+        """
         shepherd = self.request.app.vmshepherd
         data = {'presets': {}, 'config': shepherd.config}
         presets = await shepherd.preset_manager.list_presets()

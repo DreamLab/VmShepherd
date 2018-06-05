@@ -10,4 +10,6 @@ User manual
    drivers/index
    installation
    configuration
+   api
+   panel
 
