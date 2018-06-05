@@ -2,7 +2,7 @@
 OpenStackDriver
 ===============
 
-OpenStackDriver is asyncopenstackclient(LINK) library wrapper.
+OpenStackDriver is asyncopenstackclient(https://github.com/DreamLab/AsyncOpenStackClient) library wrapper.
 
 Main configuration:
 

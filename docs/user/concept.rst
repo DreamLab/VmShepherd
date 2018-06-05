@@ -31,9 +31,9 @@ Main mangement flow
         next -> end;
     }
 
-For listing presets is responsible Preset Driver described **HERE**.
+For listing presets is responsible Preset Driver described `in this section <drivers/index.html#preset-driver>`_.
 Each preset is an object of Preset class.
-Each preset from list need to be locked (via the Runtime Dviver described **HERE**)
+Each preset from list need to be locked (via the Runtime Dviver described `here <drivers/index.html#runtime-driver>`_)
 and after lock it can be managed.
 
 
