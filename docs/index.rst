@@ -3,7 +3,7 @@ VmShepherd
 ==========
 
 VmShepherd - Virtual Machine Shepherd is a lightweight, standalone asynchronous service created to manage
-clusters for different IaaS platforms. 
+clusters for different IaaS platforms.
 This tool has a plugin architecture which provide an elastic way to implement
 and use a various set of healtchecks, presets and cloud providers.
 
@@ -36,7 +36,6 @@ Infrastructure as a code:
 
 Application is a client of infrastructure not a part of it.
 With this approach all configuration is kept in dead simple yaml files.
-W a
 
 Web Panel
 ..........................
