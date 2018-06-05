@@ -13,15 +13,15 @@ Architecture
 
 VmShepherd is designed to be easy to extend via plugins. Empowered by python3 and its asyncio to facilitate scaling. Diagram show the base components.
 
-.. image:: https://raw.githubusercontent.com/DreamLab/VmShepherd/master/docs/assets/arch-overview.png
+.. image:: https://user-images.githubusercontent.com/670887/41005281-1f5dfb08-691d-11e8-8221-f48f7acfc3a7.png
 
-- *preset manager* is responsible to fetch cluster spec/definition (preset). Built-in are DirectoryDriver and GitRepoDriver
-- *runtime manger* exposes functionality of locking preset and holds intermediate states. Currently available are InMemoryDriver, PostgresDriver, ZookeeperDriver.
-- *iaas* is a glue (api wrapper) to IaaS provider, OpenStackDriver is the first implemented.
-- *healthcheck* allows to check service not only existence of virtual machine. HttpHealthcheckDriver is built-in.
+- **preset manager** is responsible for fetch cluster spec/definition (preset). Built-in are DirectoryDriver and GitRepoDriver
+- **runtime manger** exposes functionality of locking preset and holds intermediate states. Currently available are InMemoryDriver, PostgresDriver, ZookeeperDriver.
+- **iaas** is a glue (api wrapper) to IaaS provider, OpenStackDriver is the first implemented.
+- **healthcheck** allows to check service not only existence of virtual machine. HttpHealthcheckDriver is built-in.
 
 
-For more infromation please take look at the documentiation - `http://doc.dreamlab.pl/VmShpherd`_.
+For more infromation please take look at the documentiation - `http://doc.dreamlab.pl/VmShpherd <http://doc.dreamlab.pl/VmShpherd>`_.
 
 Installation
 ------------
