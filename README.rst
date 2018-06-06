@@ -60,7 +60,7 @@ Run:
 Development
 -----------
 
-We provide a Makefile and docker which can during development.
+We provide a Makefile and docker which can be used during development.
 
 Makefile:
 ..........
