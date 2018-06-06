@@ -2,6 +2,14 @@
 Changelog
 =========
 
+1.0.0 (2018-06-06)
+------------------
+
+* preserve preset state (dashboard shows data from last cycle)
+* bump AsyncOpenStackClient (0.6.2)
+* docs
+
+
 0.7.7 (2018-05-10)
 ------------------
 
