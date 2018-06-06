@@ -23,16 +23,28 @@ VmShepherd is designed to be easy to extend via plugins. Empowered by python3 an
 
 For more infromation please take look at the documentiation - `http://doc.dreamlab.pl/VmShpherd <http://doc.dreamlab.pl/VmShpherd>`_.
 
-Installation
-------------
 
-You can install easily from this repository, pypi.org
+Installation:
+--------------
+The latest stable version is `available on Pypi <https://pypi.org/project/vmshepherd/>`_.
 
 ::
 
-   pip install VmShepherd
+  pip install vmshepherd
 
-or use a docker image (described below).
+also you can install VmShepherd manually using a make:
+
+::
+
+  make install
+
+Also we provide a dockerfile which can be used for a development installation:
+
+::
+
+  docker build -t vmshepherd .
+  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run
+
 
 Usage
 -----
@@ -44,21 +56,42 @@ Run:
 
    vmshepherd -c CONFIGFILE
 
+
 Development
 -----------
+
+We provide a Makefile and docker which can during development.
+
+Makefile:
+..........
+
+Run application:
+
+::
+
+   make run
+
+Run tests:
 
 ::
 
    make test
 
-Docker
-------
+Create documentation:
 
-You can run VmShepherd locally in a development environment using docker.
+::
+
+   make show-docs
+
+
+Docker:
+.............
 
 Firstly build a image:
 
-``docker build -t vmshepherd . --rm``
+::
+
+ docker build -t vmshepherd . --rm
 
 Our Dockerfile create a ``ENTRYPOINT`` for our makefile, so basically you can execute make commands in docker container like run or show-docs.
 
@@ -66,13 +99,15 @@ Examples of usage:
 
 * Running vmshepherd application:
 
-``docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run``
+::
+
+  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run
 
 * Documentation:
 
-``docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd show-docs``
+::
 
-
+  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd show-docs
 
 License
 -------
