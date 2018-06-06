@@ -12,10 +12,10 @@ To make easier to create and use other drivers without code changes within VmShe
 
 Entry points for drivers:
 
-1. vmshepherd.driver.iaas - IaaS Driver
-2. vmshepherd.driver.presets - Preset Driver
-3. vmshepherd.driver.runtime - Runtime Driver
-4. vmshepherd.driver.healthcheck - Healthcheck Driver
+1. vmshepherd.driver.iaas - `IaaS Driver`_
+2. vmshepherd.driver.presets - `Preset Driver`_
+3. vmshepherd.driver.runtime - `Runtime Driver`_
+4. vmshepherd.driver.healthcheck - `Healthcheck Driver`_
 
 Config example for IaaS Driver:
 
@@ -35,11 +35,12 @@ IaaS Driver gives abstraction layer which unifies API methods making easier to u
 
 Implemented IaaS Drivers:
 
-    1. DummyIaasDriver - iaas simulation driver
-    2. OpenStackDriver - asyncopenstackclient library wrapper
+    1. `DummyIaasDriver <iaas_dummydriver>`_ - iaas simulation driver
+    2. `OpenStackDriver <iaas_openstackdriver>`_ - asyncopenstackclient library wrapper
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    iaas_dummydriver
@@ -53,27 +54,32 @@ It also can hold runtime data - information that should be avaliable in later ma
 
 Implemented Runtime Drivers:
 
-    1. InMemoryDriver - To use for only one VmShepherd instance. It holds all data in local memory.
-    2. (chcialo by sie tu opisac jeszcze PostgresDriver ale nie jest upubliczniony)
+    1. `InMemoryDriver <runtime_inmemory>`_ - To use for only one VmShepherd instance. It holds all data in local memory
+    2. `PostgresDriver <runtime_postgresdriver>`_ - Runtime driver that utilizes PostgreSQL database engine
+    3. `ZookeeperDriver <runtime_zookeeper>`_ - Plugin runtime driver that takes advantage of Zookeeper configuration maintainer
 
 
 .. toctree::
-   :maxdepth: 2
+   :hidden:
+   :titlesonly:
 
+   runtime_inmemory
    runtime_postgresdriver
+   runtime_zookeeper
 
-
+   
 Preset Driver
 -------------
 Preset Driver is used to get information about preset confiturations from its own store.
 
 Implemented Preset Drivers:
 
-    1. DirectoryDriver - read preset configurations from local files
-    2. GitRepoDriver - get preset configuration from git repositories
+    1. `DirectoryDriver <preset_directorydriver>`_ - read preset configurations from local files
+    2. `GitRepoDriver <preset_gitrepodriver>`_ - get preset configuration from git repositories
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    preset_directorydriver
@@ -141,11 +147,12 @@ Healthcheck Driver give methods to check if our application/something running on
 Implemented Healthcheck Drivers:
 
     1. DummyHealthcheck - healthcheck simulation driver returning always positive check result
-    2. HttpHealthcheck - uses HTTP request
+    2. `HttpHealthcheck <healthcheck_http>`_ - uses HTTP request
 
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
    healthcheck_http
 
