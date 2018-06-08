@@ -25,7 +25,6 @@ class RpcApi(handler.JSONRPCView):
             return func(self, *args, **kwargs)
         return wrap
 
-
     @enabled_checker
     async def list_vms(self, preset):
         """
@@ -42,10 +41,8 @@ class RpcApi(handler.JSONRPCView):
             ``( 1, {'180aa486-ee46-4628-ab1c-f4554b63231': {'ip': '172.1.1.2', 'state': 'running'}} )``
         """
         vmshepherd = self.request.app.vmshepherd
-        await vmshepherd.preset_manager.reload()
-        preset = await vmshepherd.preset_manager.get(preset)
-        vms = await preset.list_vms()
-        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value} for vm in vms}
+        preset = vmshepherd.preset_manager.get_preset(preset)
+        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value} for vm in preset.vms}
         return preset.count, result_vms
 
     @enabled_checker
@@ -59,7 +56,7 @@ class RpcApi(handler.JSONRPCView):
            ``OK``
         """
         vmshepherd = self.request.app.vmshepherd
-        preset = await vmshepherd.preset_manager.get(preset)
+        preset = vmshepherd.preset_manager.get_preset(preset)
         await preset.iaas.terminate_vm(vm_id)
         return 'OK'
 
@@ -75,7 +72,7 @@ class RpcApi(handler.JSONRPCView):
            ``{ 'time_shutdown' : "12312312321' }``
         """
         vmshepherd = self.request.app.vmshepherd
-        preset = await vmshepherd.preset_manager.get(preset)
+        preset = vmshepherd.preset_manager.get_preset(preset)
         vm_info = await preset.iaas.get_vm(vm_id)
         ret_info = copy.deepcopy(vm_info.metadata) if vm_info.metadata else {}
         ret_info['tags'] = vm_info.tags
