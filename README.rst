@@ -24,7 +24,7 @@ VmShepherd is designed to be easy to extend via plugins. Empowered by python3 an
 For more infromation please take look at the documentiation - `http://doc.dreamlab.pl/VmShpherd <http://doc.dreamlab.pl/VmShpherd>`_.
 
 
-Installation:
+Installation
 --------------
 The latest stable version is `available on Pypi <https://pypi.org/project/vmshepherd/>`_.
 
@@ -62,7 +62,7 @@ Development
 
 We provide a Makefile and docker which can be used during development.
 
-Makefile:
+Makefile
 ..........
 
 Run application:
@@ -84,7 +84,7 @@ Create documentation:
    make show-docs
 
 
-Docker:
+Docker
 .............
 
 Firstly build a image:
@@ -108,6 +108,31 @@ Examples of usage:
 ::
 
   docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd show-docs
+
+Contributing to VmShepherd
+----------------------------
+
+Thank you for your interest in contributing to VmShepherd. Like always there are a many ways to contribute, and we appreciate all of them.
+
+Pull requests and issues are the primary mechanism we use to change VmShepherd. Github itself has a great documentation
+about using `Pull Requests <https://help.github.com/articles/about-pull-requests/>`_. We use the 
+`"fork and pull" <https://help.github.com/articles/about-collaborative-development-models/>`_ model,
+where contributors push changes to their personal fork and create pull requests to bring those changes into the source repository.
+
+If you want to find something to work on, please check issues and our `roadmap <https://github.com/DreamLab/VmShepherd/projects/1>`_.
+
+
+TL;DR
+.......
+
+Pull requests will need:
+
+* Tests
+
+* Documentation
+
+* A logical series of `well written commits <https://github.com/alphagov/styleguides/blob/master/git.md>`_ 
+
 
 License
 -------
