@@ -13,7 +13,7 @@ test: install
 show-docs: install
 	source env/bin/activate; \
 	tox -e docs
-	cd dist/docs && python -m http.server
+	cd dist/docs && python3 -m http.server
 
 run: install
 	source env/bin/activate; \
