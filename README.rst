@@ -38,13 +38,14 @@ also you can install VmShepherd manually using a make:
 
   make install
 
-Also we provide a dockerfile which can be used for a development installation:
+There is also a third way with using a docker container:
 
 ::
 
   docker build -t vmshepherd .
-  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run
+  docker run -d --name vmshepherd -v /etc/vmshepherd/confs/:/etc/vmshepherd -p 8888:8888 vmshepherd -c /etc/vmshepherd/settings.yaml
 
+Where `/etc/vmshepherd/confs` is a directory on a host with configuration file(s) for a app.
 
 Usage
 -----
@@ -93,21 +94,12 @@ Firstly build a image:
 
  docker build -t vmshepherd . --rm
 
-Our Dockerfile create a ``ENTRYPOINT`` for our makefile, so basically you can execute make commands in docker container like run or show-docs.
-
-Examples of usage:
-
-* Running vmshepherd application:
+* Running vmshepherd application with config and mounted source code for a development
 
 ::
 
-  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run
+  docker run -it -v $FULL_PATH_TO_REPO/VmShepherd/config:/etc/vmshepherd -v $FULL_PATH_TO_REPO/VmShepherd/src:/root/src vmshepherd -c /etc/vmshepherd/settings.example.yaml
 
-* Documentation:
-
-::
-
-  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd show-docs
 
 Contributing to VmShepherd
 ----------------------------
@@ -115,7 +107,7 @@ Contributing to VmShepherd
 Thank you for your interest in contributing to VmShepherd. Like always there are a many ways to contribute, and we appreciate all of them.
 
 Pull requests and issues are the primary mechanism we use to change VmShepherd. Github itself has a great documentation
-about using `Pull Requests <https://help.github.com/articles/about-pull-requests/>`_. We use the 
+about using `Pull Requests <https://help.github.com/articles/about-pull-requests/>`_. We use the
 `"fork and pull" <https://help.github.com/articles/about-collaborative-development-models/>`_ model,
 where contributors push changes to their personal fork and create pull requests to bring those changes into the source repository.
 
@@ -131,7 +123,7 @@ Pull requests will need:
 
 * Documentation
 
-* A logical series of `well written commits <https://github.com/alphagov/styleguides/blob/master/git.md>`_ 
+* A logical series of `well written commits <https://github.com/alphagov/styleguides/blob/master/git.md>`_
 
 
 License

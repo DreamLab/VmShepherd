@@ -1,6 +1,6 @@
 FROM python:3.6-rc-slim
 
-RUN apt-get -y update; apt-get -qq -y install make sudo
+RUN apt-get -y update; apt-get -qq -y install make sudo graphviz libgraphviz-dev pkg-config
 RUN pip install tox
 
 ADD . /root/
@@ -10,7 +10,7 @@ EXPOSE 8888
 EXPOSE 8000
 
 WORKDIR /root
-RUN  make install
+RUN python setup.py install
 
-ENTRYPOINT ["make"]
+ENTRYPOINT ["vmshepherd"]
 
