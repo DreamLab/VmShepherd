@@ -21,7 +21,7 @@ VmShepherd is designed to be easy to extend via plugins. Empowered by python3 an
 - **healthcheck** allows to check service not only existence of virtual machine. HttpHealthcheckDriver is built-in.
 
 
-For more infromation please take look at the documentiation - `http://doc.dreamlab.pl/VmShpherd <http://doc.dreamlab.pl/VmShpherd>`_.
+For more infromation please take look at the documentiation - `http://doc.dreamlab.pl/VmShepherd/user/index.html <http://doc.dreamlab.pl/VmShepherd/user/index.html>`_.
 
 
 Installation
