@@ -20,7 +20,6 @@ Entry points for drivers:
 Config example for IaaS Driver:
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
     iaas:
       driver: DummyIaasDriver
@@ -83,7 +82,6 @@ Implemented Preset Drivers:
 Preset global configuration:
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
    name: NAME # preset name
    count: COUNT_OF_VMS # count of vms to keep running in this preset

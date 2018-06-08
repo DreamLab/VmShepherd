@@ -8,7 +8,6 @@ For now supports only public repositories.
 Main configuration:
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
    repositories:
      presets1: http://gitrepo.local/presets1.git

@@ -38,7 +38,7 @@ and after lock it can be managed.
 
 
 Detailed actions in one iteration (*preset manage*)
---------------------------------------------------
+---------------------------------------------------
 
 .. graphviz::
     :caption: Preset management flow
