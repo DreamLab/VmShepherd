@@ -20,8 +20,7 @@ class DirectoryDriver(AbstractConfigurationDriver):
     async def _reload(self):
         _tmp_specs = {}
         for item in os.scandir(self._path):
-            if os.path.isfile(item.path):
-                preset_name = item.name.replace('.conf', '')
+            if os.path.isfile(item.path) and item.path.endswith('.conf'):
                 config = await async_load_from_yaml_file(item.path)
                 config['name'] = preset_name = f"{config['name']}"
                 config['userdata_source_root'] = self._path
