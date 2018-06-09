@@ -23,7 +23,6 @@ VmShepherd is designed to be easily extensible with plugins. Empowered by ``pyth
 
 For more information, please take look at the `documentation <http://doc.dreamlab.pl/VmShepherd/index.html>`_.
 
-
 Installation
 --------------
 The latest stable version is `available on Pypi <https://pypi.org/project/vmshepherd/>`_.

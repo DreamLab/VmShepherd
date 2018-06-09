@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.0.1 (2018-06-08)
+------------------
+
+* bugfix: API should use last cycle data
+* bugfix: OpenStackDriver refresh token
+
 1.0.0 (2018-06-06)
 ------------------
 
