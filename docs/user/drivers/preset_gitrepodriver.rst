@@ -2,8 +2,9 @@
 GitRepoDriver
 =============
 
-GitRepoDriver get preset configurations from git repository.
-For now supports only public repositories.
+``GitRepoDriver`` loads preset configurations from a git repository.
+
+For now it only supports public repositories.
 
 Main configuration:
 
@@ -16,6 +17,6 @@ Main configuration:
 
 Parameters:
 
-1. **repositories** - List of repositories with preset configurations. One repository can hold more than one preset configuration.
+1. **repositories** - List of repositories with a preset configurations. One repository can hold more than one preset configuration.
 2. **clone_dir** - directory to clone git repositories. Default: *tempdir*/vmshepherd.
 

@@ -2,10 +2,10 @@
 Getting started
 ===============
 
-Run VmShepherd in docker
+Run VmShepherd in Docker
 ------------------------
 
-The simplest way to run VmShepherd with example config is to use docker.
+The simplest way to run VmShepherd with an example config is to use docker.
 
 .. code-block:: bash
  

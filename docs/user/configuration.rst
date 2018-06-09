@@ -2,7 +2,7 @@
 Configuration
 =============
 
-VmShepherd requires configuration to be supplied with simple `YAML <http://yaml.org/>`_ file. Available sections:
+VmShepherd requires configuration to be supplied with a simple `YAML <http://yaml.org/>`_ file. Available sections:
 
     1. general parameters
     2. runtime store configuration (pluginable)
@@ -10,14 +10,14 @@ VmShepherd requires configuration to be supplied with simple `YAML <http://yaml.
     4. and optional `defaults` than will be combined with every preset (pluginable)
 
 
-Most of the parts of configuration it's just matter of chosen driver and its options. The options you should refer with driver documentation.
+The configuration mostly depends on a chosen driver and its options. For available options, refer to the driver's documentation.
     
 
 General parameters
 ------------------
 
-- *worker_interval* - interval between manage cycles
-- *log_level* - DEBUG, INFO, ERROR - default to INFO
+- *worker_interval* - interval between manage cycles.
+- *log_level* - DEBUG, INFO, ERROR - default to INFO.
 
 
 Runtime store
@@ -32,14 +32,13 @@ Choose a runtime store driver and its options.
      some_arg1: host
      some_arg2: 345
 
-Runtime store is used to keep data that should be shared between cycles - you can find more information in `Runtime Driver section <drivers/index.html#runtime-driver>`_. 
+Runtime store is used to keep data that should be shared between cycles - you can find more information in the `Runtime Driver section <drivers/index.html#runtime-driver>`_. 
 
 
 Preset store
 ------------
 
 Specify preset store driver. 
-
 
 .. code-block:: yaml
 
@@ -48,12 +47,12 @@ Specify preset store driver.
      some_arg1: host
      some_arg2: 345
 
-Preset is a definition/spec of a cluster - more info at ....
+Preset is a definition/spec of a cluster.
 
 http
 ----
 
-You can set api/panel port, whitelist available API methods. More about API...
+You can set api/panel port, whitelist available API methods.
 
 .. code-block:: yaml
 
@@ -65,7 +64,7 @@ You can set api/panel port, whitelist available API methods. More about API...
           - get_vm_metadata
       listen_port: 8888
 
-The `api.allowed_methods` params are optional and if are not provided entire API will be exposed.
+The ``api.allowed_methods`` params are optional and if are not provided entire API will be exposed.
 
 .. code-block:: yaml
 
@@ -75,7 +74,7 @@ The `api.allowed_methods` params are optional and if are not provided entire API
 `defaults`
 ----------
 
-Allows to provide defaults for `iaas` and `healthcheck` configuration that will be merged with preset spec.
+Provides defaults for `iaas` and `healthcheck` configuration that will be merged with preset spec.
 
 .. code-block:: yaml
 

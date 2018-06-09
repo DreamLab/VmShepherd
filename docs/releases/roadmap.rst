@@ -2,7 +2,4 @@
 Roadmap
 =======
 
-
-1. IaaS AWS EC2 driver.
-2. New RW panel with auth.
-3. Auto scaling.
+Roadmap is available on the `Github <https://github.com/DreamLab/VmShepherd/projects/1>`_.

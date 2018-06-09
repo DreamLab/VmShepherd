@@ -1,27 +1,26 @@
 ===============
-Api
+API
 ===============
 
 
 Description
 -----------
 
-VMShepherd implement a RPC api which is available at `api` handler and can be configured.
+VmShepherd implements an RPC API which is available at the ``api`` handler and can be configured.
 
-In configuration you prepare a information which method is available to a user.
-This api implement a simple interface to control a Virtual Machines lifecycle in our environment.
-Also we provide a easy way to gather information about presets and virtual machines in environment.
+In configuration you prepare an information which method is available to a user.
+This API implements a simple interface to control Virtual Machines lifecycle in our environment.
+We also provide an easy way to gather information about presets and virtual machines in environment.
 
 Configuration
 -------------
 
-For api you can configure which methods are available:
+You can configure available methods for API. 
 
 Example
 .......
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
     http:
     # example of allowed_methods list
@@ -32,17 +31,16 @@ Example
           - get_vm_metadata
 
 
-Sample calls to api
+Sample calls to API
 -------------------
 
-Sample code is also available in `repository <.https://github.com/DreamLab/VmShepherd/blob/master/examples>`_
+Sample code is also available in the `repository <https://github.com/DreamLab/VmShepherd/blob/master/examples>`_
 
 
 List Virtual Machines in a preset
 .................................
 
 .. code-block:: python
-   :emphasize-lines: 3,5
 
     >>> import asyncio
     >>> from aiohttp_jsonrpc.client import ServerProxy, batch
@@ -60,7 +58,6 @@ Get Virtual Machine metadata
 ............................
 
 .. code-block:: python
-   :emphasize-lines: 3,5
 
     >>> import asyncio
     >>> from aiohttp_jsonrpc.client import ServerProxy, batch
@@ -77,7 +74,6 @@ Terminate Virtual Machine
 .........................
 
 .. code-block:: python
-   :emphasize-lines: 3,5
 
     >>> import asyncio
     >>> from aiohttp_jsonrpc.client import ServerProxy, batch

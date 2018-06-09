@@ -2,7 +2,7 @@
 DummyIaasDriver
 ===============
 
-DummyIaasDriver is only for sumulation and developement use.
+``DummyIaasDriver`` is used only for simulation and development.
 It doesn't need any configuration.
-There are all needed methods implemented with state holded inside driver internal structures(in memory).
+It has all required methods implemented, with the state kept inside the driver's internal structures (in memory).
 
