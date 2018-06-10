@@ -6,9 +6,6 @@ matrix:
     - python: '3.6'
       env:
         - TOXENV=python3-cover,report
-    - python: '3.6'
-      env:
-        - TOXENV=python3-nocov
 before_install:
   - python --version
   - uname -a
