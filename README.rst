@@ -94,6 +94,12 @@ Firstly build a image:
 
  docker build -t vmshepherd . --rm
 
+* Running vmshepherd with sample config
+
+::
+
+  docker run -it -p 8888:8888 vmshepherd -c /root/config/settings.example.yaml 
+
 * Running vmshepherd application with config and mounted source code for a development
 
 ::
