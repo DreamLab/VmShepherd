@@ -1,6 +1,13 @@
 VmShepherd
 ==========
 
+|image0|_
+
+.. |image0| image:: https://api.travis-ci.org/DreamLab/VmShepherd.png?branch=master
+.. _image0: https://travis-ci.org/DreamLab/VmShepherd
+
+.. |image1| image:: https://badge.fury.io/py/vmshepherd.svg
+.. _image1: https://badge.fury.io/py/vmshepherd
 
 Introduction
 ------------
