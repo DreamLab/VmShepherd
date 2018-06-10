@@ -43,6 +43,7 @@ vmshepherd.iaas.vm module
     :members:
     :undoc-members:
     :show-inheritance:
+    :noindex:
 
 
 Module contents

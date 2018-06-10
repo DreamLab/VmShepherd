@@ -32,15 +32,6 @@ vmshepherd.utils module
     :undoc-members:
     :show-inheritance:
 
-vmshepherd.worker module
-------------------------
-
-.. automodule:: vmshepherd.worker
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Module contents
 ---------------
 

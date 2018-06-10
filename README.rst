@@ -25,17 +25,11 @@ For more information, please take look at the `documentation <http://doc.dreamla
 
 Installation
 --------------
-The latest stable version is `available on Pypi <https://pypi.org/project/vmshepherd/>`_.
+Application requires python 3.6 or later. The latest stable version is `available on Pypi <https://pypi.org/project/vmshepherd/>`_.
 
 ::
 
   pip install vmshepherd
-
-you can also install VmShepherd manually using ``make``:
-
-::
-
-  make install
 
 We also provide a ``Dockerfile`` which can be used for a development installation:
 
@@ -57,58 +51,8 @@ Run:
    vmshepherd -c CONFIGFILE
 
 
-Development
------------
-
-We provide a Makefile and docker which can be used during development.
-
-Makefile
-........
-
-Run application:
-
-::
-
-   make run
-
-Run tests:
-
-::
-
-   make test
-
-Create documentation:
-
-::
-
-   make show-docs
-
-
-Docker
-......
-
-Firstly build an image:
-
-::
-
- docker build -t vmshepherd . --rm
-
-Our ``Dockerfile`` creates an ``ENTRYPOINT`` for our ``Makefile``, so basically you can execute ``make`` commands in docker container like ``run`` or ``show-docs``:
-
-* Running a VmShepherd application:
-
-::
-
-  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run
-
-* Documentation:
-
-::
-
-  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd show-docs
-
 Contributing to VmShepherd
-----------------------------
+--------------------------
 
 Thank you for your interest in contributing to VmShepherd. Like always there are many ways to contribute, and we appreciate all of them.
 
@@ -120,8 +64,10 @@ where contributors push changes to their personal fork and create pull requests 
 If you want to find something to work on, please check issues in our `roadmap <https://github.com/DreamLab/VmShepherd/projects/1>`_.
 
 
+Check out the documetation `http://doc.dreamlab.pl/VmShepherd/development/index.html <http://doc.dreamlab.pl/VmShepherd/development/index.html>`_.
+
 TL;DR
-.......
+-----
 
 Pull requests will need:
 
