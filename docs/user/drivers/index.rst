@@ -55,10 +55,7 @@ It can also hold runtime data - information that should be available in later it
 Implemented Runtime Drivers:
 
     1. ``InMemoryDriver`` - To use for only one VmShepherd instance. It holds all data in local memory.
-
-.. note::
-   
-   PostgresDriver will be available soon.
+    2. ``PostgresDriver`` - supplied by `a separate package <https://github.com/DreamLab/vmshepherd-runtime-postgres-driver>`_.
 
 
 Preset Driver
