@@ -1,6 +1,10 @@
 VmShepherd
 ==========
 
+|image0|_
+
+.. |image0| image:: https://api.travis-ci.org/DreamLab/VmShepherd.png?branch=master
+.. _image0: https://travis-ci.org/DreamLab/VmShepherd
 
 Introduction
 ------------
