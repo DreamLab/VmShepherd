@@ -2,12 +2,14 @@
 
 Initialization - consider following config:
 
-    iaas_driver:
-      name: SomeIaaS
-      params:
-        auth_key: AAAA
-        auth_secret: BBBB
-        some_x: CCC
+::
+    
+   iaas_driver:
+     name: SomeIaaS
+     params:
+       auth_key: AAAA
+       auth_secret: BBBB
+       some_x: CCC
 
 All params will be passed as named arguments to the driver like:
 

@@ -2,12 +2,11 @@
 OpenStackDriver
 ===============
 
-OpenStackDriver is asyncopenstackclient(https://github.com/DreamLab/AsyncOpenStackClient) library wrapper.
+``OpenStackDriver`` is the `asyncopenstackclient <https://github.com/DreamLab/AsyncOpenStackClient>`_ library wrapper.
 
 Main configuration:
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
    auth_url: http://KEYSTONE:5000/v3
    username: USER

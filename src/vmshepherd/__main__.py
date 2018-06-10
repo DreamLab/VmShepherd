@@ -11,7 +11,7 @@ def main():
     config = load_config_file(args.config_file)
     config['log_level'] = args.log_level
     config['autostart'] = False
-    config['listen_port'] = int(args.port)
+    config['http']['listen_port'] = int(args.port)
     vmshepherd = VmShepherd(config)
 
     loop = asyncio.get_event_loop()

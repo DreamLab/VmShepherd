@@ -4,18 +4,18 @@ Panel
 
 
 Description
------------------
+-----------
 
-VMShepherd provide a User Friendly webpanel available at `/` handler, where you can easily administrate environment.
+VmShepherd provides a User Friendly webpanel available at the `/` handler, where you can easily administrate your environment.
 
 
 Pages
--------
+-----
 
 * Home Page (/)
     * Header ( Vmshepherd name )
-    * Left Panel is a navigation list of a presets
-    * Dashboard show a list of presets, where every preset contain:
+    * Left Panel is a navigation a list of presets
+    * Dashboard shows a list of presets, where every preset contains:
         * Name: Preset Name
         * Basic preset information like:
             * General: Basic info like Preset name, Preset size, VMs flavor, VMs system images
@@ -26,10 +26,10 @@ Pages
         * Virtual machines: list of virtual machines in a preset
 
 Screenshots
-------------
+-----------
 
 Home Page
-...........
+.........
 
 .. image:: img/homepage.png
    :width: 600
@@ -37,13 +37,13 @@ Home Page
 
 
 Development
-------------
+-----------
 
-Our UI code is available here in `vmshepherd.http` module. In this module you will also find our css styles and UI configurations.
+Our UI code is available here in the ``vmshepherd.http`` module. In this module you will also find our css styles and UI configurations.
 
 
 Homepage (Panel /)
-................................
+..................
 
 .. automodule:: vmshepherd.http.__init__
     :members:
