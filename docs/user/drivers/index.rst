@@ -2,41 +2,41 @@
 Drivers
 =======
 
-Vmshepherd is designed to cover most of functionalities by drivers.
-It is easy to change some logic by writing your own driver and use it.
+VmShepherd is designed to cover most of its functionalities by separable drivers.
+It is easy to change some logic by writing your own driver and using it.
 
 Entry points
 ------------
 
-To make easier to create and use other drivers without code changes within VmShepherd itself, python entry point mechanizm are being used (https://packaging.python.org/specifications/entry-points/).
+To make it easier to create and use other drivers without code changes within VmShepherd itself, python's entry point mechanism are used (https://packaging.python.org/specifications/entry-points/).
 
 Entry points for drivers:
 
-1. vmshepherd.driver.iaas - IaaS Driver
-2. vmshepherd.driver.presets - Preset Driver
-3. vmshepherd.driver.runtime - Runtime Driver
-4. vmshepherd.driver.healthcheck - Healthcheck Driver
+1. ``vmshepherd.driver.iaas`` - IaaS Driver
+2. ``vmshepherd.driver.presets`` - Preset Driver
+3. ``vmshepherd.driver.runtime`` - Runtime Driver
+4. ``vmshepherd.driver.healthcheck`` - Healthcheck Driver
 
-Config example for IaaS Driver:
+Config example for an IaaS Driver:
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
     iaas:
       driver: DummyIaasDriver
       driver_arg_1: val1
       driver_arg_2: val2
 
-Search rules for entry points are vmshepherd.driver.{name}. IaaS Driver with name DummyIaasDriver will be searched in vmshepherd.driver.iaas entrypoint.
+Search rules for entry points are ``vmshepherd.driver.{name}``. IaaS Driver with a name ``DummyIaasDriver`` will be searched in the ``vmshepherd.driver.iaas`` entrypoint.
 
 Iaas Driver
 -----------
-IaaS Driver gives abstraction layer which unifies API methods making easier to use many IaaS providers.
+
+IaaS Driver provides abstraction layer which unifies API methods, making it easier to use many IaaS providers.
 
 Implemented IaaS Drivers:
 
-    1. DummyIaasDriver - iaas simulation driver
-    2. OpenStackDriver - asyncopenstackclient library wrapper
+    1. ``DummyIaasDriver`` - iaas simulation driver
+    2. ``OpenStackDriver`` - asyncopenstackclient library wrapper
 
 
 .. toctree::
@@ -48,29 +48,25 @@ Implemented IaaS Drivers:
 
 Runtime Driver
 --------------
-Runtime Driver implements methods to lock preset before manage it. It can be useful when many VmShepherd instances working on one list of presets.
-It also can hold runtime data - information that should be avaliable in later manage iterations. That data can be for example number of failed check for VM with ID X.
+
+Runtime Driver implements methods to lock preset before managing it. It can be very useful when many VmShepherd instances work on the same list of presets.
+It can also hold runtime data - information that should be available in later iterations. That data can be for example: a number of failed checks for VM with ID X.
 
 Implemented Runtime Drivers:
 
-    1. InMemoryDriver - To use for only one VmShepherd instance. It holds all data in local memory.
-    2. (chcialo by sie tu opisac jeszcze PostgresDriver ale nie jest upubliczniony)
-
-
-.. toctree::
-   :maxdepth: 2
-
-   runtime_postgresdriver
+    1. ``InMemoryDriver`` - To use for only one VmShepherd instance. It holds all data in local memory.
+    2. ``PostgresDriver`` - supplied by `a separate package <https://github.com/DreamLab/vmshepherd-runtime-postgres-driver>`_.
 
 
 Preset Driver
 -------------
-Preset Driver is used to get information about preset confiturations from its own store.
+
+Preset Driver is used to get information about preset configurations from its own store.
 
 Implemented Preset Drivers:
 
-    1. DirectoryDriver - read preset configurations from local files
-    2. GitRepoDriver - get preset configuration from git repositories
+    1. ``DirectoryDriver`` - reads preset configurations from local files.
+    2. ``GitRepoDriver`` - loads preset configuration from git repositories.
 
 
 .. toctree::
@@ -83,7 +79,6 @@ Implemented Preset Drivers:
 Preset global configuration:
 
 .. code-block:: yaml
-   :emphasize-lines: 3,5
 
    name: NAME # preset name
    count: COUNT_OF_VMS # count of vms to keep running in this preset
@@ -108,16 +103,16 @@ Preset global configuration:
 
 Parameters:
 
-1. **name** - preset name used to define VMs group. Example: PROD_apps_cluster_1.
+1. **name** - preset's name used to define VMs group. Example: ``PROD_apps_cluster_1``.
 2. **count** - count of virtual machines in group.
-3. **manage_interval** - Delay to next manage proceed.
-4. **manage_expire** - After this delay even lock acquire failed manage procedure is called.
-5. **image** - Image name avaliable in iaas.
+3. **manage_interval** - Delay to next manage iteration.
+4. **manage_expire** - After this delay ``lock acquire failed`` manage procedure is called.
+5. **image** - Image name available in iaas.
 6. **flavour** - Virtual machine flavor/size.
-7. **userdata** - User data (cloud-init config) can be defined like string or file. Content of user data can be a jinja template. To generate final config it use all preset configuration. Example below.
+7. **userdata** - User data (cloud-init config) can be defined like a string or a file. Content of user data can be a jinja template. To generate final config it uses all preset configuration. Example below.
 8. **userdata_source_root** - If *userdata* parameter is defined like 'file://' userdata_source_root is start path to find it.
 9. **meta_tags** - Virtual Machine metadata.
-10. **key_name** - Ssh public key name.
+10. **key_name** - SSH public key name.
 11. **network** - Configuration block used to define virtual machine networking.
 
 User data example:
@@ -136,12 +131,13 @@ User data example:
 
 Healthcheck Driver
 ------------------
-Healthcheck Driver give methods to check if our application/something running on VM is working properly.
+
+Healthcheck Driver provides methods to check if your application (or other process) is running on a VM, and works properly.
 
 Implemented Healthcheck Drivers:
 
-    1. DummyHealthcheck - healthcheck simulation driver returning always positive check result
-    2. HttpHealthcheck - uses HTTP request
+    1. ``DummyHealthcheck`` - a healthcheck simulation driver returning always positive check result.
+    2. ``HttpHealthcheck`` - uses HTTP request.
 
 
 .. toctree::

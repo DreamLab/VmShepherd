@@ -35,8 +35,11 @@ class RpcApi(handler.JSONRPCView):
 
             - first element of a tuple is a size of virtual machines in a preset
             - second element is a dict which contains all Virtual Machines, where every element of this dict looks like that:
-             ``{ "VIRTUAL_MACHINE_ID": { "ip": "IP_ADDR", "state": "VM_STATE" }``
+              
+              ``{ "VIRTUAL_MACHINE_ID": { "ip": "IP_ADDR", "state": "VM_STATE" }``
+
         :rtype: tuple
+
         Sample response:
             ``( 1, {'180aa486-ee46-4628-ab1c-f4554b63231': {'ip': '172.1.1.2', 'state': 'running'}} )``
         """
@@ -52,6 +55,7 @@ class RpcApi(handler.JSONRPCView):
         :arg string preset: preset name
         :arg int vm_id: Virtual Machine id
         :return: 'OK'
+        
         Sample response:
            ``OK``
         """
@@ -68,6 +72,7 @@ class RpcApi(handler.JSONRPCView):
         :arg int vm_id: Virtual Machine id
         :return:  Metadata for Virtual Machine
         :rtype: dict
+        
         Sample response:
            ``{ 'time_shutdown' : "12312312321' }``
         """
