@@ -30,7 +30,7 @@ project = 'VmShepherd'
 year = '2018'
 author = 'Dreamlab'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '1.0.1'
+version = release = '1.0.2'
 
 pygments_style = 'sphinx'
 templates_path = ['.']
