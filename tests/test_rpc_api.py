@@ -15,7 +15,7 @@ class TestRpcApi(AsyncTestCase):
         super().setUp()
         mock_request = Mock()
         self.mock_preset_manager = Mock()
-        mock_preset_data = [
+        self.mock_preset_manager.vms = [
             Vm(self, '1243454353', 'C_DEV-app-dev',
                ['10.177.51.8'], time.time(), state=VmState.RUNNING),
             Vm(self, '4535646466', 'C_DEV-app-dev',
@@ -23,14 +23,10 @@ class TestRpcApi(AsyncTestCase):
             Vm(self, '5465465643', 'C_DEV-app-dev',
                ['10.177.51.10'], time.time(), state=VmState.RUNNING)
         ]
-        self.mock_preset_manager.list_vms.return_value = futurized(mock_preset_data)
         self.mock_preset_manager.count = 3
         self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
-        self.mock_preset_manager.iaas.get_vm.return_value = futurized(mock_preset_data[0])
-        mock_request.app.vmshepherd.preset_manager.get.return_value = futurized(
-            self.mock_preset_manager)
-        mock_request.app.vmshepherd.preset_manager.reload.return_value = futurized({
-        })
+        self.mock_preset_manager.iaas.get_vm.return_value = futurized(self.mock_preset_manager.vms[0])
+        mock_request.app.vmshepherd.preset_manager.get_preset.return_value = self.mock_preset_manager
         mock_request.remote = ['10.177.51.8']
         self.rpcapi = RpcApi()
         self.rpcapi._request = mock_request
