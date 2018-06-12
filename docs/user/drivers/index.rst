@@ -12,10 +12,10 @@ To make it easier to create and use other drivers without code changes within Vm
 
 Entry points for drivers:
 
-1. ``vmshepherd.driver.iaas`` - IaaS Driver
-2. ``vmshepherd.driver.presets`` - Preset Driver
-3. ``vmshepherd.driver.runtime`` - Runtime Driver
-4. ``vmshepherd.driver.healthcheck`` - Healthcheck Driver
+1. vmshepherd.driver.iaas - `IaaS Driver`_
+2. vmshepherd.driver.presets - `Preset Driver`_
+3. vmshepherd.driver.runtime - `Runtime Driver`_
+4. vmshepherd.driver.healthcheck - `Healthcheck Driver`_
 
 Config example for an IaaS Driver:
 
@@ -35,11 +35,12 @@ IaaS Driver provides abstraction layer which unifies API methods, making it easi
 
 Implemented IaaS Drivers:
 
-    1. ``DummyIaasDriver`` - iaas simulation driver
-    2. ``OpenStackDriver`` - asyncopenstackclient library wrapper
+    1. `DummyIaasDriver <iaas_dummydriver>`_ - iaas simulation driver
+    2. `OpenStackDriver <iaas_openstackdriver>`_ - asyncopenstackclient library wrapper
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    iaas_dummydriver
@@ -54,10 +55,19 @@ It can also hold runtime data - information that should be available in later it
 
 Implemented Runtime Drivers:
 
-    1. ``InMemoryDriver`` - To use for only one VmShepherd instance. It holds all data in local memory.
-    2. ``PostgresDriver`` - supplied by `a separate package <https://github.com/DreamLab/vmshepherd-runtime-postgres-driver>`_.
+    1. `InMemoryDriver <runtime_inmemory>`_ - To use for only one VmShepherd instance. It holds all data in local memory
+    2. `PostgresDriver <https://github.com/DreamLab/vmshepherd-runtime-postgres-driver>`_ - Runtime driver that utilizes PostgreSQL database engine, supplied by a separate package
+    3. `ZookeeperDriver <https://github.com/kwarunek/vmshepherd-zookeeper-driver>`_ - Plugin runtime driver that takes advantage of Zookeeper configuration maintainer
 
+.. toctree::
+   :hidden:
+   :titlesonly:
 
+   runtime_inmemory
+   Postgres Driver <https://github.com/DreamLab/vmshepherd-runtime-postgres-driver>
+   Zookeeper Driver <https://github.com/kwarunek/vmshepherd-zookeeper-driver>
+
+   
 Preset Driver
 -------------
 
@@ -65,11 +75,12 @@ Preset Driver is used to get information about preset configurations from its ow
 
 Implemented Preset Drivers:
 
-    1. ``DirectoryDriver`` - reads preset configurations from local files.
-    2. ``GitRepoDriver`` - loads preset configuration from git repositories.
+    1. `DirectoryDriver <preset_directorydriver>`_ - read preset configurations from local files
+    2. `GitRepoDriver <preset_gitrepodriver>`_ - get preset configuration from git repositories
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    preset_directorydriver
@@ -136,12 +147,12 @@ Healthcheck Driver provides methods to check if your application (or other proce
 
 Implemented Healthcheck Drivers:
 
-    1. ``DummyHealthcheck`` - a healthcheck simulation driver returning always positive check result.
-    2. ``HttpHealthcheck`` - uses HTTP request.
-
+    1. ``DummyHealthcheck`` - a healthcheck simulation driver returning always positive check result
+    2. `HttpHealthcheck <healthcheck_http>`_ - uses HTTP request
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
    healthcheck_http
 
