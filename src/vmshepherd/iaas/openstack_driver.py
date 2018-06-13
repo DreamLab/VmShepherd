@@ -42,8 +42,8 @@ class OpenStackDriver(AbstractIaasDriver):
                                          project_domain_name=self.config['project_domain_name'])
                 self.nova = NovaClient(session=self.auth)
                 self.glance = GlanceClient(session=self.auth)
-                await self.nova.init_api(timeout=self.config['http_timeout'])
-                await self.glance.init_api(timeout=self.config['http_timeout'])
+                await self.nova.init_api(timeout=self.config.get('http_timeout', 10))
+                await self.glance.init_api(timeout=self.config.get('http_timeout', 10))
 
             if not hasattr(self, 'last_init') or self.last_init < (time.time() - 60):
                 await self.initialize()
