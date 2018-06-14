@@ -1,19 +1,16 @@
-''' Abstract of IaaS driver, it specifies all required methods.
+''' IaaS driver is responsible for communication with IaaS provider. To VmShepherd work, driver should implement `create_vm`, `terminate_vms`, `list_vms` and `get_vm_info`.
 
 Initialization - consider following config:
 
 ::
-    
-   iaas_driver:
-     name: SomeIaaS
-     params:
-       auth_key: AAAA
-       auth_secret: BBBB
-       some_x: CCC
 
-All params will be passed as named arguments to the driver like:
+   iaas:
+     driver: SomeIaaS
+     auth_key: AAAA
+     auth_secret: BBBB
+     some_x: CCC
 
-    SomeIaaS(auth_key='AAAA', auth_secret='BBBB', some_x='CCC')
+All params will be passed as config dict to the driver init:
 
 '''
 from .vm import Vm
@@ -21,10 +18,6 @@ from typing import Any, Dict, List
 
 
 class AbstractIaasDriver:
-    """
-    AbstractIaasDriver class definition.
-    Define API to implement in specific IaasDrivers like Openstack or EC2.
-    """
 
     def __init__(self, config=None):
         pass
@@ -64,7 +57,7 @@ class AbstractIaasDriver:
 
     async def terminate_vm(self, vm_id: Any) -> None:
         """
-        Terminate vm.
+        Terminates/discards vm.
 
         :arg string vm_id: Id Vm to terminate.
         """
@@ -73,7 +66,7 @@ class AbstractIaasDriver:
 
     async def get_vm(self, vm_id: Any) -> Vm:
         """
-        Get vm info.
+        Get vm info (with metadata and/or tags).
 
         :arg string vm_id: Id Vm to get.
 
