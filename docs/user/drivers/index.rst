@@ -5,28 +5,18 @@ Drivers
 VmShepherd is designed to cover most of its functionalities by separable drivers.
 It is easy to change some logic by writing your own driver and using it.
 
-Entry points
+Plugins
 ------------
 
-To make it easier to create and use other drivers without code changes within VmShepherd itself, python's `entry point mechanism <https://packaging.python.org/specifications/entry-points/>`_ are used.
+To make it easier to create and use other drivers without code changes within VmShepherd itself, plugin architecture has been used.
 
-Entry points for drivers:
+Drivers can be plugged in the following destinations:
 
 1. vmshepherd.driver.iaas - `IaaS Driver`_
 2. vmshepherd.driver.presets - `Preset Driver`_
 3. vmshepherd.driver.runtime - `Runtime Driver`_
 4. vmshepherd.driver.healthcheck - `Healthcheck Driver`_
 
-Config example for an IaaS Driver:
-
-.. code-block:: yaml
-
-    iaas:
-      driver: DummyIaasDriver
-      driver_arg_1: val1
-      driver_arg_2: val2
-
-Search rules for entry points are ``vmshepherd.driver.{name}``. IaaS Driver with a name ``DummyIaasDriver`` will be searched in the ``vmshepherd.driver.iaas`` entrypoint.
 
 Iaas Driver
 -----------
@@ -38,6 +28,14 @@ Implemented IaaS Drivers:
     1. `DummyIaasDriver <iaas_dummydriver>`_ - iaas simulation driver
     2. `OpenStackDriver <iaas_openstackdriver>`_ - asyncopenstackclient library wrapper
 
+Config example for an IaaS Driver:
+
+.. code-block:: yaml
+
+    iaas:
+      driver: DummyIaasDriver
+      driver_arg_1: val1
+      driver_arg_2: val2
 
 .. toctree::
    :hidden:
