@@ -38,13 +38,20 @@ Application requires python 3.6 or later. The latest stable version is `availabl
 
   pip install vmshepherd
 
-We also provide a ``Dockerfile`` which can be used for a development installation:
+also you can install VmShepherd manually using a make:
+
+::
+
+  make install
+
+There is also a third way with using a docker container:
 
 ::
 
   docker build -t vmshepherd .
-  docker run -it  -p 8888:8888 -p 8000:8000 vmshepherd run
+  docker run -d --name vmshepherd -v /etc/vmshepherd/confs/:/etc/vmshepherd -p 8888:8888 vmshepherd -c /etc/vmshepherd/settings.yaml
 
+Where `/etc/vmshepherd/confs` is a directory on a host with configuration file(s) for a app.
 
 Usage
 -----
@@ -58,13 +65,61 @@ Run:
    vmshepherd -c CONFIGFILE
 
 
+Development
+-----------
+
+We provide a Makefile and docker which can be helpfull during development.
+
+Makefile
+..........
+
+Run application:
+
+::
+
+   make run
+
+Run tests:
+
+::
+
+   make test
+
+Create documentation:
+
+::
+
+   make show-docs
+
+
+Docker
+.............
+
+Firstly build a image:
+
+::
+
+ docker build -t vmshepherd . --rm
+
+* Running vmshepherd with sample config
+
+::
+
+  docker run -it -p 8888:8888 vmshepherd -c /root/config/settings.example.yaml 
+
+* Running vmshepherd application with config and mounted source code for a development
+
+::
+
+  docker run -it -v $FULL_PATH_TO_REPO/VmShepherd/config:/etc/vmshepherd -v $FULL_PATH_TO_REPO/VmShepherd/src:/root/src vmshepherd -c /etc/vmshepherd/settings.example.yaml
+
 Contributing to VmShepherd
 --------------------------
 
 Thank you for your interest in contributing to VmShepherd. Like always there are many ways to contribute, and we appreciate all of them.
 
 Pull requests and issues are the primary mechanism we use to change VmShepherd. Github itself has a great documentation
-about using `Pull Requests <https://help.github.com/articles/about-pull-requests/>`_. We use the 
+about using `Pull Requests <https://help.github.com/articles/about-pull-requests/>`_. We use the
 `"fork and pull" <https://help.github.com/articles/about-collaborative-development-models/>`_ model,
 where contributors push changes to their personal fork and create pull requests to bring those changes into the source repository.
 
@@ -82,7 +137,7 @@ Pull requests will need:
 
 * Documentation
 
-* A logical series of `well written commits <https://github.com/alphagov/styleguides/blob/master/git.md>`_ 
+* A logical series of `well written commits <https://github.com/alphagov/styleguides/blob/master/git.md>`_
 
 
 License
