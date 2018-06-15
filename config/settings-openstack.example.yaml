@@ -20,6 +20,7 @@ defaults:
     user_domain_name: default    # for auth only
     image_owner_ids:
       - user
+    http_timeout: 10 # seconds
 
   healthcheck:
     driver: HttpHealthcheck

@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.1.0 (2018-06-13)
+------------------
+
+* feature: adjustable timeout for http requests to iaas 
+
 1.0.1 (2018-06-08)
 ------------------
 
