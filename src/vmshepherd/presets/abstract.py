@@ -63,7 +63,7 @@ class AbstractConfigurationDriver:
     async def _list(self):
         """ Returns list names of presets to manage
 
-        Returns list of string. Name will be used to fetch configuration using `_get_preset_spec`.
+        Returns list of string - just names. Further information will be collected with given name and `_get_preset_spec` method.
         """
         raise NotImplementedError
 
