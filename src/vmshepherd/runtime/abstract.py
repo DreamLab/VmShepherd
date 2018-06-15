@@ -1,8 +1,23 @@
-''' Abstract of runtime data storage.
+''' Runtime manager or runtime data storage stores intermediate states of VmShepherd cycles that need to be shared across multiple instances of application like:
+ - healthchecks status,
+ - try counts
+ - time and dates of last manage
 
-Storage is used to keep runtime data like fail, try count.
-It also should provide lock mechanism - in multiinstance deployment, a preset should be managed by the only one VmShepherd at a time.
+and locking mechanism.
 
+The locking mechanism guarantees a preset is managed by one instance at a time.
+
+Initialization - consider following config:
+
+::
+
+   runtime:
+     driver: SomeHC
+     param1: AAAA
+     param2: BBBB
+     some_x: CCC
+
+All params will be passed as config dict to the driver init:
 '''
 import time
 
@@ -32,6 +47,8 @@ class AbstractRuntimeData:
     async def _acquire_lock(self, name: str) -> bool:
         ''' Locks preset during manage process, any other VMgr instance won't disrubt it.
 
+        :arg string name: Lock name in particular preset name.
+
         If lock was acquired it should return True, otherwise False.
         '''
         raise NotImplementedError
@@ -39,6 +56,7 @@ class AbstractRuntimeData:
     async def _release_lock(self, name: str) -> None:
         ''' Unlocks presets, other VMgr instance will be able to manage it.
 
+        :arg string name: Lock name in particular preset name.
         :arg string preset_name: Preset name
         '''
         raise NotImplementedError
