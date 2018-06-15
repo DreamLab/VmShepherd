@@ -8,7 +8,7 @@ It is easy to change some logic by writing your own driver and using it.
 Entry points
 ------------
 
-To make it easier to create and use other drivers without code changes within VmShepherd itself, python's entry point mechanism are used (https://packaging.python.org/specifications/entry-points/).
+To make it easier to create and use other drivers without code changes within VmShepherd itself, python's `entry point mechanism <https://packaging.python.org/specifications/entry-points/>`_ are used.
 
 Entry points for drivers:
 
