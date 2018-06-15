@@ -29,8 +29,7 @@ class VmState(Enum):
 
 class Vm:
     """
-    Vm class definition.
-    Define API to implement in specific IaasDrivers like Openstack or EC2.
+    Virtual machine object.
     """
 
     def __init__(self, manager, id, name, ip, created, state=VmState.UNKNOWN, metadata=None, tags=None,
