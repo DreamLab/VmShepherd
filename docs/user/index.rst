@@ -12,4 +12,4 @@ User manual
    configuration
    api
    panel
-
+   glossary
