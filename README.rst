@@ -38,7 +38,42 @@ Application requires python 3.6 or later. The latest stable version is `availabl
 
   pip install vmshepherd
 
-We also provide a ``Dockerfile`` which can be used for a development installation:
+
+Another way of installation for a VmShepherd is a docker.
+You can easily download latest version of our application from a docker `hub
+<https://hub.docker.com/r/dreamlabcloud/vmshepherd/>`_.
+
+::
+
+  docker pull dreamlabcloud/vmshepherd
+
+Before you run a application, you need to prepare configuration files according to 
+this `rules <http://doc.dreamlab.pl/VmShepherd/user/configuration.html>`_.
+
+When you create a configuration file, you can deploy a VmShepherd like that:
+
+::
+
+  docker run -v $PATH_TO_CONFIG_DIRECTORY/:/home/shepherd -p 8888:8888 -it vmshepherd -c config/settings.example.yaml
+
+* Where PATH_TO_CONFIG_DIRECTORY is a localisation of a configuration files on your host
+* -c config/settings.example.yaml is a list of arguments passed to a VmShepherd in container
+
+
+Example:
+
+::
+
+  ➜  VmShepherd/docker ✗ sudo docker run -v $(realpath ../)/:/home/shepherd -p   8888:8888 -it vmshepherd -c config/settings.example.yaml
+  INFO:root:Starting server, listening on 8888.
+  INFO:root:VmShepherd start cycle...
+  INFO:root:VMs Status: 1 expected, 0 in iaas, 0 running, 0 nearby shutdown, 0 pending, 0   after time shutdown, 0 terminated, 0 error, 0 unknown, 1 missing
+  INFO:root:VMs Status update: 0 terminated, 0 terminated by healthcheck, 1 created, 0 failed healthcheck
+
+
+
+
+We also provide a ``Dockerfile`` which can be used during a development:
 
 ::
 
