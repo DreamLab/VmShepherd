@@ -4,6 +4,7 @@ http:
 # example of allowed_methods list
   api: 
     allowed_methods: 
+      - list_presets
       - list_vms
       - terminate_vm
       - get_vm_metadata
