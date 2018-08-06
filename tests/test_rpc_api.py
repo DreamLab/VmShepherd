@@ -27,6 +27,7 @@ class TestRpcApi(AsyncTestCase):
         self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
         self.mock_preset_manager.iaas.get_vm.return_value = futurized(self.mock_preset_manager.vms[0])
         mock_request.app.vmshepherd.preset_manager.get_preset.return_value = self.mock_preset_manager
+        mock_request.app.vmshepherd.preset_manager.list_presets.return_value = futurized({"C_DEV-app-dev": []})
         mock_request.remote = ['10.177.51.8']
         self.rpcapi = RpcApi()
         self.rpcapi._request = mock_request
@@ -59,3 +60,7 @@ class TestRpcApi(AsyncTestCase):
         ret = await self.rpcapi.get_vm_metadata('C_DEV-app-dev', 12345)
         self.assertEqual(ret, {'tags': None, 'iaas_shutdown': None})
         self.mock_preset_manager.iaas.get_vm.assert_called_with(12345)
+
+    async def test_list_presets_success(self):
+        ret = await self.rpcapi.list_presets()
+        self.assertEqual(ret, ["C_DEV-app-dev"])

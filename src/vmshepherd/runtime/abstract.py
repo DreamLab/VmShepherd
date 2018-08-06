@@ -1,4 +1,5 @@
-''' Runtime manager or runtime data storage stores intermediate states of VmShepherd cycles that need to be shared across multiple instances of application like:
+''' Runtime manager or runtime data storage stores intermediate states of VmShepherd cycles
+that need to be shared across multiple instances of application like:
  - healthchecks status,
  - try counts
  - time and dates of last manage

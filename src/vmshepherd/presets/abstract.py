@@ -1,4 +1,5 @@
-''' Preset configuration (or sometime called Preset store) is a mechanism to fetch and prepare cluster definition/spec for VmShepherd. Preset configuration driver should implement `_get_preset_spec` and `_list`.
+''' Preset configuration (or sometime called Preset store) is a mechanism to fetch and prepare cluster definition/spec for VmShepherd.
+Preset configuration driver should implement `_get_preset_spec` and `_list`.
 
 Initialization - consider following config:
 
