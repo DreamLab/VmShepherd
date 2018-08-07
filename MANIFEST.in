@@ -16,6 +16,7 @@ include test-requirements.txt
 include Dockerfile
 include tox.ini .travis.yml
 
+recursive-include docker *
 recursive-include examples *.py
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib

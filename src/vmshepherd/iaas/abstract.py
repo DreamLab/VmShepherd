@@ -1,4 +1,5 @@
-''' IaaS driver is responsible for communication with IaaS provider. To VmShepherd work, driver should implement `create_vm`, `terminate_vms`, `list_vms` and `get_vm_info`.
+''' IaaS driver is responsible for communication with IaaS provider. To VmShepherd work,
+driver should implement `create_vm`, `terminate_vms`, `list_vms` and `get_vm_info`.
 
 Initialization - consider following config:
 

@@ -1,4 +1,5 @@
-''' Abstract class of healthcheck. There is only one method to implement, that determines state of Vm or its underlying services.
+''' Abstract class of healthcheck. There is only one method to implement,
+that determines state of Vm or its underlying services.
 
 Initialization - consider following config:
 
@@ -13,6 +14,8 @@ Initialization - consider following config:
 All params will be passed as config dict to the driver init:
 
 '''
+
+
 class AbstractHealthcheck:
 
     def __init__(self, config):

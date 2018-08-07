@@ -26,6 +26,21 @@ class RpcApi(handler.JSONRPCView):
         return wrap
 
     @enabled_checker
+    async def list_presets(self):
+        """
+        Listing presets
+
+        :return:  (list of presets)
+
+        :rtype: list
+
+        Sample response:
+            ``["preset1", "preset2"]``
+        """
+        presets = await self.request.app.vmshepherd.preset_manager.list_presets()
+        return list(presets.keys())
+
+    @enabled_checker
     async def list_vms(self, preset):
         """
         Listing virtual machines in a given preset
@@ -35,7 +50,7 @@ class RpcApi(handler.JSONRPCView):
 
             - first element of a tuple is a size of virtual machines in a preset
             - second element is a dict which contains all Virtual Machines, where every element of this dict looks like that:
-              
+
               ``{ "VIRTUAL_MACHINE_ID": { "ip": "IP_ADDR", "state": "VM_STATE" }``
 
         :rtype: tuple
@@ -55,7 +70,7 @@ class RpcApi(handler.JSONRPCView):
         :arg string preset: preset name
         :arg int vm_id: Virtual Machine id
         :return: 'OK'
-        
+
         Sample response:
            ``OK``
         """
@@ -72,7 +87,7 @@ class RpcApi(handler.JSONRPCView):
         :arg int vm_id: Virtual Machine id
         :return:  Metadata for Virtual Machine
         :rtype: dict
-        
+
         Sample response:
            ``{ 'time_shutdown' : "12312312321' }``
         """
