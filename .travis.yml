@@ -25,3 +25,11 @@ notifications:
   email:
     on_success: never
     on_failure: always
+deploy:
+  provider: pypi
+  user: dreamlab-paas-pypi
+  password:
+    secure: Psb4Nnqun4Fa2nokdJDcFznKMCuw550NOesYzgy8/yXIcEOucxOF2TWtdyRGst6YDJ6G0SYGNzGhBmwdRvJdX670Afq5Kqq2s49Wra0xGXTbRBaklxfvDA/kxvm8tvrrbcKPVcOtj2HA009q5f30mEqfeQrnd1WNo/LcgCmu4t7fjpMtbi1VW3mnOa6NzCVvK5KLfwDgJvYyrc8iriOsRbN8WVnrLcRAoKWTIkxb1wBckfnQBiP8bqNSWByerDSAyF0IDEVWQIRiyEompKhjBSRLxpOQqY8njl2lRE5S1YGKunC2ihZGa/QHMbVzDpEdaIGegq7iGEwKEpvp++TZ08wCcQdJ6mJC3xhLNY/0NWjZP129bNOeg51ickvmHLwBfZwEuYpVittuR12nCmLmZJbh8FiMBRjKswofe4+muw6+QzKNQVRb05xURlIHEmRoCEcW87BNEpxMWoLW1XzvoK6qMCbiyWACFMacLZg1s8B4DUb4ZFmd3iQiFOEKAkU1Ez2J/Fiulh9N4jj93pW8CVqC1uOKwoXMlluVTiw3tL525fEdBtecz/c7/4t7MkK4QZXl5yfWWKJJhOU+t4eLaxr6felB4zFHpLOHHuGDunJIdhLkd65WKjAmpNgf8B6/HYzhBePnyeJtVZhS10rTDNoEfhOJxKO11Q0NFbuNlGU=
+  on:
+    tags: true
+    branch: master
