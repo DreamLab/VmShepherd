@@ -56,6 +56,14 @@ html_theme_options = {
 }
 html_short_title = '%s-%s' % (project, version)
 
+html_context = {
+    "display_github": True,
+    "github_user": "DreamLab",
+    "github_repo": "VmShepherd",
+    "github_version": "master",
+    "conf_py_path": "/docs/",
+}
+
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
