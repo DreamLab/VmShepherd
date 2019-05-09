@@ -21,7 +21,7 @@ def get_merged_dict_recursively(d, u):
 
 def load_config_file(path):
     with open(path, 'r') as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
     return config
 
 
@@ -33,7 +33,7 @@ async def async_load_from_file(path):
 
 async def async_load_from_yaml_file(path):
     contents = await async_load_from_file(path)
-    return yaml.load(contents)
+    return yaml.safe_load(contents)
 
 
 def add_async_delay(func):
