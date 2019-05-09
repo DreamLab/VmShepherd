@@ -48,11 +48,11 @@ class Preset:
             return False
 
         expired = time.time() - self.runtime.last_managed > self.config.get('manage_expire', 120)
-        self._locked = await self.runtime_mgr.acquire_lock(self.name)
+        self._locked = expired or (await self.runtime_mgr.acquire_lock(self.name))
 
         self._reset_counters()
 
-        return expired or self._locked
+        return self._locked
 
     async def __aexit__(self, exc_type, exc, tb):
         if self._locked:
