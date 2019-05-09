@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.2.0 (2019-05-09)
+------------------
+
+* bugfix: update runtime data after manage even if unlocked
+* bugfix: panel - deterministic preset order
+
 1.1.0 (2018-06-13)
 ------------------
 
