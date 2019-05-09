@@ -11,8 +11,10 @@ class HttpHealthcheck(AbstractHealthcheck):
         self.path = config.get('path', '/')
         self.port = config.get('port', 80)
         self.check_status = config.get('check_status', 200)
-        self.conn_timeout = config.get('conn_timeout', 1)
-        self.read_timeout = config.get('read_timeout', 1)
+        self._client_timeout = aiohttp.ClientTimeout(
+            connect=float(config.get('conn_timeout', 1)),
+            total=float(config.get('read_timeout', 1))
+        )
 
     def __str__(self):
         return f'HTTP on {self.port} with {self.method} {self.path} expecting {self.check_status}'
@@ -24,8 +26,7 @@ class HttpHealthcheck(AbstractHealthcheck):
 
         check_status = False
         try:
-            async with aiohttp.ClientSession(conn_timeout=self.conn_timeout,
-                                             read_timeout=self.read_timeout) as session:
+            async with aiohttp.ClientSession(timeout=self._client_timeout) as session:
                 ip = vm.ip[0] if type(vm.ip) == list else vm.ip
                 url = "http://{}:{}{}".format(ip, self.port, self.path)
                 resp = await session.request(method=self.method, url=url)
