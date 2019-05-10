@@ -1,4 +1,4 @@
-{% for name, data in sorted(presets.items()) %}
+{% for name, data in presets|dictsort %}
   <div class="preset-item" data-preset="{{ name }}">
     <h2 class="anchor" id="{{ name }}">Preset {{ name }}</h2>
     <div class="row">

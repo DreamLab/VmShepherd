@@ -2,27 +2,38 @@
 Changelog
 =========
 
+
+1.2.2 (2019-05-10)
+------------------
+
+* bugfix: panel - fail to load due jinja error
+
+
 1.2.1 (2019-05-09)
 ------------------
 
 * bugfix: update runtime data after manage even if unlocked
 * bugfix: panel - deterministic preset order
 
+
 1.2.0 (2018-08-07)
 ------------------
 
 * feature: api - added list_presets
+
 
 1.1.0 (2018-06-13)
 ------------------
 
 * feature: adjustable timeout for http requests to iaas 
 
+
 1.0.1 (2018-06-08)
 ------------------
 
 * bugfix: API should use last cycle data
 * bugfix: OpenStackDriver refresh token
+
 
 1.0.0 (2018-06-06)
 ------------------
