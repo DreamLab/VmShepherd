@@ -47,7 +47,14 @@ class TestRpcApi(AsyncTestCase):
         }
 
     async def test_list_vms(self):
+        self.mock_preset_manager.refresh_vms.return_value = futurized(None)
         ret = await self.rpcapi.list_vms('C_DEV-app-dev')
+        self.mock_preset_manager.refresh_vms.assert_called_once_with()
+
+        # next call should also refresh vms
+        ret = await self.rpcapi.list_vms('C_DEV-app-dev')
+        self.assertEqual(self.mock_preset_manager.refresh_vms.call_count, 2)
+
         self.assertEqual(ret[1], self.mock_list_vms)
         self.assertEqual(ret[0], 3)
 
