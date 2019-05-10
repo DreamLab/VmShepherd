@@ -21,6 +21,7 @@ class Preset:
         self._extra = {'preset': self.name}
         self._locked = False
         self._vms = []
+        self._vms_refresh_time = 0
 
     @property
     def vms(self):
@@ -73,8 +74,18 @@ class Preset:
             except Exception:
                 logging.error('Could not create vm with %s', args, extra=self._extra)
 
+    async def refresh_vms(self, if_older_than=None):
+        """ Refresh vm list
+
+        :arg integer if_older_than: Interval in seconds you accept cached data
+        """
+        if if_older_than is None or time.time() - self._vms_refresh_time > if_older_than:
+            self._vms_refresh_time = time.time()
+            self._vms = await self.iaas.list_vms(self.name)
+
     async def manage(self):
         """ Manage function docstring"""
+
         self._vms = await self.iaas.list_vms(self.name)
 
         vms_stat = Counter([vm.get_state() for vm in self._vms])
