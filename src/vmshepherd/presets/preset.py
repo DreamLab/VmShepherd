@@ -86,7 +86,7 @@ class Preset:
     async def manage(self):
         """ Manage function docstring"""
 
-        self._vms = await self.iaas.list_vms(self.name)
+        await self.refresh_vms()
 
         vms_stat = Counter([vm.get_state() for vm in self._vms])
         missing = self.count - len(self._vms) if len(self._vms) < self.count else 0
