@@ -42,8 +42,7 @@ class RpcApi(handler.JSONRPCView):
 
     @enabled_checker
     async def list_vms(self, preset):
-        """
-        Listing virtual machines in a given preset
+        """ Listing virtual machines in a given preset
 
         :arg string preset: preset name
         :return:  (Size of a preset, list of virtual machines)
@@ -60,6 +59,7 @@ class RpcApi(handler.JSONRPCView):
         """
         vmshepherd = self.request.app.vmshepherd
         preset = vmshepherd.preset_manager.get_preset(preset)
+        await preset.refresh_vms()
         result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value} for vm in preset.vms}
         return preset.count, result_vms
 
