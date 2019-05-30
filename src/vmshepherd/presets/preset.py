@@ -10,6 +10,7 @@ class Preset:
     def __init__(self, name: str):
         self.iaas = None
         self.healthcheck = None
+        self.unmanaged = False
         self.runtime_mgr = None
         self.runtime = None
         self.config = {}
@@ -30,6 +31,7 @@ class Preset:
     def configure(self, config: dict, runtime_mgr: object, iaas: object, healthcheck: object):
         self.iaas = iaas
         self.healthcheck = healthcheck
+        self.unmanaged = config.get('unmanaged', False)
         self.config = config
         self.count = config['count']
         self.runtime_mgr = runtime_mgr
@@ -81,6 +83,7 @@ class Preset:
         """
         if if_older_than is None or time.time() - self._vms_refresh_time > if_older_than:
             self._vms_refresh_time = time.time()
+            print('*'*100, type(self.iaas), self.name)
             self._vms = await self.iaas.list_vms(self.name)
 
     async def manage(self):
@@ -97,15 +100,18 @@ class Preset:
             vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
             vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
-        for vm in self._vms:
-            if vm.is_dead():
-                logging.info("Terminate %s", vm, extra=self._extra)
-                await vm.terminate()
-                self.terminated += 1
-        to_create = self.count - (len(self._vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
-        to_create = to_create if to_create > 0 else 0
-        logging.debug("Create %s Vm", to_create, extra=self._extra)
-        await self._create_vms(to_create)
+
+        if not self.unmanaged:
+            for vm in self._vms:
+                if vm.is_dead():
+                    logging.info("Terminate %s", vm, extra=self._extra)
+                    await vm.terminate()
+                    self.terminated += 1
+            to_create = self.count - (len(self._vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
+            to_create = to_create if to_create > 0 else 0
+            logging.debug("Create %s Vm", to_create, extra=self._extra)
+            await self._create_vms(to_create)
+
         await self._healthcheck(self._vms)
         logging.info(
             'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
