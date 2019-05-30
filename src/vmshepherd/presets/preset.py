@@ -83,7 +83,6 @@ class Preset:
         """
         if if_older_than is None or time.time() - self._vms_refresh_time > if_older_than:
             self._vms_refresh_time = time.time()
-            print('*'*100, type(self.iaas), self.name)
             self._vms = await self.iaas.list_vms(self.name)
 
     async def manage(self):
