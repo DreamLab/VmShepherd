@@ -31,13 +31,11 @@ setup(
         'console_scripts': ['vmshepherd = vmshepherd.__main__:main'],
         'vmshepherd.driver.iaas': [
             'DummyIaasDriver = vmshepherd.iaas:DummyIaasDriver',
-            'OpenStackDriver = vmshepherd.iaas:OpenStackDriver',
-            'AwsIaaSDriver = vmshepherd.iaas:AwsIaaSDriver'
+            'OpenStackDriver = vmshepherd.iaas:OpenStackDriver'
         ],
         'vmshepherd.driver.presets': [
             'DirectoryDriver = vmshepherd.presets:DirectoryDriver',
-            'GitRepoDriver = vmshepherd.presets:GitRepoDriver',
-            'AwsPresetDriver = vmshepherd.presets:AwsPresetDriver'
+            'GitRepoDriver = vmshepherd.presets:GitRepoDriver'
         ],
         'vmshepherd.driver.runtime': ['InMemoryDriver = vmshepherd.runtime:InMemoryDriver'],
         'vmshepherd.driver.healthcheck': ['HttpHealthcheck = vmshepherd.healthcheck:HttpHealthcheck']
