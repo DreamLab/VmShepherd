@@ -93,13 +93,15 @@ class Preset:
         vms_stat = Counter([vm.get_state() for vm in self._vms])
         missing = self.count - len(self._vms) if len(self._vms) < self.count else 0
         logging.info(
-            'VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, %s after time shutdown, '
-            '%s terminated, %s error, %s unknown, %s missing',
-            self.count, len(self._vms), vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value],
-            vms_stat[VmState.PENDING.value], vms_stat[VmState.AFTER_TIME_SHUTDOWN.value],
-            vms_stat[VmState.TERMINATED.value], vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
+            'State: %s, VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, '
+            '%s after time shutdown, %s terminated, %s error, %s unknown, %s missing',
+            'unmanaged' if self.unmanaged else 'managed', self.count, len(self._vms), vms_stat[VmState.RUNNING.value],
+            vms_stat[VmState.NEARBY_SHUTDOWN.value], vms_stat[VmState.PENDING.value],
+            vms_stat[VmState.AFTER_TIME_SHUTDOWN.value], vms_stat[VmState.TERMINATED.value],
+            vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
 
+        to_create = 0
         if not self.unmanaged:
             for vm in self._vms:
                 if vm.is_dead():
@@ -107,16 +109,21 @@ class Preset:
                     await vm.terminate()
                     self.terminated += 1
             to_create = self.count - (len(self._vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
-            to_create = to_create if to_create > 0 else 0
             logging.debug("Create %s Vm", to_create, extra=self._extra)
             await self._create_vms(to_create)
 
         await self._healthcheck(self._vms)
-        logging.info(
-            'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
-            self.terminated, self.healthcheck_terminated, to_create, len(self.runtime.failed_checks),
-            extra=self._extra
-        )
+
+        if not self.unmanaged:
+            logging.info(
+                'VMs Status update: %s terminated, %s terminated by healthcheck, %s created, %s failed healthcheck',
+                self.terminated, self.healthcheck_terminated, to_create, len(self.runtime.failed_checks),
+                extra=self._extra
+            )
+        else:
+            logging.info(
+                'VMs Status update: %s failed healthcheck', len(self.runtime.failed_checks), extra=self._extra
+            )
 
     async def _healthcheck(self, vms):
         _healthchecks = {}
@@ -134,7 +141,7 @@ class Preset:
                 count_fails = self.runtime.failed_checks.get(vm.id, {}).get('count', 0)
                 self.runtime.failed_checks[vm.id] = {'time': failed_since, 'count': count_fails + 1}
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
-                if terminate_heatlh_failed_delay >= 0 and count_fails > 5:
+                if not self.unmanaged and terminate_heatlh_failed_delay >= 0 and count_fails > 5:
                     if terminate_heatlh_failed_delay + failed_since < time.time():
                         logging.debug("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails,
                                       failed_since, extra=self._extra)
