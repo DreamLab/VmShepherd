@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.3.0 (2019-06-03)
+------------------
+
+* feature: configure unmanaged state for presets
+* feature: rpc api - get_vm_ip(preset_name, vm_id)
 
 1.2.3 (2019-05-10)
 ------------------

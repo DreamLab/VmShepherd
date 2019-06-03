@@ -98,3 +98,22 @@ class RpcApi(handler.JSONRPCView):
         ret_info['tags'] = vm_info.tags
         ret_info['iaas_shutdown'] = vm_info.timed_shutdown_at
         return ret_info
+
+    @enabled_checker
+    async def get_vm_ip(self, preset, vm_id):
+        """ Get vm ip
+
+        :arg string preset: preset name
+        :arg int vm_id: Virtual Machine id
+        :return:  Vm Ip
+        :rtype: string
+        """
+        vmshepherd = self.request.app.vmshepherd
+        preset = vmshepherd.preset_manager.get_preset(preset)
+        # check in cache
+        for vm in preset.vms:
+            if vm_id == vm.id:
+                return vm.ip[0]
+        # retrieve real time data
+        vm_info = await preset.iaas.get_vm(vm_id)
+        return vm_info.ip[0]

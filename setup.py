@@ -13,7 +13,7 @@ def read(name):
 
 setup(
     name="vmshepherd",
-    version="1.2.3",
+    version="1.3.0",
     author='Dreamlab - PaaS KRK',
     author_email='paas-support@dreamlab.pl',
     url='https://github.com/Dreamlab/vmshepherd',
@@ -31,11 +31,13 @@ setup(
         'console_scripts': ['vmshepherd = vmshepherd.__main__:main'],
         'vmshepherd.driver.iaas': [
             'DummyIaasDriver = vmshepherd.iaas:DummyIaasDriver',
-            'OpenStackDriver = vmshepherd.iaas:OpenStackDriver'
+            'OpenStackDriver = vmshepherd.iaas:OpenStackDriver',
+            'AwsIaaSDriver = vmshepherd.iaas:AwsIaaSDriver'
         ],
         'vmshepherd.driver.presets': [
             'DirectoryDriver = vmshepherd.presets:DirectoryDriver',
-            'GitRepoDriver = vmshepherd.presets:GitRepoDriver'
+            'GitRepoDriver = vmshepherd.presets:GitRepoDriver',
+            'AwsPresetDriver = vmshepherd.presets:AwsPresetDriver'
         ],
         'vmshepherd.driver.runtime': ['InMemoryDriver = vmshepherd.runtime:InMemoryDriver'],
         'vmshepherd.driver.healthcheck': ['HttpHealthcheck = vmshepherd.healthcheck:HttpHealthcheck']
