@@ -69,7 +69,10 @@ class AbstractConfigurationDriver:
         raise NotImplementedError
 
     def get_preset(self, preset_name):
-        return self._presets[preset_name]
+        try:
+            return self._presets[preset_name]
+        except KeyError:
+            raise Exception(f'Preset {preset_name} not found')
 
     async def list_presets(self, refresh=True):
         if refresh or self._presets is None:
