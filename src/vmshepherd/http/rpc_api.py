@@ -100,7 +100,7 @@ class RpcApi(handler.JSONRPCView):
         return ret_info
 
     @enabled_checker
-    async def get_vm_ip(self, preset, vm_id):
+    async def get_vm_ip(self, preset_name, vm_id):
         """ Get vm ip
 
         :arg string preset: preset name
@@ -109,7 +109,7 @@ class RpcApi(handler.JSONRPCView):
         :rtype: string
         """
         vmshepherd = self.request.app.vmshepherd
-        preset = vmshepherd.preset_manager.get_preset(preset)
+        preset = vmshepherd.preset_manager.get_preset(preset_name)
         # check in cache
         for vm in preset.vms:
             if vm_id == vm.id:
