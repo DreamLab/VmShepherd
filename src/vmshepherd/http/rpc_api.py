@@ -7,6 +7,7 @@ class RpcApi(handler.JSONRPCView):
     """
     RPC Api to manage virtual machines
     """
+
     def __init__(self, allowed_methods=None):
         self.METHOD_PREFIX = ''
         self.allowed_methods = allowed_methods
@@ -18,11 +19,13 @@ class RpcApi(handler.JSONRPCView):
     def enabled_checker(func):
         """ Access decorator which checks if a RPC method is enabled by our configuration
         """
+
         @wraps(func)
         def wrap(self, *args, **kwargs):
             if self.allowed_methods and isinstance(self.allowed_methods, list) and func.__name__ not in self.allowed_methods:
                 raise Exception("Method {} is disabled".format(func.__name__))
             return func(self, *args, **kwargs)
+
         return wrap
 
     @enabled_checker
@@ -113,7 +116,9 @@ class RpcApi(handler.JSONRPCView):
         # check in cache
         for vm in preset.vms:
             if vm_id == vm.id:
-                return vm.ip[0]
+                return {'vm_ip': vm.ip[0]}
         # retrieve real time data
         vm_info = await preset.iaas.get_vm(vm_id)
-        return vm_info.ip[0]
+        return {
+            'vm_ip': vm_info.ip[0]
+        }

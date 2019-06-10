@@ -71,3 +71,7 @@ class TestRpcApi(AsyncTestCase):
     async def test_list_presets_success(self):
         ret = await self.rpcapi.list_presets()
         self.assertEqual(ret, ["C_DEV-app-dev"])
+
+    async def test_get_vm_ip(self):
+        ret = await self.rpcapi.get_vm_ip('C_DEV-app-dev', '1243454353')
+        self.assertEqual({'vm_ip': '10.177.51.8'}, ret)
