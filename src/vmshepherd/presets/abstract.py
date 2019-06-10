@@ -19,7 +19,7 @@ from .preset import Preset
 from jinja2 import Template
 from vmshepherd.drivers import Drivers
 from vmshepherd.utils import get_merged_dict_recursively, async_load_from_file
-
+from vmshepherd.errors import PresetNotFound
 
 class AbstractConfigurationDriver:
 
@@ -72,7 +72,7 @@ class AbstractConfigurationDriver:
         try:
             return self._presets[preset_name]
         except KeyError:
-            raise Exception(f'Preset {preset_name} not found')
+            raise PresetNotFound(preset_name)
 
     async def list_presets(self, refresh=True):
         if refresh or self._presets is None:
