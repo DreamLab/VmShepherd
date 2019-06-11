@@ -1,11 +1,11 @@
 import logging
 from .abstract import AbstractIaasDriver
-from .exception import IaasException
+from vmshepherd.errors import IaaSError
 from .vm import Vm, VmState
 from vmshepherd.utils import next_id, add_async_delay
 
 
-class DummyIaasUserExc(IaasException):
+class DummyIaasUserExc(IaaSError):
     def __init__(self, message, details):
         super().__init__(message, details)
 

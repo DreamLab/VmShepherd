@@ -2,7 +2,7 @@ import base64
 import logging
 import time
 from .abstract import AbstractIaasDriver
-from .exception import IaasException
+from vmshepherd.errors import IaaSError
 from .vm import Vm, VmState
 from asyncopenstackclient import NovaClient, GlanceClient, AuthPassword
 from bidict import bidict
@@ -24,7 +24,7 @@ class OpenStackDriver(AbstractIaasDriver):
                 return await func(*args, **kwargs)
             except Exception as e:
                 logging.error(e)
-                raise IaasException
+                raise IaaSError(memoryview='OpenStackError')
         return wrap
 
     def initialize_openstack(func):
