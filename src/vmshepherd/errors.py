@@ -15,8 +15,8 @@ class VmShepherdError(Exception):
 
     def __repr__(self):
         if self.details:
-            return 'VmShepherdError(message=%s, details=%s' % (repr(self.message), repr(self.details))
-        return 'VmShepherdError(message=%s)' % repr(self.message)
+            return f'VmShepherdError(message={self.message}, details={self.details}'
+        return f'VmShepherdError(message={self.message})'
 
 
 class PresetNotFound(VmShepherdError):
