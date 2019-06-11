@@ -48,11 +48,11 @@ class IaasAuthError(IaaSError):
         super().__init__(message, details)
 
 
-class DummyIaasUserExc(IaaSError):
-    def __init__(self, message, details=None):
+class DummyIaasUserError(IaaSError):
+    def __init__(self, message="DummyIaasUserError", details=None):
         super().__init__(message, details)
 
 
-class DummyIaasVmNotFound(DummyIaasUserExc):
+class DummyIaasVmNotFound(DummyIaasUserError):
     def __init__(self):
         super().__init__('VMNOTFOUND', 'Vm Not Found')
