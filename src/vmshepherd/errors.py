@@ -2,16 +2,16 @@ class VmShepherdError(Exception):
     message = None
     details = None
 
-    def __init__(self, message, details=None):
+    def __init__(self, message, details=''):
         super().__init__(self.message)
         self.message = message
-        self.details = details if details else ''
+        self.details = details
         assert self.message is not None
 
     def __str__(self):
         if self.details:
-            return 'VmShepherdError: %s, details=%s' % (self.message, self.details)
-        return 'VmShepherdError: %s' % self.message
+            return f'VmShepherdError: {self.message}, details={self.details}'
+        return f'VmShepherdError: {self.message}'
 
     def __repr__(self):
         if self.details:
