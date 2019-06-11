@@ -49,7 +49,7 @@ class IaasAuthError(IaaSError):
 
 
 class DummyIaasUserExc(IaaSError):
-    def __init__(self, message, details):
+    def __init__(self, message, details=None):
         super().__init__(message, details)
 
 
