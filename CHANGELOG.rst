@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.3.1 (2019-06-03)
+------------------
+
+* bugfix:  change the return type for get_vm_ip
+* feature: custom exception class for errors
+
+
 1.3.0 (2019-06-03)
 ------------------
 
