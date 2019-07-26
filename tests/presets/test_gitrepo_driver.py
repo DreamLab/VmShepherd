@@ -24,10 +24,9 @@ class TestGitRepo(AsyncTestCase):
             'vmshepherd.presets.gitrepo_driver.asyncio.create_subprocess_exec',
             return_value=futurized(self.mock_process)
         ).start()
-
-        self.patch_tempfile = patch('vmshepherd.presets.gitrepo_driver.tempfile.NamedTemporaryFile')
-        self.mock_tmp = self.patch_tempfile.start()
-        self.mock_tmp.return_value.__enter__.return_value.name = '/tmp/vmshepherd123456'
+        self.patch_tmp = patch('vmshepherd.presets.gitrepo_driver.tempfile.TemporaryDirectory')
+        self.mock_tmp = self.patch_tmp.start()
+        self.mock_tmp.return_value.name = '/tmp/prefixRANDOM_HASH/'
 
         self.config = {
             'repositories': {
@@ -37,24 +36,6 @@ class TestGitRepo(AsyncTestCase):
             'clone_dir': '/tmp/'
         }
         self.driver = gitrepo_driver.GitRepoDriver(self.config, self.mock_runtime, example_config['defaults'])
-
-    async def test_reload_tmp_path(self):
-        self.mock_os.path.exists.return_value = False
-        cfg = {
-            'repositories': {
-                'paas': 'git://testrepm/paas.git',
-                'db': 'git://stash/db.git',
-            }}
-        driver = gitrepo_driver.GitRepoDriver(cfg, self.mock_runtime, example_config['defaults'])
-        self.mock_os.path.join.side_effect = lambda a, b: (a + b)
-        driver._clone_or_update = Mock(return_value=futurized(None))
-        driver._assure_clone_dir_exists = Mock(return_value=True)
-        driver._load_repo = Mock(return_value=futurized({}))
-        await driver.list_presets()
-        driver._load_repo.assert_has_calls([
-            mock.call('paas', '/tmp/paas'), mock.call('db', '/tmp/db')
-        ])
-        self.assertEqual(driver._load_repo.call_count, 2)
 
     def tearDown(self):
         patch.stopall()
@@ -108,3 +89,21 @@ class TestGitRepo(AsyncTestCase):
             mock.call('paas', '/tmp/paas'), mock.call('db', '/tmp/db')
         ])
         self.assertEqual(self.driver._load_repo.call_count, 2)
+
+    async def test_reload_tmp_path(self):
+        self.mock_os.path.exists.return_value = False
+        cfg = {
+            'repositories': {
+                'paas': 'git://testrepm/paas.git',
+                'db': 'git://stash/db.git',
+            }}
+        driver = gitrepo_driver.GitRepoDriver(cfg, self.mock_runtime, example_config['defaults'])
+        self.mock_os.path.join.side_effect = lambda a, b: (a + b)
+        driver._clone_or_update = Mock(return_value=futurized(None))
+        driver._assure_clone_dir_exists = Mock(return_value=True)
+        driver._load_repo = Mock(return_value=futurized({}))
+        await driver.list_presets()
+        driver._load_repo.assert_has_calls([
+            mock.call('paas', '/tmp/prefixRANDOM_HASH/paas'), mock.call('db', '/tmp/prefixRANDOM_HASH/db')
+        ])
+        self.assertEqual(driver._load_repo.call_count, 2)
