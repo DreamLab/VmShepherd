@@ -15,6 +15,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
         self._clone_dir = config.get('clone_dir', tempfile.TemporaryDirectory(prefix='vmshepherd').name)
         self._repos = config['repositories']
         self._specs = {}
+        self.lock = asyncio.Lock()
 
     async def _get_preset_spec(self, preset_name: str):
         return self._specs[preset_name]
