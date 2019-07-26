@@ -12,7 +12,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
 
     def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
-        self._clone_dir = config.get('clone_dir', os.path.join(tempfile.gettempdir(), 'vmshepherd'))
+        self._clone_dir = config.get('clone_dir', tempfile.TemporaryDirectory(prefix='vmshepherd').name)
         self._repos = config['repositories']
         self._specs = {}
 
