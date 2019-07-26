@@ -59,9 +59,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
                 *cmd, stdout=PIPE, stderr=PIPE
             )
             stdout, stderr = await process.communicate()
-
             logging.debug('GitRepo code=%s stdout: %s stderr: %s', process.returncode, stdout, stderr)
-
             if process.returncode != 0:
                 logging.error('Git error: %s %s %s', path, repo, stderr)
                 raise RuntimeError(f'Could not fetch presets ({path}) from {repo}')
