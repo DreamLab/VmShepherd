@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.3.2 (2019-07-26)
+------------------
+
+* bugfix:  Add unique name for a tmp preset directory in a Git Driver
+
+
 1.3.1 (2019-06-03)
 ------------------
 
