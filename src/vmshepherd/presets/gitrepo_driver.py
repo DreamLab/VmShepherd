@@ -2,7 +2,7 @@ import asyncio
 import errno
 import logging
 import os
-import tempfile
+from tempfile import NamedTemporaryFile
 from .abstract import AbstractConfigurationDriver
 from asyncio.subprocess import PIPE
 from vmshepherd.utils import async_load_from_yaml_file
@@ -12,7 +12,7 @@ class GitRepoDriver(AbstractConfigurationDriver):
 
     def __init__(self, config, runtime, defaults):
         super().__init__(runtime, defaults)
-        self._clone_dir = config.get('clone_dir', os.path.join(tempfile.gettempdir(), 'vmshepherd'))
+        self._clone_dir = config.get('clone_dir', NamedTemporaryFile(prefix='vmshepherd').name)
         self._repos = config['repositories']
         self._specs = {}
 
