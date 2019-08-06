@@ -3,6 +3,7 @@ from aiohttp_jsonrpc import handler
 from functools import wraps
 import logging
 
+
 class RpcApi(handler.JSONRPCView):
     """
     RPC Api to manage virtual machines
