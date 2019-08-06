@@ -123,6 +123,7 @@ class RpcApi(handler.JSONRPCView):
         # check in cache
         for vm in preset.vms:
             if vm_id == vm.id:
+                logging.info('IaaS verification ok')
                 return {'vm_ip': vm.ip[0]}
         # retrieve real time data
         try:
@@ -131,6 +132,7 @@ class RpcApi(handler.JSONRPCView):
             logging.exception(ex)
             raise
 
+        logging.info('IaaS verification ok')
         return {
             'vm_ip': vm_info.ip[0]
         }
