@@ -118,7 +118,12 @@ class RpcApi(handler.JSONRPCView):
             if vm_id == vm.id:
                 return {'vm_ip': vm.ip[0]}
         # retrieve real time data
-        vm_info = await preset.iaas.get_vm(vm_id)
+        try:
+           vm_info = await preset.iaas.get_vm(vm_id)
+        except Exception as ex:
+            logging.exception(ex)
+            raise
+
         return {
             'vm_ip': vm_info.ip[0]
         }
