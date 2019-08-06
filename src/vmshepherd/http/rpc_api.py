@@ -2,6 +2,7 @@ import copy
 from aiohttp_jsonrpc import handler
 from functools import wraps
 import logging
+from vmshepherd.errors import VmNotFound, PresetNotFound
 
 
 class RpcApi(handler.JSONRPCView):
@@ -113,7 +114,12 @@ class RpcApi(handler.JSONRPCView):
         :rtype: string
         """
         vmshepherd = self.request.app.vmshepherd
-        preset = vmshepherd.preset_manager.get_preset(preset_name)
+        try:
+            preset = vmshepherd.preset_manager.get_preset(preset_name)
+        except PresetNotFound as ex:
+            logging.exception(ex)
+            raise
+
         # check in cache
         for vm in preset.vms:
             if vm_id == vm.id:
@@ -121,7 +127,7 @@ class RpcApi(handler.JSONRPCView):
         # retrieve real time data
         try:
            vm_info = await preset.iaas.get_vm(vm_id)
-        except Exception as ex:
+        except VmNotFound as ex:
             logging.exception(ex)
             raise
 
