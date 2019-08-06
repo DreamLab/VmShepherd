@@ -61,6 +61,8 @@ class Worker:
                     if locked:
                         cnt_managed += 1
                         await preset.manage()
+            except PresetNotFound as ex:
+                logging.exception(ex)
             except Exception:
                 logging.exception('Error managing %s', name)
                 cnt_failed_presets += 1
