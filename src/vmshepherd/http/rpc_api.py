@@ -117,7 +117,7 @@ class RpcApi(handler.JSONRPCView):
         try:
             preset = vmshepherd.preset_manager.get_preset(preset_name)
         except PresetNotFound as ex:
-            logging.exception(ex)
+            logging.error(ex)
             raise
 
         # check in cache
@@ -129,7 +129,7 @@ class RpcApi(handler.JSONRPCView):
         try:
            vm_info = await preset.iaas.get_vm(vm_id)
         except VmNotFound as ex:
-            logging.exception(ex)
+            logging.error(ex)
             raise
 
         logging.info('IaaS verification ok')
