@@ -9,8 +9,10 @@ class Drivers:
     @classmethod
     def get(cls, group: str, cfg: dict, **kwargs) -> object:
         _hash = hash(json.dumps(cfg, sort_keys=True))
+        pkg_resources._initialize_master_working_set()  # reload plugins
         if _hash not in cls._loaded:
-            for entry_point in pkg_resources.WorkingSet(None).iter_entry_points(group=f'vmshepherd.driver.{group}'):
+            ws = pkg_resources.WorkingSet(None)
+            for entry_point in ws.iter_entry_points(group=f'vmshepherd.driver.{group}'):
                 if entry_point.name == cfg['driver']:
                     _class = entry_point.load()
                     try:
