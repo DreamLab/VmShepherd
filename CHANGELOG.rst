@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.3.4 (2019-07-26)
+1.3.5 (2019-07-26)
 ------------------
 
 * bugfix: fix problem with sys.path in drivers
