@@ -5,7 +5,8 @@ Changelog
 1.3.4 (2019-07-26)
 ------------------
 
-* bugfix:  fix problem with sys.path in drivers
+* bugfix: fix problem with sys.path in drivers
+* bugfix: reload entry_points
 
 
 1.3.3 (2019-07-26)
