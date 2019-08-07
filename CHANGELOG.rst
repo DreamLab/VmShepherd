@@ -2,11 +2,17 @@
 Changelog
 =========
 
+1.3.4 (2019-07-26)
+------------------
+
+* bugfix: fix problem with sys.path in drivers
+* bugfix: reload entry_points
+
 
 1.3.3 (2019-07-26)
 ------------------
 
-* bugfix:  Add asyncio.Lock for git clone/pull commands
+* bugfix:  add asyncio.lock for git clone/pull commands
 
 1.3.2 (2019-07-26)
 ------------------
