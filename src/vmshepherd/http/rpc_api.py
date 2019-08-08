@@ -29,6 +29,19 @@ class RpcApi(handler.JSONRPCView):
 
         return wrap
 
+    def rpc_logger(func):
+        """ RPC decorator for additional logging in RPC methods
+        """
+        @wraps(func)
+        async def wrap(self, *args, **kwargs):
+            try:
+                return await func(self, *args, **kwargs)
+            except Exception as ex:
+                logging.error(ex)
+                raise
+
+        return wrap
+
     @enabled_checker
     async def list_presets(self):
         """
@@ -104,6 +117,7 @@ class RpcApi(handler.JSONRPCView):
         return ret_info
 
     @enabled_checker
+    @rpc_logger
     async def get_vm_ip(self, preset_name, vm_id):
         """ Get vm ip
 
@@ -113,11 +127,7 @@ class RpcApi(handler.JSONRPCView):
         :rtype: string
         """
         vmshepherd = self.request.app.vmshepherd
-        try:
-            preset = vmshepherd.preset_manager.get_preset(preset_name)
-        except Exception as ex:
-            logging.error(ex)
-            raise
+        preset = vmshepherd.preset_manager.get_preset(preset_name)
 
         # check in cache
         for vm in preset.vms:
@@ -125,11 +135,7 @@ class RpcApi(handler.JSONRPCView):
                 logging.info('IaaS verification ok')
                 return {'vm_ip': vm.ip[0]}
         # retrieve real time data
-        try:
-           vm_info = await preset.iaas.get_vm(vm_id)
-        except Exception as ex:
-            logging.error(ex)
-            raise
+        vm_info = await preset.iaas.get_vm(vm_id)
 
         logging.info('IaaS verification ok')
         return {
