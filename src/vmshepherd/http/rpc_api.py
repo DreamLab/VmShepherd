@@ -30,7 +30,7 @@ class RpcApi(handler.JSONRPCView):
         return wrap
 
     def rpc_logger(func):
-        """ RPC decorator for additional logging in RPC methods
+        """ RPC decorator for additional logging in methods
         """
         @wraps(func)
         async def wrap(self, *args, **kwargs):
