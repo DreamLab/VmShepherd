@@ -19,6 +19,15 @@ class VmShepherdError(Exception):
         return f'VmShepherdError(message={self.message})'
 
 
+class VmNotFound(VmShepherdError):
+    def __init__(self, vm_id):
+        """
+        :param vm_id: vm id
+        """
+        self.message = f"VM id: {vm_id} not found"
+        super().__init__(self.message)
+
+
 class PresetNotFound(VmShepherdError):
     def __init__(self, preset_name):
         """

@@ -24,7 +24,7 @@ class OpenStackDriver(AbstractIaasDriver):
                 return await func(*args, **kwargs)
             except Exception as e:
                 logging.error(e)
-                raise IaaSError(memoryview='OpenStackError')
+                raise IaaSError(message='OpenStackError')
         return wrap
 
     def initialize_openstack(func):

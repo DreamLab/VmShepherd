@@ -1,6 +1,7 @@
 import copy
 from aiohttp_jsonrpc import handler
 from functools import wraps
+import logging
 
 
 class RpcApi(handler.JSONRPCView):
@@ -25,6 +26,19 @@ class RpcApi(handler.JSONRPCView):
             if self.allowed_methods and isinstance(self.allowed_methods, list) and func.__name__ not in self.allowed_methods:
                 raise Exception("Method {} is disabled".format(func.__name__))
             return func(self, *args, **kwargs)
+
+        return wrap
+
+    def rpc_logger(func):
+        """ RPC decorator for additional logging in methods
+        """
+        @wraps(func)
+        async def wrap(self, *args, **kwargs):
+            try:
+                return await func(self, *args, **kwargs)
+            except Exception as ex:
+                logging.error(ex)
+                raise
 
         return wrap
 
@@ -103,6 +117,7 @@ class RpcApi(handler.JSONRPCView):
         return ret_info
 
     @enabled_checker
+    @rpc_logger
     async def get_vm_ip(self, preset_name, vm_id):
         """ Get vm ip
 
@@ -113,12 +128,16 @@ class RpcApi(handler.JSONRPCView):
         """
         vmshepherd = self.request.app.vmshepherd
         preset = vmshepherd.preset_manager.get_preset(preset_name)
+
         # check in cache
         for vm in preset.vms:
             if vm_id == vm.id:
+                logging.info('IaaS verification ok')
                 return {'vm_ip': vm.ip[0]}
         # retrieve real time data
         vm_info = await preset.iaas.get_vm(vm_id)
+
+        logging.info('IaaS verification ok')
         return {
             'vm_ip': vm_info.ip[0]
         }
