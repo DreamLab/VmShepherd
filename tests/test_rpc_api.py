@@ -1,4 +1,5 @@
 import time
+import datetime
 from aiounittest import futurized, AsyncTestCase
 from unittest.mock import patch, Mock
 from vmshepherd.http.rpc_api import RpcApi
@@ -36,17 +37,17 @@ class TestRpcApi(AsyncTestCase):
             "1243454353": {
                 "ip": "10.177.51.8",
                 "state": "running",
-                "created": mock_vm_launched_time
+                "created": datetime.datetime.fromtimestamp(mock_vm_launched_time)
             },
             "4535646466": {
                 "ip": "10.177.51.9",
                 "state": "running",
-                "created": mock_vm_launched_time
+                "created": datetime.datetime.fromtimestamp(mock_vm_launched_time)
             },
             "5465465643": {
                 "ip": "10.177.51.10",
                 "state": "running",
-                "created": mock_vm_launched_time
+                "created": datetime.datetime.fromtimestamp(mock_vm_launched_time)
             }
         }
 
