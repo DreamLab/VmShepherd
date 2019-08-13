@@ -13,7 +13,7 @@ def read(name):
 
 setup(
     name="vmshepherd",
-    version="1.3.6",
+    version="1.4.0",
     author='Dreamlab - PaaS KRK',
     author_email='paas-support@dreamlab.pl',
     url='https://github.com/Dreamlab/vmshepherd',

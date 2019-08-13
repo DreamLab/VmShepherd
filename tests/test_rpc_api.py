@@ -1,4 +1,5 @@
 import time
+import datetime
 from aiounittest import futurized, AsyncTestCase
 from unittest.mock import patch, Mock
 from vmshepherd.http.rpc_api import RpcApi
@@ -15,13 +16,14 @@ class TestRpcApi(AsyncTestCase):
         super().setUp()
         mock_request = Mock()
         self.mock_preset_manager = Mock()
+        mock_vm_launched_time = time.time()
         self.mock_preset_manager.vms = [
             Vm(self, '1243454353', 'C_DEV-app-dev',
-               ['10.177.51.8'], time.time(), state=VmState.RUNNING),
+               ['10.177.51.8'], mock_vm_launched_time, state=VmState.RUNNING),
             Vm(self, '4535646466', 'C_DEV-app-dev',
-               ['10.177.51.9'], time.time(), state=VmState.RUNNING),
+               ['10.177.51.9'], mock_vm_launched_time, state=VmState.RUNNING),
             Vm(self, '5465465643', 'C_DEV-app-dev',
-               ['10.177.51.10'], time.time(), state=VmState.RUNNING)
+               ['10.177.51.10'], mock_vm_launched_time, state=VmState.RUNNING)
         ]
         self.mock_preset_manager.count = 3
         self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
@@ -34,15 +36,18 @@ class TestRpcApi(AsyncTestCase):
         self.mock_list_vms = {
             "1243454353": {
                 "ip": "10.177.51.8",
-                "state": "running"
+                "state": "running",
+                "created": datetime.datetime.fromtimestamp(mock_vm_launched_time)
             },
             "4535646466": {
                 "ip": "10.177.51.9",
-                "state": "running"
+                "state": "running",
+                "created": datetime.datetime.fromtimestamp(mock_vm_launched_time)
             },
             "5465465643": {
                 "ip": "10.177.51.10",
-                "state": "running"
+                "state": "running",
+                "created": datetime.datetime.fromtimestamp(mock_vm_launched_time)
             }
         }
 

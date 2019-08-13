@@ -77,7 +77,7 @@ class RpcApi(handler.JSONRPCView):
         vmshepherd = self.request.app.vmshepherd
         preset = vmshepherd.preset_manager.get_preset(preset)
         await preset.refresh_vms()
-        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value} for vm in preset.vms}
+        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value, 'created': vm.created} for vm in preset.vms}
         return preset.count, result_vms
 
     @enabled_checker
