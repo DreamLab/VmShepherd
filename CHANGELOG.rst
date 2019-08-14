@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.4.2 (2019-08-14)
+------------------
+
+* bugfix: remove next _initialize_master_working_set line
+
+
 1.4.1 (2019-08-14)
 ------------------
 
