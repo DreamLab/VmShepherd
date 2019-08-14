@@ -2,6 +2,8 @@ import json
 import pkg_resources
 
 
+pkg_resources._initialize_master_working_set()  # reload plugins
+
 class Drivers:
 
     _loaded = {}
@@ -11,8 +13,7 @@ class Drivers:
         _hash = hash(json.dumps(cfg, sort_keys=True))
         pkg_resources._initialize_master_working_set()  # reload plugins
         if _hash not in cls._loaded:
-            ws = pkg_resources.WorkingSet(None)
-            for entry_point in ws.iter_entry_points(group=f'vmshepherd.driver.{group}'):
+            for entry_point in pkg_resources.iter_entry_points(group=f'vmshepherd.driver.{group}'):
                 if entry_point.name == cfg['driver']:
                     _class = entry_point.load()
                     try:

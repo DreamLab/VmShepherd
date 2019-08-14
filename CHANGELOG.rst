@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.4.1 (2019-08-14)
+------------------
+
+* bugfix: remove _initialize_master_working_set on each driver get
+
+
 1.4.0 (2019-08-12)
 ------------------
 
