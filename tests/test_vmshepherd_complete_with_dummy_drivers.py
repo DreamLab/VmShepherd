@@ -46,30 +46,30 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            preset.vms,
+            preset._runtime_vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(preset.vms[0].is_running())
+        self.assertTrue(preset._runtime_vms[0].is_running())
 
         # # second run - there should be no change
         await self.vmshepherd.run(run_once=True)
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            preset.vms,
+            preset._runtime_vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(preset.vms[0].is_running())
+        self.assertTrue(preset._runtime_vms[0].is_running())
 
         # third run - virtual machine goes in ERROR
         #  - failed vm should be terminated
         #  - new vm should schdule new vm
 
-        preset.vms[0].state = VmState.ERROR
+        preset._runtime_vms[0].state = VmState.ERROR
         await self.vmshepherd.run(run_once=True)
 
         self.assertEqual(
-            preset.vms,
+            preset._runtime_vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
 
@@ -91,7 +91,7 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            preset.vms, []
+            preset._runtime_vms, []
         )
 
     @expectedFailure
@@ -107,6 +107,6 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
         self.assertEqual(
-            preset.vms,
+            preset._runtime_vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
