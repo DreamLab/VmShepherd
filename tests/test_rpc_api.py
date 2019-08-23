@@ -17,17 +17,20 @@ class TestRpcApi(AsyncTestCase):
         mock_request = Mock()
         self.mock_preset_manager = Mock()
         mock_vm_launched_time = time.time()
-        self.mock_preset_manager.vms = [
+        self.mock_preset_manager.get_vms.return_value = futurized([
             Vm(self, '1243454353', 'C_DEV-app-dev',
                ['10.177.51.8'], mock_vm_launched_time, state=VmState.RUNNING),
             Vm(self, '4535646466', 'C_DEV-app-dev',
                ['10.177.51.9'], mock_vm_launched_time, state=VmState.RUNNING),
             Vm(self, '5465465643', 'C_DEV-app-dev',
                ['10.177.51.10'], mock_vm_launched_time, state=VmState.RUNNING)
-        ]
+        ])
         self.mock_preset_manager.count = 3
         self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
-        self.mock_preset_manager.iaas.get_vm.return_value = futurized(self.mock_preset_manager.vms[0])
+        self.mock_preset_manager.iaas.get_vm.return_value = futurized(
+            Vm(self, '1243454353', 'C_DEV-app-dev',
+               ['10.177.51.8'], mock_vm_launched_time, state=VmState.RUNNING)
+        )
         mock_request.app.vmshepherd.preset_manager.get_preset.return_value = self.mock_preset_manager
         mock_request.app.vmshepherd.preset_manager.list_presets.return_value = futurized({"C_DEV-app-dev": []})
         mock_request.remote = ['10.177.51.8']
@@ -52,13 +55,8 @@ class TestRpcApi(AsyncTestCase):
         }
 
     async def test_list_vms(self):
-        self.mock_preset_manager.refresh_vms.return_value = futurized(None)
         ret = await self.rpcapi.list_vms('C_DEV-app-dev')
-        self.mock_preset_manager.refresh_vms.assert_called_once_with()
-
-        # next call should also refresh vms
-        ret = await self.rpcapi.list_vms('C_DEV-app-dev')
-        self.assertEqual(self.mock_preset_manager.refresh_vms.call_count, 2)
+        self.mock_preset_manager.get_vms.assert_called_once_with()
 
         self.assertEqual(ret[1], self.mock_list_vms)
         self.assertEqual(ret[0], 3)

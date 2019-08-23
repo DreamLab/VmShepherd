@@ -45,31 +45,34 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
         await self.vmshepherd.run(run_once=True)
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
+
+        vms = await preset.get_vms()
         self.assertEqual(
-            preset._runtime_vms,
+            vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(preset._runtime_vms[0].is_running())
+        self.assertTrue(vms[0].is_running())
 
         # # second run - there should be no change
         await self.vmshepherd.run(run_once=True)
 
-        preset = self.vmshepherd.preset_manager.get_preset('test-preset')
+        vms = await preset.get_vms()
         self.assertEqual(
-            preset._runtime_vms,
+            vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertTrue(preset._runtime_vms[0].is_running())
+        self.assertTrue(vms[0].is_running())
 
         # third run - virtual machine goes in ERROR
         #  - failed vm should be terminated
         #  - new vm should schdule new vm
 
-        preset._runtime_vms[0].state = VmState.ERROR
+        preset.iaas._vms[0].state = VmState.ERROR
         await self.vmshepherd.run(run_once=True)
 
+        vms = await preset.get_vms()
         self.assertEqual(
-            preset._runtime_vms,
+            vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
 
@@ -90,8 +93,9 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
         )
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
+        vms = await preset.get_vms()
         self.assertEqual(
-            preset._runtime_vms, []
+            vms, []
         )
 
     @expectedFailure
@@ -106,7 +110,8 @@ class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
         )
 
         preset = self.vmshepherd.preset_manager.get_preset('test-preset')
+        vms = preset.get_vms()
         self.assertEqual(
-            preset._runtime_vms,
+            vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )

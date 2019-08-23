@@ -66,11 +66,11 @@ class Panel(web.View):
         runtime = shepherd.runtime_manager
         for name in presets:
             preset = shepherd.preset_manager.get_preset(name)
-            await preset.refresh_vms(if_older_than=60)
+            runtime_data = await runtime.get_preset_data(name)
             data['presets'][name] = {
                 'preset': preset,
-                'vms': preset.vms,
-                'runtime': await runtime.get_preset_data(name),
+                'vms': runtime_data.iaas['vms'] if 'vms' in runtime_data.iaas else [],
+                'runtime': runtime_data,
                 'vmshepherd_id': shepherd.instance_id,
                 'now': time.time()
             }

@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.5.0 (2019-08-23)
+------------------
+
+* feature: return cached vms list for rpc and panel
+
+
 1.4.2 (2019-08-14)
 ------------------
 
