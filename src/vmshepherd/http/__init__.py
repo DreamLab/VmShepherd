@@ -69,7 +69,6 @@ class Panel(web.View):
             runtime_data = await runtime.get_preset_data(name)
             data['presets'][name] = {
                 'preset': preset,
-                'vms': runtime_data.iaas['vms'] if 'vms' in runtime_data.iaas else [],
                 'runtime': runtime_data,
                 'vmshepherd_id': shepherd.instance_id,
                 'now': time.time()

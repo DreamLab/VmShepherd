@@ -88,7 +88,7 @@
   </div>  <!-- end last managed -->
   <div class="table-responsive sub-header">
     <div>
-      <h4 class="pull-left">Virtual machines ({{ data['vms']|length }}/{{ data['preset'].count }})</h4>
+      <h4 class="pull-left">Virtual machines ({{ data['runtime'].iaas['vms']|length }}/{{ data['preset'].count }})</h4>
     </div>
     <table class="table table-striped">
       <thead>
@@ -102,7 +102,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for vm in data['vms']|sorted %}
+        {% for vm in data['runtime'].iaas['vms']|sorted %}
           <tr>
             <td>{{ loop.index }}</td>
             <td>{{ vm.id }}</td>

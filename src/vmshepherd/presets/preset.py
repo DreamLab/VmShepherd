@@ -78,7 +78,7 @@ class Preset:
         """
         if cached is True:
             runtime_data = await self.runtime_mgr.get_preset_data(self.name)
-            vms = runtime_data.iaas['vms']
+            vms = runtime_data.iaas['vms'] if 'vms' in runtime_data.iaas else []
         else:
             vms = await self.iaas.list_vms(self.name)
         return vms
