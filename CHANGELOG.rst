@@ -5,7 +5,8 @@ Changelog
 1.5.0 (2019-08-23)
 ------------------
 
-* feature: return cached vms list for rpc and panel
+* feature: list vms is keeping in runtime driver (latest possible)
+           ans is refreshed by worker on every cycle
 
 
 1.4.2 (2019-08-14)
