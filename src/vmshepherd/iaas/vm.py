@@ -32,12 +32,11 @@ class Vm:
     Virtual machine object.
     """
 
-    def __init__(self, manager, id, name, ip, created, state=VmState.UNKNOWN, metadata=None, tags=None,
+    def __init__(self, id, name, ip, created, state=VmState.UNKNOWN, metadata=None, tags=None,
                  flavor=None, image=None, timed_shutdown_at=None):
 
         """ Init for VM.
 
-        :arg AbstractIaasDriver manager: class implementing Vm actions.
         :arg string id: Vm uniq id.
         :arg string name: Vm name/preset_name ??.
         :arg list ip: Vm ip list.
@@ -50,7 +49,6 @@ class Vm:
         :arg int timed_shutdown_at: Timestamp when VM will be terminated.
         """
 
-        self.manager = manager
         self.id = id
         self.name = name
         self.ip = ip
@@ -82,13 +80,6 @@ class Vm:
 
     def __hash__(self):
         return hash(self.id)
-
-    async def terminate(self):
-        """ Terminate vm.
-        """
-        logging.debug('Terminate: %s', self)
-        self.state = VmState.TERMINATED
-        return await self.manager.terminate_vm(self.id)
 
     def is_running(self):
         return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN)

@@ -36,9 +36,6 @@ class Preset:
         self.terminated = 0
         self.healthcheck_terminated = 0
 
-    async def _terminate_vm(self, vm):
-        await vm.terminate()
-
     async def __aenter__(self):
         self.runtime = await self.runtime_mgr.get_preset_data(self.name)
         require_manage = time.time() - self.runtime.last_managed > self.config.get('manage_interval', 60)
@@ -103,7 +100,7 @@ class Preset:
             for vm in vms:
                 if vm.is_dead():
                     logging.info("Terminate %s", vm, extra=self._extra)
-                    await vm.terminate()
+                    await self.iaas.terminate_vm(vm_id=vm.id)
                     self.terminated += 1
             running_vms = len(vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value]
             to_create = self.count - running_vms

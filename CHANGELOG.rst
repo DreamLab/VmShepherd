@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.5.1 (2019-08-26)
+
+* bugfix: Vm class - remove terminate method
+
+
 1.5.0 (2019-08-23)
 ------------------
 

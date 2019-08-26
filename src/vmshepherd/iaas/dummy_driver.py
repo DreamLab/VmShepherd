@@ -50,7 +50,7 @@ class DummyIaasDriver(AbstractIaasDriver):
             'tags': ['a-tag', 'b-tag', 'c-tag']
         }
         logging.debug('Prepare vm: %s', info)
-        vm = Vm(self, **info)
+        vm = Vm(**info)
         self._vms[vm.id] = vm
         logging.debug('Create: %s', vm)
         return None
