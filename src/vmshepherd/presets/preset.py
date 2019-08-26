@@ -21,12 +21,7 @@ class Preset:
         self.healthcheck_terminated = 0
         self._extra = {'preset': self.name}
         self._locked = False
-        self._vms = []
         self._vms_refresh_time = 0
-
-    @property
-    def vms(self):
-        return self._vms
 
     def configure(self, config: dict, runtime_mgr: object, iaas: object, healthcheck: object):
         self.iaas = iaas
@@ -76,43 +71,47 @@ class Preset:
             except Exception:
                 logging.error('Could not create vm with %s', args, extra=self._extra)
 
-    async def refresh_vms(self, if_older_than=None):
-        """ Refresh vm list
+    async def get_vms(self, cached=True):
+        """ Get vm list
 
-        :arg integer if_older_than: Interval in seconds you accept cached data
+        :arg boolean cached: If True, return cached data from runtime, otherwise actual data from iaas driver
         """
-        if if_older_than is None or time.time() - self._vms_refresh_time > if_older_than:
-            self._vms_refresh_time = time.time()
-            self._vms = await self.iaas.list_vms(self.name)
+        if cached is True:
+            runtime_data = await self.runtime_mgr.get_preset_data(self.name)
+            vms = runtime_data.iaas['vms'] if 'vms' in runtime_data.iaas else []
+        else:
+            vms = await self.iaas.list_vms(self.name)
+        return vms
 
     async def manage(self):
         """ Manage function docstring"""
+        vms = await self.get_vms(cached=False)
 
-        await self.refresh_vms()
-
-        vms_stat = Counter([vm.get_state() for vm in self._vms])
-        missing = self.count - len(self._vms) if len(self._vms) < self.count else 0
+        vms_stat = Counter([vm.get_state() for vm in vms])
+        missing = self.count - len(vms) if len(vms) < self.count else 0
         logging.info(
             'State: %s, VMs Status: %s expected, %s in iaas, %s running, %s nearby shutdown, %s pending, '
             '%s after time shutdown, %s terminated, %s error, %s unknown, %s missing',
-            'unmanaged' if self.unmanaged else 'managed', self.count, len(self._vms), vms_stat[VmState.RUNNING.value],
-            vms_stat[VmState.NEARBY_SHUTDOWN.value], vms_stat[VmState.PENDING.value],
+            'unmanaged' if self.unmanaged else 'managed', self.count, len(vms),
+            vms_stat[VmState.RUNNING.value], vms_stat[VmState.NEARBY_SHUTDOWN.value], vms_stat[VmState.PENDING.value],
             vms_stat[VmState.AFTER_TIME_SHUTDOWN.value], vms_stat[VmState.TERMINATED.value],
             vms_stat[VmState.ERROR.value], vms_stat[VmState.UNKNOWN.value], missing, extra=self._extra
         )
 
         to_create = 0
         if not self.unmanaged:
-            for vm in self._vms:
+            for vm in vms:
                 if vm.is_dead():
                     logging.info("Terminate %s", vm, extra=self._extra)
                     await vm.terminate()
                     self.terminated += 1
-            to_create = self.count - (len(self._vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value])
+            running_vms = len(vms) - self.terminated - vms_stat[VmState.NEARBY_SHUTDOWN.value]
+            to_create = self.count - running_vms
             logging.debug("Create %s Vm", to_create, extra=self._extra)
             await self._create_vms(to_create)
 
-        await self._healthcheck(self._vms)
+        self.runtime.iaas['vms'] = vms
+        await self._healthcheck(vms)
 
         if not self.unmanaged:
             logging.info(

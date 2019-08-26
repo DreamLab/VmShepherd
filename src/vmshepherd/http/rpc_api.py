@@ -76,8 +76,8 @@ class RpcApi(handler.JSONRPCView):
         """
         vmshepherd = self.request.app.vmshepherd
         preset = vmshepherd.preset_manager.get_preset(preset)
-        await preset.refresh_vms()
-        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value, 'created': vm.created} for vm in preset.vms}
+        vms = await preset.get_vms()
+        result_vms = {vm.id: {'ip': vm.ip[0], 'state': vm.state.value, 'created': vm.created} for vm in vms}
         return preset.count, result_vms
 
     @enabled_checker
@@ -130,7 +130,8 @@ class RpcApi(handler.JSONRPCView):
         preset = vmshepherd.preset_manager.get_preset(preset_name)
 
         # check in cache
-        for vm in preset.vms:
+        vms = await preset.get_vms()
+        for vm in vms:
             if vm_id == vm.id:
                 logging.info('IaaS verification ok')
                 return {'vm_ip': vm.ip[0]}
