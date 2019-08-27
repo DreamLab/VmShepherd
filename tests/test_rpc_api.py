@@ -18,17 +18,17 @@ class TestRpcApi(AsyncTestCase):
         self.mock_preset_manager = Mock()
         mock_vm_launched_time = time.time()
         self.mock_preset_manager.get_vms.return_value = futurized([
-            Vm(self, '1243454353', 'C_DEV-app-dev',
+            Vm('1243454353', 'C_DEV-app-dev',
                ['10.177.51.8'], mock_vm_launched_time, state=VmState.RUNNING),
-            Vm(self, '4535646466', 'C_DEV-app-dev',
+            Vm('4535646466', 'C_DEV-app-dev',
                ['10.177.51.9'], mock_vm_launched_time, state=VmState.RUNNING),
-            Vm(self, '5465465643', 'C_DEV-app-dev',
+            Vm('5465465643', 'C_DEV-app-dev',
                ['10.177.51.10'], mock_vm_launched_time, state=VmState.RUNNING)
         ])
         self.mock_preset_manager.count = 3
         self.mock_preset_manager.iaas.terminate_vm.return_value = futurized('ok')
         self.mock_preset_manager.iaas.get_vm.return_value = futurized(
-            Vm(self, '1243454353', 'C_DEV-app-dev',
+            Vm('1243454353', 'C_DEV-app-dev',
                ['10.177.51.8'], mock_vm_launched_time, state=VmState.RUNNING)
         )
         mock_request.app.vmshepherd.preset_manager.get_preset.return_value = self.mock_preset_manager

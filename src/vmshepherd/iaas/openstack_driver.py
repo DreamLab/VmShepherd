@@ -185,7 +185,7 @@ class OpenStackDriver(AbstractIaasDriver):
         timed_shutdown_at = vm.get('metadata', {}).get('iaas_timed_shutdown')
         timed_shutdown_at = int(timed_shutdown_at) if timed_shutdown_at else None
         state = self._map_vm_status(vm['status'], timed_shutdown_at)
-        iaasvm = Vm(self, vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags', []), flavor=flavor,
+        iaasvm = Vm(vm['id'], vm['name'], ip, created, state=state, metadata=vm['metadata'], tags=vm.get('tags', []), flavor=flavor,
                     image=image, timed_shutdown_at=timed_shutdown_at)
         return iaasvm
 
