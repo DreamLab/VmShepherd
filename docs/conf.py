@@ -27,10 +27,10 @@ if os.getenv('SPELLCHECK'):
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'VmShepherd'
-year = '2018'
+year = '2019'
 author = 'Dreamlab'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '1.0.2'
+version = release = '1.5.2'
 
 pygments_style = 'sphinx'
 templates_path = ['.']

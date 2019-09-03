@@ -141,7 +141,7 @@ class Preset:
                     if terminate_heatlh_failed_delay + failed_since < time.time():
                         logging.debug("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails,
                                       failed_since, extra=self._extra)
-                        await self._terminate_vm(vm)
+                        await self.iaas.terminate_vm(vm_id=vm.id)
                         self.healthcheck_terminated += 1
 
         for vm_id in list(self.runtime.failed_checks.keys()):
