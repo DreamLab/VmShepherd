@@ -2,9 +2,17 @@
 Changelog
 =========
 
-1.5.1 (2019-08-26)
 
-* bugfix: Vm class - remove terminate method
+1.5.2 (2019-09-03)
+------------------
+
+* bugfix: terminate via iaas on healthcheck
+
+
+1.5.1 (2019-08-26)
+------------------
+
+* bugfix: vm class - remove terminate method
 
 
 1.5.0 (2019-08-23)
