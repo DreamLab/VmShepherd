@@ -45,6 +45,8 @@ class GitRepoDriver(AbstractConfigurationDriver):
                 # prepend repo name to preset_name
                 config['name'] = preset_name = f"{repo_name}.{config['name']}"
                 config['userdata_source_root'] = path
+                if 'meta_tags' not in config:
+                    config['meta_tags'] = {}
                 loaded[preset_name] = config
         return loaded
 

@@ -58,6 +58,31 @@ class RpcApi(handler.JSONRPCView):
         return list(presets.keys())
 
     @enabled_checker
+    async def list_presets_with_tags(self):
+        """ Gets more verbose list of available presets
+
+        :return:  (dict of presets with tags)
+
+        :rtype: dict of dicts
+
+        Sample response:
+            ``{"preset1": {"tag1": "value1"}, "preset2": {"tag1": "value1"}}``
+        """
+        presets = await self.request.app.vmshepherd.preset_manager.list_presets()
+        return {name: preset.config['meta_tags'] for name, preset in presets.items()}
+
+    @enabled_checker
+    async def get_preset_tags(self, preset):
+        """ Get tags of preset
+
+        :arg string preset: preset name
+        :return: preset tags
+
+        :rtype: dict
+        """
+        return self.request.app.vmshepherd.preset_manager.get_preset(preset).config['meta_tags']
+
+    @enabled_checker
     async def list_vms(self, preset):
         """ Listing virtual machines in a given preset
 

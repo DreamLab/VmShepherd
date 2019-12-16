@@ -2,9 +2,11 @@ log_level: info
 
 http:
 # example of allowed_methods list
-  api: 
-    allowed_methods: 
+  api:
+    allowed_methods:
       - list_presets
+      - list_presets_with_tags
+      - get_preset_tags
       - list_vms
       - terminate_vm
       - get_vm_metadata
