@@ -24,6 +24,8 @@ class DirectoryDriver(AbstractConfigurationDriver):
                 config = await async_load_from_yaml_file(item.path)
                 config['name'] = preset_name = f"{config['name']}"
                 config['userdata_source_root'] = self._path
+                if 'meta_tags' not in config:
+                    config['meta_tags'] = {}
                 _tmp_specs[preset_name] = config
         self._specs = _tmp_specs
 

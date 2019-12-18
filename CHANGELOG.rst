@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+1.6.0 (2019-12-18)
+------------------
+
+* feature: new rpc methods - list_presets_with_tags, get_preset_tags
+
+
 1.5.2 (2019-09-03)
 ------------------
 
@@ -93,7 +99,7 @@ Changelog
 1.1.0 (2018-06-13)
 ------------------
 
-* feature: adjustable timeout for http requests to iaas 
+* feature: adjustable timeout for http requests to iaas
 
 
 1.0.1 (2018-06-08)
