@@ -68,21 +68,19 @@ class Preset:
             except Exception:
                 logging.error('Could not create vm with %s', args, extra=self._extra)
 
-    async def get_vms(self, cached=True):
-        """ Get vm list
+    async def get_vms(self):
+        """ Get cached vms from runtime driver with healthcheck state """
 
-        :arg boolean cached: If True, return cached data from runtime, otherwise actual data from iaas driver
-        """
-        if cached is True:
-            runtime_data = await self.runtime_mgr.get_preset_data(self.name)
-            vms = runtime_data.iaas['vms'] if 'vms' in runtime_data.iaas else []
-        else:
-            vms = await self.iaas.list_vms(self.name)
-        return vms
+        runtime_data = await self.runtime_mgr.get_preset_data(self.name)
+        vms = runtime_data.iaas['vms'] if 'vms' in runtime_data.iaas else []
+
+        return {vm.id: {'ip': vm.ip[0],
+                        'state': vm.state.value if not runtime_data.failed_checks.get(vm.id) else 'CHECK',
+                        'created': vm.created} for vm in vms}
 
     async def manage(self):
         """ Manage function docstring"""
-        vms = await self.get_vms(cached=False)
+        vms = await self.iaas.list_vms(self.name)
 
         vms_stat = Counter([vm.get_state() for vm in vms])
         missing = self.count - len(vms) if len(vms) < self.count else 0
@@ -136,6 +134,8 @@ class Preset:
                 failed_since = self.runtime.failed_checks.get(vm.id, {}).get('time', time.time())
                 count_fails = self.runtime.failed_checks.get(vm.id, {}).get('count', 0)
                 self.runtime.failed_checks[vm.id] = {'time': failed_since, 'count': count_fails + 1}
+
+                # terminate check failed vms
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if not self.unmanaged and terminate_heatlh_failed_delay >= 0 and count_fails > 5:
                     if terminate_heatlh_failed_delay + failed_since < time.time():
