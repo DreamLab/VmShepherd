@@ -19,14 +19,7 @@ example_config = {
             'api_secret': 'asd'
         },
         'healthcheck': {
-            'driver': 'HttpHealthcheck',
-            'conn_timeout': 1,
-            'read_timeout': 1,
-            'port': 7007,
-            'path': '/',
-            'method': 'GET',
-            'check_status': 200,
-            'terminate_heatlh_failed_delay': 1000
+            'driver': 'DummyHealthcheck'
         }
     }
 }

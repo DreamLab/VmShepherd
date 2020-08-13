@@ -38,7 +38,10 @@ setup(
             'GitRepoDriver = vmshepherd.presets:GitRepoDriver'
         ],
         'vmshepherd.driver.runtime': ['InMemoryDriver = vmshepherd.runtime:InMemoryDriver'],
-        'vmshepherd.driver.healthcheck': ['HttpHealthcheck = vmshepherd.healthcheck:HttpHealthcheck']
+        'vmshepherd.driver.healthcheck': [
+            'HttpHealthcheck = vmshepherd.healthcheck:HttpHealthcheck',
+            'DummyHealthcheck = vmshepherd.healthcheck:DummyHealthcheck'
+        ]
     },
     keywords=[
         'cluster', 'preset',

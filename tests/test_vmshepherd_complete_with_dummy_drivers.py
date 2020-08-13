@@ -51,8 +51,7 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
             vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertFalse(vms[0].is_running())
-        self.assertEqual(vms[0].get_state(), 'unhealthy')
+        self.assertTrue(vms[0].is_running())
 
         # # second run - there should be no change
         await self.vmshepherd.run(run_once=True)
@@ -62,10 +61,20 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
             vms,
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
-        self.assertFalse(vms[0].is_running())
+        self.assertTrue(vms[0].is_running())
+
+        # third run - healthcheck vm return false
+        preset.healthcheck.set_status(False)
+        await self.vmshepherd.run(run_once=True)
+
+        vms = await preset.get_vms()
+        self.assertEqual(
+            vms,
+            [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
+        )
         self.assertEqual(vms[0].get_state(), 'unhealthy')
 
-        # third run - virtual machine goes in ERROR
+        # fourth run - virtual machine goes in ERROR
         #  - failed vm should be terminated
         #  - new vm should schdule new vm
 
@@ -78,7 +87,6 @@ class TestVmShepherdRunWithDummyDrivers(AsyncTestCase):
             [VmMock(0, ['127.0.0.1'], 'test-preset', 'fedora-27', 'm1.small')]
         )
         self.assertEqual(vms[0].get_state(), 'error')
-
 
 class TestVmShepherdLockingWithDummyDrivers(AsyncTestCase):
 

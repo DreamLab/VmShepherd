@@ -84,7 +84,7 @@ class Vm:
         return hash(self.id)
 
     def is_running(self):
-        return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN)
+        return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN, VmState.UNHEALTHY)
 
     def is_dead(self):
         return self.state in (VmState.TERMINATED, VmState.ERROR, VmState.AFTER_TIME_SHUTDOWN)
