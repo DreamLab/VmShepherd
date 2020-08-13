@@ -107,16 +107,16 @@
             <td>{{ loop.index }}</td>
             <td>{{ vm.id }}</td>
             <td>{{ vm.ip|join(", ") }}</td>
-            <td {%if data['runtime'].failed_checks.get(vm.id) %} class="error" {% elif vm.state.value in ['nearbyshutdown', 'aftertimeshutdown'] %} class="warning" {% endif %}>
+            <td {%if vm.state.value == 'unhealthy' %} class="error" {% elif vm.state.value in ['nearbyshutdown', 'aftertimeshutdown'] %} class="warning" {% endif %}>
               {{ vm.state.value|upper }}
-              {%if data['runtime'].failed_checks.get(vm.id) %}
-                Healthcheck fails for {{ data['now']|int - data['runtime'].failed_checks[vm.id]['time']|int }}s, count: {{data['runtime'].failed_checks[vm.id]['count'] }})
+              {%if vm.state.value == 'unhealthy' %}
+                Healthcheck fails for {{ data['now']|int - vm.state_data['time']|int }}s, count: {{vm.state_data['count'] }})
               {% endif %}
             </td>
             <td>{{ vm.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
             <td>
               {% for name, link in data['preset']['config'].get('panel_links', {}).items() %}
-                <a href="{{ link.replace('ip', (vm.ip or ["#"]).pop()) }}">{{ name }}</a> 
+                <a href="{{ link.replace('ip', (vm.ip or ["#"]).pop()) }}">{{ name }}</a>
               {% endfor %}
             </td>
           </tr>
