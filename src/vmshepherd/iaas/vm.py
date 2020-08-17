@@ -25,7 +25,7 @@ class VmState(Enum):
     PENDING = 'pending'
     UNKNOWN = 'unknown'
     ERROR = 'error'
-
+    UNHEALTHY = 'unhealthy'
 
 class Vm:
     """
@@ -53,11 +53,13 @@ class Vm:
         self.name = name
         self.ip = ip
         self.state = state
+        self.state_data = {}
         self.metadata = metadata
         self.tags = tags
         self.flavor = flavor
         self.image = image
         self.timed_shutdown_at = timed_shutdown_at
+
         if isinstance(created, datetime.datetime):
             self.created = created
         elif isinstance(created, (int, float)):
@@ -67,7 +69,7 @@ class Vm:
             self.created = time.time()
 
     def __str__(self):
-        return f'VM id={self.id} preset={self.name} state={self.state} ip={self.ip}'
+        return f'VM id={self.id} preset={self.name} state={self.state} ip={self.ip} state_data={self.state_data}'
 
     def __eq__(self, other):
         for prop in ('id', 'ip', 'name', 'flavor', 'image'):
@@ -82,10 +84,14 @@ class Vm:
         return hash(self.id)
 
     def is_running(self):
-        return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN)
+        return self.state in (VmState.RUNNING, VmState.NEARBY_SHUTDOWN, VmState.UNHEALTHY)
 
     def is_dead(self):
         return self.state in (VmState.TERMINATED, VmState.ERROR, VmState.AFTER_TIME_SHUTDOWN)
 
     def get_state(self):
         return self.state.value
+
+    def set_state(self, state, data):
+        self.state = state
+        self.state_data = data

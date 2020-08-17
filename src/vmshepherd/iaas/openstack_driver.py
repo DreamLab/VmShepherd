@@ -5,7 +5,7 @@ from .abstract import AbstractIaasDriver
 from vmshepherd.errors import IaaSError
 from .vm import Vm, VmState
 from asyncopenstackclient import NovaClient, GlanceClient, AuthPassword
-from bidict import bidict
+from bidict import bidict, OnDup, DROP_OLD
 from datetime import datetime
 from simplejson.errors import JSONDecodeError
 
@@ -63,7 +63,7 @@ class OpenStackDriver(AbstractIaasDriver):
         self.images_details = {}
 
         for flavor in flavors:
-            self.flavors_map.put(flavor['id'], flavor['name'], on_dup_key='OVERWRITE', on_dup_val='OVERWRITE')
+            self.flavors_map.put(flavor['id'], flavor['name'], OnDup(key=DROP_OLD, val=DROP_OLD))
 
         for image in images:
             # @TODO filetes :
@@ -76,7 +76,7 @@ class OpenStackDriver(AbstractIaasDriver):
                 'created_at': image['created_at'],
                 'latest': 'latest' in image['tags']
             }
-            self.images_map.put(image['id'], image['name'], on_dup_key='OVERWRITE', on_dup_val='OVERWRITE')
+            self.images_map.put(image['id'], image['name'], OnDup(key=DROP_OLD, val=DROP_OLD))
 
     @initialize_openstack
     @openstack_exception
