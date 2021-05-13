@@ -136,11 +136,16 @@ class Preset:
                 terminate_heatlh_failed_delay = self.config.get('healthcheck', {}).get('terminate_heatlh_failed_delay', -1)
                 if not self.unmanaged and terminate_heatlh_failed_delay >= 0 and count_fails > 5:
                     if terminate_heatlh_failed_delay + failed_since < time.time():
-                        logging.debug("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails,
+                        logging.info("Terminate %s, healthcheck fails (count %s) since %s", vm, count_fails,
                                       failed_since, extra=self._extra)
                         await self.iaas.terminate_vm(vm_id=vm.id)
                         self.healthcheck_terminated += 1
 
         for vm_id in list(self.runtime.failed_checks.keys()):
             if vm_id not in current_fails:
+                logging.info(
+                    'Vm %s, healthcheck failed (count %s) for %s seconds', vm_id,
+                    self.runtime.failed_checks[vm_id]['count'],
+                    int(time.time() - self.runtime.failed_checks[vm_id]['time'])
+                )
                 del self.runtime.failed_checks[vm_id]
