@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+1.6.2 (2021-05-13)
+------------------
+
+* feature: log info how long virtual machine fails healthcheck
+
+
 1.6.1 (2020-08-13)
 ------------------
 
