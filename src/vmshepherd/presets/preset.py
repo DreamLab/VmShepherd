@@ -146,6 +146,6 @@ class Preset:
                 logging.info(
                     'Vm %s, healthcheck failed (count %s) for %s seconds', vm_id,
                     self.runtime.failed_checks[vm_id]['count'],
-                    int(time.time() - self.runtime.failed_checks[vm_id]['time'])
+                    int(time.time() - self.runtime.failed_checks[vm_id]['time']), extra=self._extra
                 )
                 del self.runtime.failed_checks[vm_id]
